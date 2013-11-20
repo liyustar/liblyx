@@ -1,6 +1,8 @@
 #include "lyxSocket.h"
 
 #include <errno.h>		// For errno
+#include <cstring>		// For memset
+#include <cstdio>		// For snprintf
 using namespace std;
 
 namespace lyx {
@@ -62,7 +64,7 @@ namespace lyx {
 		if (servAddrs == NULL)
 			throw SocketException("No matching socket address");
 
-		addrLen = servAddrs->ai_addrLen;
+		addrLen = servAddrs->ai_addrlen;
 		memcpy( &addr, servAddrs->ai_addr, addrLen );
 
 		freeaddrinfo(servAddrs);
@@ -79,7 +81,7 @@ namespace lyx {
 		if (servAddrs == NULL)
 			throw SocketException("No matching socket address");
 
-		addrLen = servAddrs->ai_addrLen;
+		addrLen = servAddrs->ai_addrlen;
 		memcpy( &addr, servAddrs->ai_addr, addrLen );
 
 		freeaddrinfo(servAddrs);
@@ -124,7 +126,7 @@ namespace lyx {
 		}
 	}
 
-	vector<SocketAddress> ScoketAddress::lookupAddresses(const char *host,
+	vector<SocketAddress> SocketAddress::lookupAddresses(const char *host,
 			const char *service, AddressType atype) throw(SocketException) {
 		addrinfo *servAddrs = getAddressInfo(host, service, atype);
 
@@ -133,14 +135,14 @@ namespace lyx {
 		for (addrinfo *curAddr = servAddrs; curAddr != NULL;
 				curAddr = curAddr->ai_next)
 			addrList.push_back(SocketAddress((sockaddr *)(curAddr->ai_addr),
-						curAddr->ai_addrLen));
+						curAddr->ai_addrlen));
 
 		freeaddrinfo(servAddrs);
 
 		return addrList;
 	}
 
-	vector<SocketAddress> ScoketAddress::lookupAddresses(const char *host,
+	vector<SocketAddress> SocketAddress::lookupAddresses(const char *host,
 			in_port_t port, AddressType atype) throw(SocketException) {
 		// Convert the numeric port request into a string.
 		char service[6];
@@ -152,7 +154,7 @@ namespace lyx {
 		for (addrinfo *curAddr = servAddrs; curAddr != NULL;
 				curAddr = curAddr->ai_next)
 			addrList.push_back(SocketAddress((sockaddr *)(curAddr->ai_addr),
-						curAddr->ai_addrLen));
+						curAddr->ai_addrlen));
 
 		freeaddrinfo(servAddrs);
 
@@ -167,7 +169,7 @@ namespace lyx {
 		sockDesc = -1;
 	}
 
-	Scoket::~Socket() {
+	Socket::~Socket() {
 		if (sockDesc >= 0) {
 			close();
 		}
@@ -270,9 +272,9 @@ namespace lyx {
 			SocketStreamBuffer(TCPSocket *sock) {
 				// Save the a copy of the socket we are wrapping
 				SocketStreamBuffer::sock = sock;
-				setg(inBuffer, inBuffer + sizeof(inBuffer),
+				this->setg(inBuffer, inBuffer + sizeof(inBuffer),
 						inBuffer + sizeof(inBuffer));
-				setp(outBuffer, outBuffer + sizeof(outBuffer));
+				this->setp(outBuffer, outBuffer + sizeof(outBuffer));
 				extra = 0;
 			}
 
@@ -283,7 +285,7 @@ namespace lyx {
 
 				// If an extra character was passed in, put it into our buffer
 				if (c != Traits::eof()) {
-					sputc(Traits::to_char_type(c));
+					this->sputc(Traits::to_char_type(c));
 				}
 
 				return 0;
@@ -292,7 +294,7 @@ namespace lyx {
 			int sync() {
 				// Write out the contents of the buffer
 				sock->send(outBuffer, (this->pptr() - outBuffer) * sizeof(CharT));
-				setp(outBuffer, outBuffer + sizeof(outBuffer));
+				this->setp(outBuffer, outBuffer + sizeof(outBuffer));
 				return 0;
 			}
 
@@ -307,7 +309,7 @@ namespace lyx {
 
 				// Adjust the base class buffer pointers and return the first
 				// character read
-				setg(inBuffer, inBuffer, inBuffer + len / sizeof(CharT));
+				this->setg(inBuffer, inBuffer, inBuffer + len / sizeof(CharT));
 				return this->sgetc();
 			}
 
@@ -387,7 +389,7 @@ namespace lyx {
 
 	TCPSocket::TCPSocket(int desc) {
 		myStream = NULL;
-		socketDesc = desc;
+		sockDesc = desc;
 	}
 
 	void TCPSocket::bind(const SocketAddress &localAddress) throw(SocketException) {
@@ -400,9 +402,9 @@ namespace lyx {
 
 	void TCPSocket::connect(const SocketAddress &foreignAddress) throw(SocketException) {
 		if (sockDesc < 0)
-			createSocket(foreignAddress, SOCK_STREAM, IPPPROTO_TCP);
+			createSocket(foreignAddress, SOCK_STREAM, IPPROTO_TCP);
 
-		if (::connect(sockDesc, foreignAddress.getScokaddr(),
+		if (::connect(sockDesc, foreignAddress.getSockaddr(),
 					foreignAddress.getSockaddrLen()) < 0)
 			throw SocketException(string("Call to connect() failed: ") + strerror(errno));
 	}
@@ -427,7 +429,7 @@ namespace lyx {
 		addrCriteria.ai_socktype = SOCK_STREAM;			// Only streaming sockets
 		addrCriteria.ai_protocol = IPPROTO_TCP;			// Only TCP protocol
 
-		struct addrinfo *serAddr; // List of server addresses
+		struct addrinfo *servAddr; // List of server addresses
 		int result;
 		if ((result = getaddrinfo(localAddr, localPort, &addrCriteria, &servAddr)) != 0)
 			throw SocketException("getaddrinfo() failed: %s", gai_strerror(result));
@@ -520,7 +522,7 @@ namespace lyx {
 	}
 
 	void UDPSocket::sendTo(const void *buffer, int bufferLen,
-			const SocketAddress &foreignAddress) throw(socketException) {
+			const SocketAddress &foreignAddress) throw(SocketException) {
 		// Write out the whole buffer as a single message
 		if (sendto(sockDesc, (raw_type *) buffer, bufferLen, 0,
 					foreignAddress.getSockaddr(),

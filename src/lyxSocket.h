@@ -78,7 +78,7 @@ namespace lyx {
 		public:
 			void send(const void *buffer, int bufferLen) throw(SocketException);
 			size_t recv(void *buffer, int bufferLen) throw(SocketException);
-			size_t recvFuuly(void *buffer, int bufferLen) throw(SocketException);
+			size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
 			SocketAddress getForeignAddress() throw(SocketException);
 	};
 
@@ -119,10 +119,11 @@ namespace lyx {
 
 			void disconnect() throw(SocketException);
 			void sendTo(const void *buffer, int bufferLen,
-					const SocketAddress, &foreignAddress) throw(SocketException);
+					const SocketAddress &foreignAddress) throw(SocketException);
 			int recvFrom(void *buffer, int bufferLen,
 					SocketAddress &sourceAddress) throw(SocketException);
 			void setMulticastTTL(unsigned char multicastTTL) throw(SocketException);
+			void joinGroup(const std::string &multicastGroup) throw(SocketException);
 			void leaveGroup(const std::string &multicastGroup) throw(SocketException);
 
 		private:
