@@ -21,6 +21,8 @@ namespace lyx {
 	/**
 	 * SocketAddress
 	 */
+
+	// Need freeaddrinfo(result).
 	static addrinfo *getAddressInfo(const char *host, const char *service,
 			SocketAddress::AddressType atype) throw(SocketException) {
 		// Create criteria for the socket we require
@@ -477,6 +479,12 @@ namespace lyx {
 	TCPSocket *TCPServerSocket::accept() throw(SocketException) {
 		int newConnSD;
 		if ((newConnSD = ::accept(sockDesc, NULL, 0)) < 0) {
+			throw SocketException("Set listening socket failed (listen())");
+		}
+	}
+
+	void TCPServerSocket::setListen(int queueLen) throw(SocketException) {
+		if (listen(sockDesc, queueLen) < 0) {
 			throw SocketException("Set listening socket failed (listen())");
 		}
 	}
