@@ -481,6 +481,8 @@ namespace lyx {
 		if ((newConnSD = ::accept(sockDesc, NULL, 0)) < 0) {
 			throw SocketException("Set listening socket failed (listen())");
 		}
+
+		return new TCPSocket(newConnSD);
 	}
 
 	void TCPServerSocket::setListen(int queueLen) throw(SocketException) {
