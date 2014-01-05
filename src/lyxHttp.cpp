@@ -256,6 +256,10 @@ namespace lyx {
 		for (unsigned int pos = 0, end = 0;
 				(end = header.find("\r\n", pos));
 				pos = end + 2) {
+			if (string::npos == end) {
+				perror("error: header have no \\r\\n\n");
+				return -1;
+			}
 			curLine = header.substr(pos, end - pos);
 			// if (curLine.compare("\r\n") == 0) {
 			if (end == pos) {
