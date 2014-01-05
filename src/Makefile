@@ -15,9 +15,6 @@
 #           to create the executable
 ##############################################################################
 
-# EXEC      = PlusOneServer \
-			PlusOneClient
-# SRC_FILES = PlusOneServer.cpp
 EXEC      = yooli_analyzer
 
 MODULE = lyxSocket \
@@ -46,6 +43,10 @@ SRC_FILES += $(EXEC:%=%.cpp)
 # COURSE_DIR = /home/lyx/Work/liblyx/include
 # LIB_DIR    = /home/lyx/Work/liblyx/lib
 
+# for openssl
+COURSE_DIR = /usr/local/ssl/include
+LIB_DIR = /usr/local/ssl/lib
+
 ##############################################################################
 # Compiler specifications
 # These match the variable names given in /usr/share/lib/make/make.rules
@@ -70,7 +71,7 @@ CCFLAGS         = $(CXXFLAGS)
 #   because each compiler already knows where to look for its system
 #   files (unless you want to override the defaults)
 
-# CPPFLAGS        = -I. \
+CPPFLAGS        = -I. \
                   -I$(COURSE_DIR)
 
 # What flags should be passed to the linker
@@ -78,7 +79,7 @@ CCFLAGS         = $(CXXFLAGS)
 #   you should never need to include compiler specific directories here
 #   because each compiler already knows where to look for its system files.
 
-# LDFLAGS         = -L. \
+LDFLAGS         = -L. \
                   -L$(LIB_DIR) \
                   # -L$(COURSE_DIR) \
                   # -R $(LIB_DIR):$(COURSE_DIR)
@@ -87,7 +88,7 @@ CCFLAGS         = $(CXXFLAGS)
 # For example, -lm links with libm.so, the math library.
 # If you make a library of your own, say, libscandir.a, you have to link it
 # in by adding -lscandir here.
-# LDLIBS          = -llyx
+LDLIBS          = -lssl -lcrypto -ldl
 
 # All source files have associated object files.
 # This line sets `OFILES' to have the same value as `SRC_FILES' but

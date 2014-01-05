@@ -7,6 +7,7 @@
 #include <arpa/inet.h>	// For inet_addr()
 #include <unistd.h>		// For close()
 #include <netinet/in.h>	// For sockaddr_in
+#include <openssl/ssl.h>
 typedef void raw_type;	// Type used for raw data on this platform
 
 #include <iostream>
@@ -98,6 +99,22 @@ namespace lyx {
 
 			std::iostream *myStream;
 			std::streambuf *myStreambuf;
+	};
+
+	class TCPSslSocket: public TCPSocket {
+		public:
+			TCPSslSocket(const char *foreignAddress, in_port_t foreignPort) throw(SocketException);
+			TCPSslSocket();
+			~TCPSslSocket();
+
+			void connect(const SocketAddress &foreignAddress) throw(SocketException);
+
+		private:
+			SSL *sockSsl;
+			SSL_CTX *sockSslCtx;
+
+		private:
+			TCPSslSocket(int sockDesc);
 	};
 
 	class TCPServerSocket: public Socket {

@@ -420,6 +420,35 @@ namespace lyx {
 	}
 
 	/**
+	 * TCPSslSocket
+	 */
+	TCPSslSocket::TCPSslSocket()
+		: TCPSocket() {
+		sockSsl = NULL;
+		sockSslCtx = NULL;
+	}
+
+	TCPSslSocket::~TCPSslSocket() {
+		if (sockSsl) SSL_free(sockSsl);
+		if (sockSslCtx) SSL_CTX_free(sockSslCtx);
+	}
+
+	TCPSslSocket::TCPSslSocket(const char *foreignAddress, in_port_t foreignPort)
+		throw(SocketException)
+		: TCPSocket(foreignAddress, foreignPort) {
+		sockSslCtx = SSL_CTX_new(SSLv3_client_method());
+		sockSsl = SSL_new(sockSslCtx);
+		SSL_set_fd(sockSsl, sockDesc);
+		SSL_connect(sockSsl);
+	}
+
+	void TCPSslSocket::connect(const SocketAddress &foreignAddress) throw(SocketException) {
+		TCPSocket::connect(foreignAddress);
+		SSL_set_fd(sockSsl, sockDesc);
+		SSL_connect(sockSsl);
+	}
+
+	/**
 	 * TCPServerSocket
 	 */
 	int findTCPServerSocketDesc(const char *localAddr, const char *localPort) {
