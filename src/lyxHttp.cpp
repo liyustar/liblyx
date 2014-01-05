@@ -1,7 +1,6 @@
 #include "lyxHttp.h"
 #include "lyxUrl.h"
 #include "lyxSocket.h"
-#include "lyxSslSocket.h"
 #include "lyxCookieStorage.h"
 #include <unistd.h>
 #include <iostream>
@@ -9,6 +8,7 @@
 #include <map>
 #include <utility>
 #include <cstdio>
+#include <cstdlib>
 
 using namespace std;
 
@@ -56,16 +56,19 @@ namespace lyx {
 		} else {
 			m_method = METHOD_UNKNOW;
 		}
+		return 0;
 	}
 
 	int Http::addParam(const string key, const string val) {
 		// TODO: process '&' '?' etc.
 		m_params.push_back(make_pair(key, val));
+		return 0;
 	}
 
 	int Http::addHeader(const string title, const string content) {
 		// TODO: process '&' '?' etc.
 		m_headers.push_back(make_pair(title, content));
+		return 0;
 	}
 
 	string Http::getMethodStr() const {
@@ -165,17 +168,18 @@ namespace lyx {
 		return 0;
 	}
 
-	int Http::sendRequest(Socket *psock, const string &request) {
+	int Http::sendRequest(CommunicatingSocket *psock, const string &request) {
 		psock->send(request.c_str(), request.size());
+		return 0;
 	}
 
-	int Http::recvResponse(Socket *psock, string &header, string &response) {
+	int Http::recvResponse(CommunicatingSocket *psock, string &header, string &response) {
 		int isFindHeader = false;
 		const int BUFLEN = 1024 * 8;
 		char buf[BUFLEN];
 		int totalrecv = 0;
 		do {
-			int len = psock->rawRecv(buf, BUFLEN);
+			int len = psock->recv(buf, BUFLEN);
 			if (len > 0) {
 				response.append(buf, len);
 				// find header
@@ -196,6 +200,7 @@ namespace lyx {
 			totalrecv += len;
 		} while(true);
 		// cout << "recv len: " << totalrecv << endl;
+		return 0;
 	}
 
 	int Http::processHeaderLine(const string &tokStr, const string &content) {
@@ -230,7 +235,7 @@ namespace lyx {
 	}
 
 	int Http::analyseHeaderLine(const string &line) {
-		int pos = 0, end = 0;
+		unsigned int pos = 0, end = 0;
 		string token, content;
 		end = line.find(":");
 		if (string::npos == end) {
@@ -243,12 +248,13 @@ namespace lyx {
 		end = 1 + line.find_last_not_of(" \r\n", line.size());
 		content = line.substr(pos, end - pos);
 		processHeaderLine(token, content);
+		return 0;
 	}
 
 	int Http::analyzeResponseHeader(const string &header, int &status) {
 		string curLine;
-		for (int pos = 0, end = 0;
-				end = header.find("\r\n", pos);
+		for (unsigned int pos = 0, end = 0;
+				(end = header.find("\r\n", pos));
 				pos = end + 2) {
 			curLine = header.substr(pos, end - pos);
 			// if (curLine.compare("\r\n") == 0) {
@@ -266,6 +272,7 @@ namespace lyx {
 				analyseHeaderLine(curLine);
 			}
 		}
+		return 0;
 	}
 
 	int Http::getResponse(string &response) {
@@ -274,13 +281,10 @@ namespace lyx {
 		string header;
 		int status = 0;
 		int res = 0; // result
-		Socket *sock = NULL;
-		if (443 == m_url.getPort()) {
-			sock = new SslSocket(m_url.getHostname(), m_url.getPort());
-		} else {
-			sock = new Socket(m_url.getHostname(), m_url.getPort());
-		}
-		res = sock->setupSocket();
+		TCPSocket *sock = NULL;
+		sock = new TCPSocket(m_url.getHostname().c_str(), m_url.getPort());
+
+		// res = sock->setupSocket();
 		res = createRequest(request);
 		res = sendRequest(sock, request);
 		res = recvResponse(sock, header, response);
@@ -307,6 +311,7 @@ namespace lyx {
 		// TODO
 		int len = atoi(str.c_str());
 		cout << "Content-Length: " << len << endl;
+		return 0;
 	}
 
 	int Http::parseSetCookie(HttpCtx ctx, string setCookiestr) {
@@ -314,6 +319,7 @@ namespace lyx {
 		CookieStorageInstence csInstence = CookieStorage::getCookieStorageInstence();
 		Cookie cookie = Cookie::parseSetCookieString(ctx->getUrl(), setCookiestr);
 		csInstence->addCookie(cookie);
+		return 0;
 	}
 
 	Url Http::getUrl() const {

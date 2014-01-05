@@ -18,10 +18,7 @@
 # EXEC      = PlusOneServer \
 			PlusOneClient
 # SRC_FILES = PlusOneServer.cpp
-TEST_EXEC      = yooli_analyzer
-
-SRC_FILES = $(TEST_EXEC:%=%.cpp)
-SRC_FILES += $(EXEC:%=%.cpp)
+EXEC      = yooli_analyzer
 
 MODULE = lyxSocket \
 		 lyxCookie \
@@ -29,8 +26,10 @@ MODULE = lyxSocket \
 		 lyxUrl \
 		 lyxHttp
 
+SRC_FILES = $(MODULE:%=%.cpp)
+SRC_FILES += $(EXEC:%=%.cpp)
 
-OBJ = $(MODULE:%=%.o) 
+# OBJ = $(MODULE:%=%.o) 
 
 
 ##############################################################################
@@ -100,7 +99,7 @@ O_FILES         = $(SRC_FILES:%.cpp=%.o)
 # Additional rules make should know about in order to compile our files
 ###########################################################################
 # all is the default rule
-all: $(OBJ)
+all: $(EXEC)
 
 
 # exec depends on the object files
@@ -117,4 +116,4 @@ clean:
 	-$(RM) $(O_FILES) core *.rpo
 
 very-clean: clean
-	-$(RM) $(OBJ) $(EXEC)
+	-$(RM) $(EXEC)
