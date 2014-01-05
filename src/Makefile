@@ -18,12 +18,17 @@
 # EXEC      = PlusOneServer \
 			PlusOneClient
 # SRC_FILES = PlusOneServer.cpp
-TEST_EXEC      = PlusOneServer \
-				 PlusOneClient
+TEST_EXEC      = yooli_analyzer
+
 SRC_FILES = $(TEST_EXEC:%=%.cpp)
 SRC_FILES += $(EXEC:%=%.cpp)
 
-MODULE = lyxSocket
+MODULE = lyxSocket \
+		 lyxCookie \
+		 lyxCookieStorage \
+		 lyxUrl \
+		 lyxHttp
+
 
 OBJ = $(MODULE:%=%.o) 
 
@@ -105,13 +110,11 @@ $(EXEC): $(O_FILES)
 
 # to use `makedepend', the target is `depend'
 depend:
-	->   makedepend -- $(CXXFLAGS) -- -Y $(SRC_FILES)
-
-
+	-makedepend -- $(CXXFLAGS) -- -Y $(SRC_FILES)
 
 # clean up after you're done
 clean:
-	->   $(RM) $(O_FILES) core *.rpo
+	-$(RM) $(O_FILES) core *.rpo
 
 very-clean: clean
-	->   $(RM) $(EXEC)
+	-$(RM) $(OBJ) $(EXEC)
