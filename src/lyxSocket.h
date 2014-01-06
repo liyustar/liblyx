@@ -77,9 +77,9 @@ namespace lyx {
 
 	class CommunicatingSocket: public Socket {
 		public:
-			void send(const void *buffer, int bufferLen) throw(SocketException);
-			size_t recv(void *buffer, int bufferLen) throw(SocketException);
-			size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
+			virtual void send(const void *buffer, int bufferLen) throw(SocketException);
+			virtual size_t recv(void *buffer, int bufferLen) throw(SocketException);
+			virtual size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
 			SocketAddress getForeignAddress() throw(SocketException);
 	};
 
@@ -108,6 +108,14 @@ namespace lyx {
 			~TCPSslSocket();
 
 			void connect(const SocketAddress &foreignAddress) throw(SocketException);
+
+			// override
+			void send(const void *buffer, int bufferLen) throw(SocketException);
+			size_t recv(void *buffer, int bufferLen) throw(SocketException);
+
+		private:
+			// Not Implement
+			size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
 
 		private:
 			SSL *sockSsl;

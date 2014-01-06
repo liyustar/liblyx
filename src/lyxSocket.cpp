@@ -3,6 +3,7 @@
 #include <errno.h>		// For errno
 #include <cstring>		// For memset
 #include <cstdio>		// For snprintf
+#include <openssl/err.h>	// For ERR_print_errors_fp
 using namespace std;
 
 namespace lyx {
@@ -446,6 +447,51 @@ namespace lyx {
 		TCPSocket::connect(foreignAddress);
 		SSL_set_fd(sockSsl, sockDesc);
 		SSL_connect(sockSsl);
+	}
+
+#define CHK_SSL(err) if((err)==-1){ERR_print_errors_fp(stderr);}
+
+	void TCPSslSocket::send(const void *buffer, int bufferLen)
+		throw(SocketException) {
+		int totalsend = 0;
+		while (totalsend < bufferLen) {
+			int sendlen = SSL_write(sockSsl, buffer, bufferLen - totalsend);
+			int ret = SSL_get_error(sockSsl, sendlen);
+			if (sendlen == 0) {
+				throw SocketException("SslSocket Send none");
+			} else if (sendlen < 0 && ret == SSL_ERROR_WANT_WRITE) {
+				continue;
+			} else if (sendlen < 0) {
+				// not successful
+				CHK_SSL(sendlen);
+				throw SocketException("SslSocket Send failed (send())");
+			}
+			totalsend += sendlen;
+
+			if (totalsend >= bufferLen) {
+				break;
+			}
+		}
+	}
+
+	size_t TCPSslSocket::recv(void *buffer, int bufferLen)
+		throw(SocketException) {
+		int recvlen, ret;
+		do {
+			recvlen = SSL_read(sockSsl, buffer, bufferLen);
+			ret = SSL_get_error(sockSsl, recvlen);
+		} while (recvlen == -1 && ret == SSL_ERROR_WANT_READ);
+
+		if (ret == -1) {
+			throw SocketException("SslSocket Receive failed (recv())");
+		}
+		return recvlen;
+	}
+
+	// Not Implement
+	size_t TCPSslSocket::recvFully(void *buffer, int bufferLen)
+		throw(SocketException) {
+		return 0;
 	}
 
 	/**
