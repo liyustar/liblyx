@@ -154,6 +154,12 @@ namespace lyx {
 		private:
 			void setBroadcast();
 	};
+
+	class OpenSslInit {
+		static OpenSslInit init;
+		OpenSslInit();
+	};
+
 }
 
 #endif // LYXSOCKET_H

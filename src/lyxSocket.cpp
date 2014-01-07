@@ -659,4 +659,15 @@ namespace lyx {
 		}
 	}
 
+	/**
+	 * OpenSslInit
+	 */
+	OpenSslInit OpenSslInit::init;
+
+	OpenSslInit::OpenSslInit() {
+		SSL_library_init();
+		OpenSSL_add_ssl_algorithms();
+		SSL_load_error_strings();
+	}
+
 } // namespace lyx
