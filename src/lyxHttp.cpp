@@ -168,12 +168,12 @@ namespace lyx {
 		return 0;
 	}
 
-	int Http::sendRequest(CommunicatingSocket *psock, const string &request) {
+	int Http::sendRequest(TCPSocket *psock, const string &request) {
 		psock->send(request.c_str(), request.size());
 		return 0;
 	}
 
-	int Http::recvResponse(CommunicatingSocket *psock, string &header, string &response) {
+	int Http::recvResponse(TCPSocket *psock, string &header, string &response) {
 		int isFindHeader = false;
 		const int BUFLEN = 1024 * 8;
 		char buf[BUFLEN];
@@ -286,9 +286,12 @@ namespace lyx {
 		int status = 0;
 		int res = 0; // result
 		TCPSocket *sock = NULL;
-		sock = new TCPSocket(m_url.getHostname().c_str(), m_url.getPort());
+		if (m_url.getPort() != 443) {
+			sock = new TCPSocket(m_url.getHostname().c_str(), m_url.getPort());
+		} else {
+			sock = new TCPSslSocket(m_url.getHostname().c_str(), m_url.getPort());
+		}
 
-		// res = sock->setupSocket();
 		res = createRequest(request);
 		res = sendRequest(sock, request);
 		res = recvResponse(sock, header, response);

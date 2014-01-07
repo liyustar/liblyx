@@ -79,8 +79,8 @@ namespace lyx {
 			std::string getHeadersStr() const;
 			std::string getCookiesStr() const;
 			int createRequest(std::string &request);
-			int sendRequest(CommunicatingSocket *psock, const std::string &request);
-			int recvResponse(CommunicatingSocket *psock, std::string &header, std::string &response);
+			int sendRequest(TCPSocket *psock, const std::string &request);
+			int recvResponse(TCPSocket *psock, std::string &header, std::string &response);
 			int analyzeResponseHeader(const std::string &header, int &status);
 			int processHeaderLine(const std::string &token, const std::string &content);
 			int analyseHeaderFirstLine(const std::string &firstLine);
