@@ -21,7 +21,8 @@ MODULE = lyxSocket \
 		 lyxCookie \
 		 lyxCookieStorage \
 		 lyxUrl \
-		 lyxHttp
+		 lyxHttp \
+		 lyxUtil
 
 SRC_FILES = $(MODULE:%=%.cpp)
 SRC_FILES += $(EXEC:%=%.cpp)
