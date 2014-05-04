@@ -1,6 +1,6 @@
 include ../projdef.mk
 
-MODULE := module_1
+MODULE := network
 
 # 创建cpp的文件依赖
 CPPFILES := $(wildcard *.cpp)

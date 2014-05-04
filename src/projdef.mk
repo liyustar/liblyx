@@ -6,8 +6,9 @@ LIBDIR := ../../lib
 PRODUCT := $(LIBDIR)/liblyx.a
 
 # add modules
-MODULES := module_1 \
-			module_2
+MODULES	:=	util \
+			network \
+			http
 
 CPPFLAGS := -g -Wall
 CPPFLAGS += $(addprefix -I../,$(MODULES))
