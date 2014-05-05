@@ -13,10 +13,13 @@ MODULES	:=	util \
 CPPFLAGS := -g -Wall
 CPPFLAGS += $(addprefix -I../,$(MODULES))
 
+# 其他依赖库
+CPPFLAGS	+=	-I/usr/local/ssl/include
+
 all:
 
 $(PRODUCT): $(OBJ)
-	$(AR) $(ARFLAGS) $@ $<
+	$(AR) $(ARFLAGS) $@ $^
 
 %.d: %.cpp
 	@set -e;rm -f $@; \

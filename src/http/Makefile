@@ -20,4 +20,4 @@ test:
 
 clean:
 	-rm $(OBJ) $(DEPINC)
-	make -C test clean
+	-make -C test clean
