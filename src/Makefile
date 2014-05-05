@@ -4,3 +4,8 @@ all :
 	@for module in ${MODULES}; do \
 		make -C $${module}; \
 	done
+
+clean :
+	@for module in ${MODULES}; do \
+		make -C $${module} clean; \
+	done

@@ -50,7 +50,7 @@ namespace lyx {
 
 	Cookie Cookie::parseSetCookieString(Url url, const string &setCookieStr) {
 		string name, val, domain, path;
-		unsigned int pos = 0, end = 0, secure = 0;
+		size_t pos = 0, end = 0, secure = 0;
 		pos = setCookieStr.find_first_not_of(" ");
 		end = setCookieStr.find("=", pos);
 		name = setCookieStr.substr(pos, end - pos);
