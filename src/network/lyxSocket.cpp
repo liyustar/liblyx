@@ -219,16 +219,19 @@ namespace lyx {
 	/**
 	 * CommunicatingSocket
 	 */
-	void CommunicatingSocket::send(const void *buffer, int bufferLen)
+	size_t CommunicatingSocket::send(const void *buffer, int bufferLen)
 		throw(SocketException) {
-		if (::send(sockDesc, (raw_type *)buffer, bufferLen, 0) < 0) {
+		int rtn = TEMP_FAILURE_RETRY(::send(sockDesc, (raw_type *)buffer, bufferLen, 0));
+		if (rtn < 0) {
 			throw SocketException("Send failed (send())");
 		}
+
+		return rtn;
 	}
 
 	size_t CommunicatingSocket::recv(void *buffer, int bufferLen)
 		throw(SocketException) {
-		int rtn = ::recv(sockDesc, (raw_type *)buffer, bufferLen, 0);
+		int rtn = TEMP_FAILURE_RETRY(::recv(sockDesc, (raw_type *)buffer, bufferLen, 0));
 		if (rtn < 0) {
 			throw SocketException("Receive failed (recv())");
 		}
@@ -239,11 +242,11 @@ namespace lyx {
 	size_t CommunicatingSocket::recvFully(void *buffer, int bufferLen)
 		throw(SocketException) {
 		int rcount = 0;
-		int len = ::recv(sockDesc, (raw_type *)buffer, bufferLen, 0);
+		int len = TEMP_FAILURE_RETRY(::recv(sockDesc, (raw_type *)buffer, bufferLen, 0));
 		while (len > 0 && rcount + len < bufferLen) {
 			rcount += len;
-			len = ::recv(sockDesc, (raw_type *)(((char *) buffer) + rcount),
-					bufferLen - rcount, 0);
+			len = TEMP_FAILURE_RETRY(::recv(sockDesc, (raw_type *)(((char *) buffer) + rcount),
+					bufferLen - rcount, 0));
 		}
 
 		if (len < 0) {
@@ -375,7 +378,7 @@ namespace lyx {
 			if ((sockDesc = socket(curAddr->ai_family, curAddr->ai_socktype,
 							curAddr->ai_protocol)) >= 0) {
 				// Try to connect the socket to the requested foreign address
-				if (::connect(sockDesc, curAddr->ai_addr, curAddr->ai_addrlen) < 0) {
+				if (TEMP_FAILURE_RETRY(::connect(sockDesc, curAddr->ai_addr, curAddr->ai_addrlen)) < 0) {
 					// If we fail, close the socket
 					::close(sockDesc);
 					sockDesc = -1;
@@ -407,8 +410,8 @@ namespace lyx {
 		if (sockDesc < 0)
 			createSocket(foreignAddress, SOCK_STREAM, IPPROTO_TCP);
 
-		if (::connect(sockDesc, foreignAddress.getSockaddr(),
-					foreignAddress.getSockaddrLen()) < 0)
+		if (TEMP_FAILURE_RETRY(::connect(sockDesc, foreignAddress.getSockaddr(),
+					foreignAddress.getSockaddrLen())) < 0)
 			throw SocketException(string("Call to connect() failed: ") + strerror(errno));
 	}
 
@@ -451,7 +454,7 @@ namespace lyx {
 
 #define CHK_SSL(err) if((err)==-1){ERR_print_errors_fp(stderr);}
 
-	void TCPSslSocket::send(const void *buffer, int bufferLen)
+	size_t TCPSslSocket::send(const void *buffer, int bufferLen)
 		throw(SocketException) {
 		int totalsend = 0;
 		while (totalsend < bufferLen) {
@@ -472,6 +475,7 @@ namespace lyx {
 				break;
 			}
 		}
+		return totalsend;
 	}
 
 	size_t TCPSslSocket::recv(void *buffer, int bufferLen)
@@ -488,10 +492,9 @@ namespace lyx {
 		return recvlen;
 	}
 
-	// Not Implement
 	size_t TCPSslSocket::recvFully(void *buffer, int bufferLen)
 		throw(SocketException) {
-		return 0;
+		return recv(buffer, bufferLen);
 	}
 
 	/**
@@ -588,8 +591,8 @@ namespace lyx {
 		if (sockDesc < 0)
 			createSocket(foreignAddress, SOCK_DGRAM, IPPROTO_UDP);
 
-		if (::connect(sockDesc, foreignAddress.getSockaddr(),
-					foreignAddress.getSockaddrLen()) < 0)
+		if (TEMP_FAILURE_RETRY(::connect(sockDesc, foreignAddress.getSockaddr(),
+					foreignAddress.getSockaddrLen())) < 0)
 			throw SocketException(string("Call to connect() failed: ") + strerror(errno));
 	}
 
@@ -599,7 +602,7 @@ namespace lyx {
 		nullAddr.sin_family = AF_UNSPEC;
 
 		// Try to disconnect
-		if (::connect(sockDesc, (sockaddr *) &nullAddr, sizeof(nullAddr)) < 0) {
+		if (TEMP_FAILURE_RETRY(::connect(sockDesc, (sockaddr *) &nullAddr, sizeof(nullAddr))) < 0) {
 			if (errno != EAFNOSUPPORT) {
 				throw SocketException("Disconnect failed (connect())");
 			}
@@ -609,9 +612,9 @@ namespace lyx {
 	void UDPSocket::sendTo(const void *buffer, int bufferLen,
 			const SocketAddress &foreignAddress) throw(SocketException) {
 		// Write out the whole buffer as a single message
-		if (sendto(sockDesc, (raw_type *) buffer, bufferLen, 0,
+		if (TEMP_FAILURE_RETRY(sendto(sockDesc, (raw_type *) buffer, bufferLen, 0,
 					foreignAddress.getSockaddr(),
-					foreignAddress.getSockaddrLen()) != bufferLen) {
+					foreignAddress.getSockaddrLen())) != bufferLen) {
 			throw SocketException("Send failed (sendto())");
 		}
 	}
@@ -620,8 +623,8 @@ namespace lyx {
 			SocketAddress &sourceAddress) throw(SocketException) {
 		sockaddr_storage clntAddr;
 		socklen_t addrLen = sizeof(clntAddr);
-		int rtn = recvfrom(sockDesc, (raw_type *) buffer, bufferLen, 0,
-				(sockaddr *) &clntAddr, (socklen_t *) &addrLen);
+		int rtn = TEMP_FAILURE_RETRY(recvfrom(sockDesc, (raw_type *) buffer, bufferLen, 0,
+				(sockaddr *) &clntAddr, (socklen_t *) &addrLen));
 		if (rtn < 0) {
 			throw SocketException("Receive failed (recvfrom())");
 		}

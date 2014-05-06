@@ -57,6 +57,9 @@ namespace lyx {
 			socklen_t addrLen;
 	};
 
+	/**
+	 * 最底层的socket类
+	 */
 	class Socket {
 		public:
 			virtual ~Socket();
@@ -65,6 +68,7 @@ namespace lyx {
 			static void cleanUp() throw(SocketException);
 
 		private:
+			// 不可拷贝
 			Socket(const Socket &sock);
 			void operator=(const Socket &sock);
 
@@ -77,7 +81,7 @@ namespace lyx {
 
 	class CommunicatingSocket: public Socket {
 		public:
-			virtual void send(const void *buffer, int bufferLen) throw(SocketException);
+			virtual size_t send(const void *buffer, int bufferLen) throw(SocketException);
 			virtual size_t recv(void *buffer, int bufferLen) throw(SocketException);
 			virtual size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
 			SocketAddress getForeignAddress() throw(SocketException);
@@ -110,11 +114,8 @@ namespace lyx {
 			void connect(const SocketAddress &foreignAddress) throw(SocketException);
 
 			// override
-			void send(const void *buffer, int bufferLen) throw(SocketException);
+			size_t send(const void *buffer, int bufferLen) throw(SocketException);
 			size_t recv(void *buffer, int bufferLen) throw(SocketException);
-
-		private:
-			// Not Implement
 			size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
 
 		private:
