@@ -8,7 +8,8 @@ PRODUCT := $(LIBDIR)/liblyx.a
 # add modules
 MODULES	:=	util \
 			network \
-			http
+			http \
+			common
 
 CPPFLAGS := -g -Wall
 CPPFLAGS += $(addprefix -I../,$(MODULES))
