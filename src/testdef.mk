@@ -3,18 +3,25 @@
 INCDIR := ../../../include
 LIBDIR := ../../../lib
 
+GTEST_DIR = /home/lyx/Tool/gtest-1.7.0
+
 PRODUCT := $(LIBDIR)/liblyx.a
+PRODUCT += $(GTEST_DIR)/make/gtest_main.a
 
 # add modules
-MODULES	:=	util \
+MODULES :=	util \
 			network \
-			http
+			http \
+			common \
+			gtest_example
 
-CPPFLAGS := -g -Wall
 CPPFLAGS += $(addprefix -I../../,$(MODULES))
 
 # 其他依赖库头文件
-CPPFLAGS	+=	-I/usr/local/ssl/include
+CPPFLAGS += -I/usr/local/ssl/include
+CPPFLAGS += -isystem $(GTEST_DIR)/include
+
+CXXFLAGS += -g -Wall -Wextra -pthread
 
 LDFLAGS := -L$(LIBDIR)
 LDLIBS := -llyx
