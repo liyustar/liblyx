@@ -28,10 +28,14 @@ TEST_F(ConfTest, GetValue) {
     EXPECT_STREQ("d", conf_.getValue("SEC_1", "dd").c_str());
     EXPECT_STREQ("B", conf_.getValue("SEC_2", "bb").c_str());
     EXPECT_STREQ("C", conf_.getValue("SEC_2", "cc").c_str());
+}
 
+TEST_F(ConfTest, GetEmptyValue) {
     EXPECT_TRUE(conf_.getValue("SEC_1", "xx").empty());
     EXPECT_TRUE(conf_.getValue("SEC", "aa").empty());
+}
 
+TEST_F(ConfTest, ModifyValue) {
     EXPECT_FALSE(conf_.modifyValue("SEC_1", "aa", "a"));
     EXPECT_TRUE(conf_.modifyValue("SEC_1", "aa", "change"));
 
@@ -56,5 +60,6 @@ TEST_F(ConfTest, Clear) {
 TEST_F(ConfTest, DumpStr) {
     std::ostringstream osstrm;
     osstrm << conf_;
-    EXPECT_STREQ("[Not Implement]", osstrm.str().c_str());
+    EXPECT_STREQ("<Conf>{[=SEC_1=[aa,a],[bb,b],[cc,c],[dd,d],=],[=SEC_2=[bb,B],[cc,C],=],}",
+            osstrm.str().c_str());
 }

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 
 namespace lyx {
 
@@ -12,9 +13,11 @@ class Conf {
         typedef string Section;
         typedef string Key;
         typedef string Value;
+        typedef std::set<Section> SectionSet;
+        typedef std::set<Key> KeySet;
 
         void setValue(const string& section, const string& key, const string& value);
-        string getValue(const string& section, const string& key);
+        string getValue(const string& section, const string& key) const;
 
         bool modifyValue(const string& section, const string& key, const string& value);
 
@@ -23,6 +26,9 @@ class Conf {
 
         bool querySection(const string& section);
         bool queryKey(const string& section, const string& key);
+
+        SectionSet getSections() const;
+        KeySet getKeys(const string& section) const;
 
     private:
         typedef std::map<Key, Value> KeyValueMap;
