@@ -9,7 +9,8 @@ PRODUCT := $(LIBDIR)/liblyx.a
 MODULES	:=	util \
 			network \
 			http \
-			common
+			common \
+			proto
 
 CPPFLAGS := -g -Wall
 CPPFLAGS += $(addprefix -I../,$(MODULES))
@@ -21,6 +22,9 @@ all:
 
 $(PRODUCT): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
+
+%.pb.cc: %.proto
+	protoc --cpp_out=. $<
 
 %.d: %.cpp
 	@set -e;rm -f $@; \
