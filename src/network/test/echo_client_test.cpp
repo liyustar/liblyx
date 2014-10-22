@@ -11,7 +11,7 @@ int main() {
 	TCPSocket clnt("localhost", listen_port);
 
 	char buf[] = "hello world";
-	size_t ret = clnt.send(buf, sizeof(buf));
+	ssize_t ret = clnt.send(buf, sizeof(buf));
 	if (ret != sizeof(buf)) {
 		perror("send() failed");
 	}

@@ -15,7 +15,7 @@ int main() {
 
 	char buf[1024];
 	while(1) {
-		size_t ret = conn->recv(buf, 1024);
+		ssize_t ret = conn->recv(buf, 1024);
 		if (ret < 0) {
 			perror("recv() failed");
 			break;
