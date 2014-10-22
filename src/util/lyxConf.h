@@ -2,9 +2,7 @@
 #define LIBLYX_UTIL_LYXCONF_H_
 
 #include <string>
-#include <utility>
 #include <map>
-#include <list>
 
 namespace lyx {
 
@@ -14,7 +12,6 @@ class Conf {
         typedef string Section;
         typedef string Key;
         typedef string Value;
-        typedef std::pair<Key, Value> KeyValue;
 
         void setValue(const string& section, const string& key, const string& value);
         string getValue(const string& section, const string& key);
@@ -28,18 +25,12 @@ class Conf {
         bool queryKey(const string& section, const string& key);
 
     private:
-        typedef std::map<string, string> StringMap;
-        StringMap m_mapItem;
-
-        typedef std::pair<Section, Key> Index;
-        typedef std::pair<Index, Value> Record;
-        typedef std::list<Record> RecordList;
-        RecordList m_list;
-
-        string makeIndex(const string& section, const string& key) {
-            return section + key;
-        }
+        typedef std::map<Key, Value> KeyValueMap;
+        typedef std::map<Section, KeyValueMap> SectionMap;
+        SectionMap m_secMap;
 };
+
+std::ostream& operator << (std::ostream& ostrm, const Conf& conf);
 
 }
 

@@ -1,6 +1,7 @@
 #include "lyxConf.h"
 #include "gtest/gtest.h"
 #include <string>
+#include <sstream>
 
 using namespace lyx;
 
@@ -30,5 +31,30 @@ TEST_F(ConfTest, GetValue) {
 
     EXPECT_TRUE(conf_.getValue("SEC_1", "xx").empty());
     EXPECT_TRUE(conf_.getValue("SEC", "aa").empty());
+
+    EXPECT_FALSE(conf_.modifyValue("SEC_1", "aa", "a"));
+    EXPECT_TRUE(conf_.modifyValue("SEC_1", "aa", "change"));
+
+    EXPECT_STREQ("change", conf_.getValue("SEC_1", "aa").c_str());
 }
 
+TEST_F(ConfTest, Clear) {
+    EXPECT_TRUE(conf_.querySection("SEC_1"));
+    EXPECT_TRUE(conf_.querySection("SEC_2"));
+    EXPECT_FALSE(conf_.querySection("SEC_3"));
+
+    EXPECT_TRUE(conf_.queryKey("SEC_1", "aa"));
+    EXPECT_TRUE(conf_.queryKey("SEC_2", "cc"));
+
+    conf_.clear();
+    EXPECT_TRUE(conf_.empty());
+
+    EXPECT_FALSE(conf_.querySection("SEC_2"));
+    EXPECT_FALSE(conf_.queryKey("SEC_1", "aa"));
+}
+
+TEST_F(ConfTest, DumpStr) {
+    std::ostringstream osstrm;
+    osstrm << conf_;
+    EXPECT_STREQ("[Not Implement]", osstrm.str().c_str());
+}

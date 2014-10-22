@@ -1,31 +1,15 @@
 #include "lyxConf.h"
 #include <string>
-#include <iterator>
+#include <iostream>
 
 namespace lyx {
 
 void Conf::setValue(const string& section, const string& key, const string& value) {
-    // 更新 m_mapItem
-    m_mapItem[makeIndex(section, key)] = value;
-
-    // 更新 m_list
-    Index index(section, key);
-    RecordList::iterator it;
-    for (it = m_list.begin(); it != m_list.end(); ++it) {
-        if (index == it->first) {
-            it->second = value;
-            return;
-        }
-    }
-    m_list.push_back(Record(index, value));
+    m_secMap[section][key] = value;
 }
 
 std::string Conf::getValue(const string& section, const string& key) {
-    StringMap::iterator it = m_mapItem.find( makeIndex(section, key) );
-    if (it != m_mapItem.end()) {
-        return it->second;
-    }
-    return string();
+    return m_secMap[section][key];
 }
 
 bool Conf::modifyValue(const string& section, const string& key, const string& value) {
@@ -37,26 +21,24 @@ bool Conf::modifyValue(const string& section, const string& key, const string& v
 }
 
 void Conf::clear() {
-    m_mapItem.clear();
-    m_list.clear();
+    m_secMap.clear();
 }
 
 bool Conf::empty() const {
-    return m_mapItem.empty();
+    return m_secMap.empty();
 }
 
 bool Conf::querySection(const string& section) {
-    RecordList::iterator it;
-    for (it = m_list.begin(); it != m_list.end(); ++it) {
-        if (it->first.first == section) {
-            return true;
-        }
-    }
-    return false;
+    return ! m_secMap[section].empty();
 }
 
 bool Conf::queryKey(const string& section, const string& key) {
-    return m_mapItem.find( makeIndex(section, key) ) != m_mapItem.end();
+    return ! m_secMap[section][key].empty();
+}
+
+std::ostream& operator << (std::ostream& ostrm, const Conf& conf) {
+    ostrm << "[Not Implement]";
+    return ostrm;
 }
 
 }
