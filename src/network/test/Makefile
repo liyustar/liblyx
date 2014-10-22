@@ -12,4 +12,4 @@ all: $(TESTBIN)
 $(TESTBIN): $(PRODUCT)
 
 clean:
-	-rm $(TESTBIN)
+	-rm -f $(TESTBIN)

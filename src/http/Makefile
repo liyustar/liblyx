@@ -16,4 +16,4 @@ all: $(PRODUCT)
 $(PRODUCT): $(OBJ)
 
 clean:
-	-rm $(OBJ) $(DEPINC)
+	-rm -f $(OBJ) $(DEPINC)
