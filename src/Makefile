@@ -7,11 +7,15 @@ all :
 
 test :
 	@for module in ${MODULES}; do \
-		make -C $${module}/test; \
+		if [ -d $${module}/test ]; then \
+			make -C $${module}/test; \
+		fi \
 	done
 
 clean :
 	@for module in ${MODULES}; do \
 		make -C $${module} clean; \
-		make -C $${module}/test clean; \
+		if [ -d $${module}/test ]; then \
+			make -C $${module}/test clean; \
+		fi \
 	done
