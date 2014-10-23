@@ -1,8 +1,8 @@
 #include "lyxConf.h"
-#include <arpa/inet.h>
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "lyxDataStream.h"
 
 namespace lyx {
 
@@ -82,52 +82,18 @@ Conf::KeySet Conf::getKeys(const string& section) const {
     return keys;
 }
 
-bool writeSizeAndString(std::ostream& ostrm, const std::string& str) {
-    // int size = 0;
-    short size = static_cast<short>(str.length());
-    size = htons(size);
-    ostrm.write(reinterpret_cast<char*>(&size), sizeof(short));
-    ostrm.write(str.c_str(), str.length());
-    return true;
-}
-
-bool writeInt(std::ostream& ostrm, int v) {
-    short val = static_cast<short>(v);
-    val = htons(val);
-    ostrm.write(reinterpret_cast<char*>(&val), sizeof(short));
-    return true;
-}
-
-std::string readString(std::istream& istrm) {
-    const int BUFSIZE = 1024;
-    char buf[BUFSIZE];
-    istrm.read(buf, sizeof(short));
-    short size = ntohs(*reinterpret_cast<short*>(buf));
-    if (size > BUFSIZE) {
-        return std::string();
-    }
-    istrm.read(buf, size);
-    return std::string(buf, size);
-}
-
-int readInt(std::istream& istrm) {
-    char buf[sizeof(short)];
-    istrm.read(buf, sizeof(short));
-    return ntohs(*reinterpret_cast<short*>(buf));
-}
-
 bool Conf::ParseFromIstream(std::istream& istrm) {
     clear();
-    int secSize = readInt(istrm);
+    int secSize = DataStream::readInt(istrm);
     std::string section;
     std::string key;
     std::string value;
     for (int i = 0; i < secSize; i++) {
-        section = readString(istrm);
-        int keySize = readInt(istrm);
+        section = DataStream::readSizeAndBytes(istrm);
+        int keySize = DataStream::readInt(istrm);
         for (int j = 0; j < keySize; j++) {
-            key = readString(istrm);
-            value = readString(istrm);
+            key = DataStream::readSizeAndBytes(istrm);
+            value = DataStream::readSizeAndBytes(istrm);
             setValue(section, key, value);
         }
     }
@@ -138,16 +104,16 @@ bool Conf::SerializeToOstream(std::ostream& ostrm) {
     const Conf::SectionSet sections = getSections();
     Conf::SectionSet::iterator secIter;
 
-    writeInt(ostrm, sections.size());   // write section's size
+    DataStream::writeInt(ostrm, sections.size());   // write section's size
     for (secIter = sections.begin(); secIter != sections.end(); secIter++) {
         const Conf::KeySet keys = getKeys(*secIter);
         Conf::KeySet::iterator keyIter;
 
-        writeSizeAndString(ostrm, *secIter); // write section
-        writeInt(ostrm, keys.size());       // write key's size
+        DataStream::writeSizeAndBytes(ostrm, *secIter); // write section
+        DataStream::writeInt(ostrm, keys.size());       // write key's size
         for (keyIter = keys.begin(); keyIter != keys.end(); keyIter++) {
-            writeSizeAndString(ostrm, *keyIter); // write key
-            writeSizeAndString(ostrm, getValue(*secIter, *keyIter)); // write value
+            DataStream::writeSizeAndBytes(ostrm, *keyIter); // write key
+            DataStream::writeSizeAndBytes(ostrm, getValue(*secIter, *keyIter)); // write value
         }
     }
     return true;

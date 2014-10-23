@@ -75,7 +75,7 @@ TEST_F(ConfTest, Stream) {
     conf_.SerializeToOstream(sstrm);
     sstrm.flush();
 
-    EXPECT_EQ(62, sstrm.str().length());
+    EXPECT_EQ(96, sstrm.str().length());
 
     Conf new_conf;
     new_conf.ParseFromIstream(sstrm);
