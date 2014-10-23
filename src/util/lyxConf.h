@@ -20,6 +20,8 @@ class Conf {
         string getValue(const string& section, const string& key) const;
 
         bool modifyValue(const string& section, const string& key, const string& value);
+        bool deleteSection(const string& section);
+        bool deleteKey(const string& section, const string& key);
 
         void clear();
         bool empty() const;
@@ -29,6 +31,11 @@ class Conf {
 
         SectionSet getSections() const;
         KeySet getKeys(const string& section) const;
+
+        bool ParseFromIstream(std::istream& istrm);
+        bool SerializeToOstream(std::ostream& ostrm);
+
+        string DumpStr() const;
 
     private:
         typedef std::map<Key, Value> KeyValueMap;

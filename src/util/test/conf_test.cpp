@@ -42,6 +42,19 @@ TEST_F(ConfTest, ModifyValue) {
     EXPECT_STREQ("change", conf_.getValue("SEC_1", "aa").c_str());
 }
 
+TEST_F(ConfTest, DeleteValue) {
+    EXPECT_FALSE(conf_.deleteKey("SEC_1", "kk"));
+    EXPECT_TRUE(conf_.deleteKey("SEC_1", "cc"));
+
+    EXPECT_TRUE(conf_.deleteSection("SEC_2"));
+    EXPECT_FALSE(conf_.deleteSection("SEC_3"));
+
+    std::ostringstream osstrm;
+    osstrm << conf_;
+    EXPECT_STREQ("<Conf>{[=SEC_1=[aa,a],[bb,b],[dd,d],=],}",
+            osstrm.str().c_str());
+}
+
 TEST_F(ConfTest, Clear) {
     EXPECT_TRUE(conf_.querySection("SEC_1"));
     EXPECT_TRUE(conf_.querySection("SEC_2"));
@@ -55,6 +68,23 @@ TEST_F(ConfTest, Clear) {
 
     EXPECT_FALSE(conf_.querySection("SEC_2"));
     EXPECT_FALSE(conf_.queryKey("SEC_1", "aa"));
+}
+
+TEST_F(ConfTest, Stream) {
+    std::stringstream sstrm;
+    conf_.SerializeToOstream(sstrm);
+    sstrm.flush();
+
+    EXPECT_EQ(62, sstrm.str().length());
+
+    Conf new_conf;
+    new_conf.ParseFromIstream(sstrm);
+
+    sstrm.seekp(0);
+    sstrm << new_conf;
+    // EXPECT_TRUE(conf_ == new_conf);
+    EXPECT_STREQ("<Conf>{[=SEC_1=[aa,a],[bb,b],[cc,c],[dd,d],=],[=SEC_2=[bb,B],[cc,C],=],}",
+            sstrm.str().c_str());
 }
 
 TEST_F(ConfTest, DumpStr) {
