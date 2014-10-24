@@ -70,6 +70,20 @@ TEST_F(ConfTest, Clear) {
     EXPECT_FALSE(conf_.queryKey("SEC_1", "aa"));
 }
 
+TEST_F(ConfTest, Protobuf) {
+    std::stringstream sstrm;
+    EXPECT_TRUE(conf_.PBSerializeToOstream(sstrm));
+
+    EXPECT_EQ(72, sstrm.str().length());
+
+    Conf conf;
+    EXPECT_TRUE(conf.PBParseFromIstream(sstrm));
+    std::ostringstream osstrm;
+    osstrm << conf;
+    EXPECT_STREQ("<Conf>{[=SEC_1=[aa,a],[bb,b],[cc,c],[dd,d],=],[=SEC_2=[bb,B],[cc,C],=],}",
+            osstrm.str().c_str());
+}
+
 TEST_F(ConfTest, Stream) {
     std::stringstream sstrm;
     conf_.SerializeToOstream(sstrm);

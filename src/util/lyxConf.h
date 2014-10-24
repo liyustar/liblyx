@@ -35,6 +35,9 @@ class Conf {
         bool ParseFromIstream(std::istream& istrm);
         bool SerializeToOstream(std::ostream& ostrm);
 
+        bool PBParseFromIstream(std::istream& istrm);
+        bool PBSerializeToOstream(std::ostream& ostrm);
+
         string DumpStr() const;
 
     private:

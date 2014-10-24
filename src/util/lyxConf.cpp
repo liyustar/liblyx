@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "lyxDataStream.h"
+#include "lyxConfMsg.pb.h"
 
 namespace lyx {
 
@@ -117,6 +118,43 @@ bool Conf::SerializeToOstream(std::ostream& ostrm) {
         }
     }
     return true;
+}
+
+bool Conf::PBParseFromIstream(std::istream& istrm) {
+    ConfMsg confMsg;
+    if (!confMsg.ParseFromIstream(&istrm)) {
+        return false;
+    }
+
+    for (int i = 0; i < confMsg.section_size(); i++) {
+        const ConfMsg::Section& section = confMsg.section(i);
+        for (int j = 0; j < section.keyvalue_size(); j++) {
+            const ConfMsg::Section::KeyValue& kv = section.keyvalue(j);
+            setValue(section.name(), kv.key(), kv.value());
+        }
+    }
+    return true;
+}
+
+bool Conf::PBSerializeToOstream(std::ostream& ostrm) {
+    ConfMsg confMsg;
+
+    const Conf::SectionSet sections = getSections();
+    Conf::SectionSet::iterator secIter;
+    for (secIter = sections.begin(); secIter != sections.end(); secIter++) {
+        const Conf::KeySet keys = getKeys(*secIter);
+        Conf::KeySet::iterator keyIter;
+
+        ConfMsg::Section* sectionMsg = confMsg.add_section();
+        sectionMsg->set_name(*secIter);
+        for (keyIter = keys.begin(); keyIter != keys.end(); keyIter++) {
+            ConfMsg::Section::KeyValue* kvMsg = sectionMsg->add_keyvalue();
+            kvMsg->set_key(*keyIter);
+            kvMsg->set_value(getValue(*secIter, *keyIter));
+        }
+    }
+
+    return confMsg.SerializeToOstream(&ostrm);
 }
 
 std::string Conf::DumpStr() const {

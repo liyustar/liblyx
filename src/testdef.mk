@@ -28,4 +28,4 @@ LDLIBS := -llyx
 
 # 其他依赖库
 LDFLAGS += -L/usr/local/ssl/lib
-LDLIBS += -lssl -lcrypto -ldl
+LDLIBS += -lssl -lcrypto -ldl -lprotobuf
