@@ -10,6 +10,7 @@ MODULES	:=	util \
 			network \
 			http \
 			common \
+			foundation \
 			proto
 
 CPPFLAGS := -g -Wall

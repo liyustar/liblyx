@@ -2,6 +2,7 @@
 #include <cstring>
 #include <string>
 #include "lyxSocketDefs.h"
+#include "lyxNumberFormatter.h"
 
 namespace lyx {
 
@@ -32,13 +33,13 @@ std::string IPv4AddressImpl::toString() const {
     const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&_addr);
     std::string result;
     result.reserve(16);
-    // NumberFormatter::append(result, bytes[0]);
+    NumberFormatter::append(result, bytes[0]);
     result.append(".");
-    // NumberFormatter::append(result, bytes[1]);
+    NumberFormatter::append(result, bytes[1]);
     result.append(".");
-    // NumberFormatter::append(result, bytes[2]);
+    NumberFormatter::append(result, bytes[2]);
     result.append(".");
-    // NumberFormatter::append(result, bytes[3]);
+    NumberFormatter::append(result, bytes[3]);
     return result;
 }
 

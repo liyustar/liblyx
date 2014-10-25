@@ -13,6 +13,7 @@ MODULES :=	util \
 			network \
 			http \
 			common \
+			foundation \
 			gtest_example
 
 CPPFLAGS += $(addprefix -I../../,$(MODULES))
