@@ -22,7 +22,7 @@ CPPFLAGS += $(addprefix -I../../,$(MODULES))
 CPPFLAGS += -I/usr/local/ssl/include
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
-CXXFLAGS += -g -Wall -Wextra -pthread
+CXXFLAGS += -std=c++0x -g -Wall -Wextra -pthread
 
 LDFLAGS := -L$(LIBDIR)
 LDLIBS := -llyx

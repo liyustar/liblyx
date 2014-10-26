@@ -36,6 +36,7 @@ class IPAddress {
 
         const void* addr() const;
 
+        Family family() const;
         int af() const;
         IPAddress parse(const std::string& addr);
         bool tryParse(const std::string& addr, IPAddress& result);

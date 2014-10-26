@@ -71,6 +71,10 @@ const void* IPAddress::addr() const {
     return pImpl()->addr();
 }
 
+IPAddress::Family IPAddress::family() const {
+    return static_cast<IPAddress::Family>(pImpl()->family());
+}
+
 int IPAddress::af() const {
     return pImpl()->af();
 }

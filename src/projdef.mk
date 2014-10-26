@@ -13,7 +13,7 @@ MODULES	:=	util \
 			foundation \
 			proto
 
-CPPFLAGS := --std=c++0x -g -Wall
+CPPFLAGS := -std=c++0x -g -Wall
 CPPFLAGS += $(addprefix -I../,$(MODULES))
 
 # 其他依赖库
