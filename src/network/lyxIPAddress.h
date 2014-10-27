@@ -19,7 +19,9 @@ class IPAddress {
         IPAddress();
         IPAddress(const IPAddress& addr);
         explicit IPAddress(Family family);
+        explicit IPAddress(const std::string& addr);
         IPAddress(const std::string& addr, Family family);
+        IPAddress(const void* addr, socklen_t length);
         IPAddress(const struct sockaddr& sockaddr);
 
         ~IPAddress();
@@ -39,7 +41,7 @@ class IPAddress {
         Family family() const;
         int af() const;
         IPAddress parse(const std::string& addr);
-        bool tryParse(const std::string& addr, IPAddress& result);
+        static bool tryParse(const std::string& addr, IPAddress& result);
 
     private:
         typedef IPAddressImpl Impl;

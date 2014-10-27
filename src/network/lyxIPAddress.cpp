@@ -16,9 +16,20 @@ IPAddress::IPAddress(Family family) {
     // TODO: if not IPV4, throw Exception
 }
 
+IPAddress::IPAddress(const std::string& addr) {
+    IPv4AddressImpl addr4(IPv4AddressImpl::parse(addr));
+    newIPv4(addr4.addr());
+}
+
 IPAddress::IPAddress(const std::string& addr, Family family) {
     IPv4AddressImpl addr4(IPv4AddressImpl::parse(addr));
     newIPv4(addr4.addr());
+}
+
+IPAddress::IPAddress(const void* addr, socklen_t length) {
+    if (length == sizeof(struct in_addr)) {
+        newIPv4(addr);
+    }
 }
 
 IPAddress::IPAddress(const struct sockaddr& sockaddr) {
