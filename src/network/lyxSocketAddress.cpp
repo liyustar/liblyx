@@ -15,6 +15,10 @@ SocketAddress::SocketAddress(uint16_t portNumber) {
     init(IPAddress(), portNumber);
 }
 
+SocketAddress::SocketAddress(const std::string& hostAddress, const std::string& service) {
+    init(hostAddress, resolveService(service));
+}
+
 SocketAddress::SocketAddress(const std::string& hostAddress, uint16_t portNumber) {
     init(hostAddress, portNumber);
 }

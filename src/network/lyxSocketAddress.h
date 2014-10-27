@@ -10,6 +10,7 @@ class SocketAddress {
         SocketAddress();
         SocketAddress(const IPAddress& hostAddress, uint16_t portNumber);
         SocketAddress(uint16_t portNumber);
+        SocketAddress(const std::string& hostAddress, const std::string& service);
         SocketAddress(const std::string& hostAddress, uint16_t portNumber);
         SocketAddress(const SocketAddress& socketAddress);
         SocketAddress(const struct sockaddr* sockAddr, socklen_t length);
