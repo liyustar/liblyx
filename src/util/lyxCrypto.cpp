@@ -7,8 +7,8 @@ namespace lyx {
 static std::string byteToHex(uint8_t byte) {
     const char HEX[] = "0123456789ABCDEF";
     std::string hex;
-    hex.append(HEX[byte >> 4], 1);
-    hex.append(HEX[byte & 0x0F], 1);
+    hex.append(1, HEX[byte >> 4]);
+    hex.append(1, HEX[byte & 0x0F]);
     return hex;
 }
 
