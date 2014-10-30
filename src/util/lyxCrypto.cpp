@@ -1,6 +1,7 @@
 #include "lyxCrypto.h"
 #include <cctype>   // for toupper()
 #include <openssl/md5.h>
+#include <openssl/sha.h>
 
 namespace lyx {
 
@@ -22,6 +23,18 @@ std::string Crypto::stringToMD5(const std::string& str) {
     MD5_Update(&md5_ctx, str.c_str(), str.length());
     MD5_Final(md.uchar_arr, &md5_ctx);
     return std::string(md.char_arr, MD5_DIGEST_LENGTH);
+}
+
+std::string Crypto::stringToSHA1(const std::string& str) {
+    SHA_CTX sha_ctx;
+    union {
+        unsigned char   uchar_arr[SHA_DIGEST_LENGTH];
+        char            char_arr[SHA_DIGEST_LENGTH];
+    } md = {0};
+    SHA1_Init(&sha_ctx);
+    SHA1_Update(&sha_ctx, str.c_str(), str.length());
+    SHA1_Final(md.uchar_arr, &sha_ctx);
+    return std::string(md.char_arr, SHA_DIGEST_LENGTH);
 }
 
 std::string Crypto::bytesToHex(const std::string& bytes) {
