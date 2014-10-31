@@ -22,3 +22,31 @@ TEST(IPAddressTest, StringConv) {
     EXPECT_EQ(IPAddress::IPv4, ia4.family());
     EXPECT_STREQ("0.0.0.0", ia4.toString().c_str());
 }
+
+TEST(IPAddressTest, Relationals) {
+    IPAddress ip1("192.168.1.120");
+    IPAddress ip2(ip1);
+    IPAddress ip3;
+    IPAddress ip4("10.0.0.138");
+
+    EXPECT_TRUE(ip1 != ip4);
+    EXPECT_TRUE(ip1 == ip2);
+    EXPECT_TRUE(!(ip1 != ip2));
+    EXPECT_TRUE(!(ip1 == ip4));
+    EXPECT_TRUE(ip1 > ip4);
+    EXPECT_TRUE(ip1 >= ip4);
+    EXPECT_TRUE(ip4 < ip1);
+    EXPECT_TRUE(ip4 <= ip1);
+    EXPECT_TRUE(!(ip1 < ip4));
+    EXPECT_TRUE(!(ip1 <= ip4));
+    EXPECT_TRUE(!(ip4 > ip1));
+    EXPECT_TRUE(!(ip4 >= ip1));
+
+    ip3 = ip1;
+    EXPECT_TRUE(ip1 == ip3);
+    ip3 = ip4;
+    EXPECT_TRUE(ip1 != ip3);
+    EXPECT_TRUE(ip3 == ip4);
+
+}
+

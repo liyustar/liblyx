@@ -74,6 +74,42 @@ bool IPAddress::operator != (const IPAddress& a) const {
         return true;
 }
 
+bool IPAddress::operator < (const IPAddress& a) const {
+    socklen_t l1 = length();
+    socklen_t l2 = a.length();
+    if (l1 == l2)
+        return std::memcmp(addr(), a.addr(), l1) < 0;
+    else
+        return false;
+}
+
+bool IPAddress::operator <= (const IPAddress& a) const {
+    socklen_t l1 = length();
+    socklen_t l2 = a.length();
+    if (l1 == l2)
+        return std::memcmp(addr(), a.addr(), l1) <= 0;
+    else
+        return false;
+}
+
+bool IPAddress::operator > (const IPAddress& a) const {
+    socklen_t l1 = length();
+    socklen_t l2 = a.length();
+    if (l1 == l2)
+        return std::memcmp(addr(), a.addr(), l1) > 0;
+    else
+        return false;
+}
+
+bool IPAddress::operator >= (const IPAddress& a) const {
+    socklen_t l1 = length();
+    socklen_t l2 = a.length();
+    if (l1 == l2)
+        return std::memcmp(addr(), a.addr(), l1) >= 0;
+    else
+        return false;
+}
+
 socklen_t IPAddress::length() const {
     return pImpl()->length();
 }

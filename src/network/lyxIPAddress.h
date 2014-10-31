@@ -33,6 +33,10 @@ class IPAddress {
 
         bool operator == (const IPAddress& addr) const;
         bool operator != (const IPAddress& addr) const;
+        bool operator < (const IPAddress& addr) const;
+        bool operator <= (const IPAddress& addr) const;
+        bool operator > (const IPAddress& addr) const;
+        bool operator >= (const IPAddress& addr) const;
 
         socklen_t length() const;
 
