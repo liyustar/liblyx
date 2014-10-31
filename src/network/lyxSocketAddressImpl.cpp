@@ -25,4 +25,12 @@ IPv4SocketAddressImpl::IPv4SocketAddressImpl(const void* addr, uint16_t port) {
     _addr.sin_port = port;
 }
 
+bool IPv4SocketAddressImpl::operator == (const IPv4SocketAddressImpl& addr) const {
+    return 0 == std::memcmp(&_addr, &addr._addr, sizeof(_addr));
+}
+
+bool IPv4SocketAddressImpl::operator != (const IPv4SocketAddressImpl& addr) const {
+    return !(*this == addr);
+}
+
 } // namespace lyx

@@ -36,6 +36,9 @@ class IPv4SocketAddressImpl : public SocketAddressImpl {
         const struct sockaddr* addr() const;
         int af() const;
 
+        bool operator == (const IPv4SocketAddressImpl& addr) const;
+        bool operator != (const IPv4SocketAddressImpl& addr) const;
+
     private:
         struct sockaddr_in _addr;
 };

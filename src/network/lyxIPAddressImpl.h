@@ -48,6 +48,9 @@ class IPv4AddressImpl : public IPAddressImpl {
         bool isLoopback() const;
         static IPv4AddressImpl parse(const std::string& addr);
 
+        bool operator == (const IPv4AddressImpl& addr) const;
+        bool operator != (const IPv4AddressImpl& addr) const;
+
     private:
         struct in_addr _addr;
 };

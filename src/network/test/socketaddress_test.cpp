@@ -19,6 +19,6 @@ TEST(SocketAddressTest, Constructor) {
     EXPECT_EQ(21, sa3.port());
 
     SocketAddress sa4("github.com", 80);
-    EXPECT_EQ("192.30.252.131", sa4.host().toString());
+    EXPECT_EQ("192.30.252.128", sa4.host().toString());
     EXPECT_EQ(80, sa4.port());
 }

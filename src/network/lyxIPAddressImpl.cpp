@@ -80,4 +80,12 @@ IPv4AddressImpl IPv4AddressImpl::parse(const std::string& addr) {
         return IPv4AddressImpl();
 }
 
+bool IPv4AddressImpl::operator == (const IPv4AddressImpl& addr) const {
+    return 0 == std::memcmp(&_addr, &addr._addr, sizeof(_addr));
+}
+
+bool IPv4AddressImpl::operator != (const IPv4AddressImpl& addr) const {
+    return !(*this == addr);
+}
+
 } // namespace lyx
