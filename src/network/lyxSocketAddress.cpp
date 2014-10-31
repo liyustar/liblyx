@@ -1,5 +1,7 @@
 #include "lyxSocketAddress.h"
 #include "lyxNumberFormatter.h"
+#include "lyxHostEntry.h"
+#include "lyxDNS.h"
 
 namespace lyx {
 
@@ -66,8 +68,20 @@ void SocketAddress::init(const IPAddress& hostAddress, uint16_t portNumber) {
 
 void SocketAddress::init(const std::string& hostAddress, uint16_t portNumber) {
     IPAddress ip;
-    IPAddress::tryParse(hostAddress, ip);
-    init(ip, portNumber);
+    if (IPAddress::tryParse(hostAddress, ip)) {
+        init(ip, portNumber);
+    }
+    else {
+        HostEntry he = DNS::hostByName(hostAddress);
+        HostEntry::AddressList addresses = he.addresses();
+        if (addresses.size() > 0) {
+            init(addresses[0], portNumber);
+        }
+        else {
+            // default ip
+            init(ip, portNumber);
+        }
+    }
 }
 
 uint16_t SocketAddress::resolveService(const std::string& service) {
