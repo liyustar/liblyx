@@ -24,6 +24,9 @@ class SocketImpl {
         SocketImpl(int sockfd);
         ~SocketImpl();
 
+        virtual void init(int af);
+        virtual void initSocket(int af, int type, int proto = 0);
+
     private:
         SocketImpl(const SocketImpl&);
         SocketImpl& operator = (const SocketImpl&);

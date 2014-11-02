@@ -62,6 +62,10 @@ std::string SocketAddress::toString() const {
     return result;
 }
 
+int SocketAddress::length() const {
+    return pImpl()->length();
+}
+
 void SocketAddress::init(const IPAddress& hostAddress, uint16_t portNumber) {
     newIPv4(hostAddress, portNumber);
 }

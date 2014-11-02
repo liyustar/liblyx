@@ -1,4 +1,5 @@
 #include "lyxSocketImpl.h"
+#include <cassert>
 
 namespace lyx {
 
@@ -18,6 +19,14 @@ SocketImpl::~SocketImpl() {
     close();
 }
 
+void SocketImpl::connect(const SocketAddress& address) {
+    if (_sockfd == -1) {
+        init(address.af());
+    }
+    int rc;
+    rc = TEMP_FAILURE_RETRY(::connect(_sockfd, address.addr(), address.length()));
+}
+
 void SocketImpl::close() {
     if (_sockfd != -1) {
         ::close(_sockfd);
@@ -35,6 +44,16 @@ void SocketImpl::shutdownSend() {
 
 void SocketImpl::shutdown() {
     int rc = ::shutdown(_sockfd, 2);
+}
+
+void SocketImpl::init(int af) {
+    initSocket(af, SOCK_STREAM);
+}
+
+void SocketImpl::initSocket(int af, int type, int proto) {
+    assert(_sockfd == -1);
+
+    _sockfd = ::socket(af, type, proto);
 }
 
 } // namespace lyx

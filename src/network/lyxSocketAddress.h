@@ -24,6 +24,7 @@ class SocketAddress {
         const struct sockaddr* addr() const;
         int af() const;
         std::string toString() const;
+        int length() const;
 
         enum {
             MAX_ADDRESS_LENGTH = sizeof(struct sockaddr_in6)
