@@ -46,6 +46,24 @@ void SocketImpl::shutdown() {
     int rc = ::shutdown(_sockfd, 2);
 }
 
+int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
+    if (_sockfd == -1) {
+        return -1;
+    }
+    int rc;
+    rc = TEMP_FAILURE_RETRY(::send(_sockfd, buffer, length, flags));
+    return rc;
+}
+
+int SocketImpl::receiveBytes(void* buffer, int length, int flags) {
+    if (_sockfd == -1) {
+        return -1;
+    }
+    int rc;
+    rc = TEMP_FAILURE_RETRY(::recv(_sockfd, buffer, length, flags));
+    return rc;
+}
+
 void SocketImpl::init(int af) {
     initSocket(af, SOCK_STREAM);
 }

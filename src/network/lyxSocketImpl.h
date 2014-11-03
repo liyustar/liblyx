@@ -17,7 +17,7 @@ class SocketImpl {
         virtual int sendBytes(const void* buffer, int length, int flags = 0);
         virtual int receiveBytes(void* buffer, int length, int flags = 0);
 
-        virtual int available();
+        // virtual int available();
 
     // protected:
         SocketImpl();
