@@ -7,7 +7,10 @@ namespace lyx {
 
 class SocketImpl {
     public:
+        virtual SocketImpl* acceptConnection(SocketAddress& clientAddr);
         virtual void connect(const SocketAddress& address);
+        virtual void bind(const SocketAddress& address, bool reuseAddress = false);
+        virtual void listen(int backlog = 64);
 
         virtual void close();
         virtual void shutdownReceive();

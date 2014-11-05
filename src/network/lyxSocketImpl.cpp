@@ -1,5 +1,6 @@
 #include "lyxSocketImpl.h"
 #include <cassert>
+#include "lyxStreamSocketImpl.h"
 
 namespace lyx {
 
@@ -19,12 +20,42 @@ SocketImpl::~SocketImpl() {
     close();
 }
 
+SocketImpl* SocketImpl::acceptConnection(SocketAddress& clientAddr) {
+    if (_sockfd == -1) {
+        return NULL;
+    }
+    char buffer[SocketAddress::MAX_ADDRESS_LENGTH];
+    struct sockaddr* pSA = reinterpret_cast<struct sockaddr*>(buffer);
+    socklen_t saLen = sizeof(buffer);
+    int sd;
+    sd = TEMP_FAILURE_RETRY(::accept(_sockfd, pSA, &saLen));
+    if (sd != -1) {
+        clientAddr = SocketAddress(pSA, saLen);
+        return new StreamSocketImpl(sd);
+    }
+    return NULL;
+}
+
 void SocketImpl::connect(const SocketAddress& address) {
     if (_sockfd == -1) {
         init(address.af());
     }
     int rc;
     rc = TEMP_FAILURE_RETRY(::connect(_sockfd, address.addr(), address.length()));
+}
+
+void SocketImpl::bind(const SocketAddress& address, bool reuseAddress) {
+    if (_sockfd == -1) {
+        init(address.af());
+    }
+    int rc = ::bind(_sockfd, address.addr(), address.length());
+}
+
+void SocketImpl::listen(int backlog) {
+    if (_sockfd == -1) {
+        return;
+    }
+    int rc = ::listen(_sockfd, backlog);
 }
 
 void SocketImpl::close() {
