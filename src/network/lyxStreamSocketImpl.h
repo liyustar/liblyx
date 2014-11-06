@@ -13,8 +13,8 @@ class StreamSocketImpl : public SocketImpl {
 
         virtual int sendBytes(const void* buffer, int length, int flags = 0);
 
-    private:
-        ~StreamSocketImpl();
+    protected:
+        virtual ~StreamSocketImpl();
 };
 
 } // namespace lyx

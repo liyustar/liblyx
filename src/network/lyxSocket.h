@@ -1,166 +1,60 @@
-#ifndef LYXSOCKET_H
-#define LYXSOCKET_H
+#ifndef LIBLYX_NETWORK_LYXSOCKET_H_
+#define LIBLYX_NETWORK_LYXSOCKET_H_
 
-#include <sys/types.h>	// For data types
-#include <sys/socket.h>	// For socket(), connect(), send(), and recv()
-#include <netdb.h>		// For gethostbyname(), in_port_t
-#include <arpa/inet.h>	// For inet_addr()
-#include <unistd.h>		// For close()
-#include <netinet/in.h>	// For sockaddr_in
-#include <openssl/ssl.h>
-typedef void raw_type;	// Type used for raw data on this platform
-
-#include <iostream>
-#include <string>
-#include <stdexcept>
+#include "lyxSocketImpl.h"
 #include <vector>
+#include <memory>
 
 namespace lyx {
 
-	class SocketException: public std::runtime_error {
-		public:
-			SocketException(const std::string &message) throw();
-			SocketException(const std::string &message, const std::string &detail) throw();
-	};
+class Socket {
+    public:
+        typedef std::vector<Socket> SocketList;
+        typedef std::shared_ptr<SocketImpl> Ptr;
 
-	class SocketAddress {
-		public:
-			enum AddressType { TCP_SOCKET, TCP_SERVER, UDP_SOCKET };
+        // Socket();
+        Socket(const Socket& socket);
 
-			// Constructor
-			SocketAddress(const char *host, const char *service, AddressType atype = TCP_SOCKET)
-				throw(SocketException);
-			SocketAddress(const char *host, in_port_t port, AddressType aType = TCP_SOCKET)
-				throw(SocketException);
-			SocketAddress(sockaddr *addrVal = NULL, socklen_t addrLenVal = 0);
+        Socket& operator = (const Socket& socket);
+        virtual ~Socket();
 
-			// getter
-			std::string getAddress() const throw(SocketException);
-			in_port_t getPort() const throw(SocketException);
-			sockaddr *getSockaddr() const {
-				return (sockaddr *)&addr;
-			}
-			socklen_t getSockaddrLen() const {
-				return addrLen;
-			}
+        void close();
 
-			static std::vector<SocketAddress>
-				lookupAddresses(const char *host, const char *service,
-						AddressType atype = TCP_SOCKET) throw(SocketException);
+        SocketAddress address() const;
+        SocketAddress peerAddress() const;
 
-			static std::vector<SocketAddress>
-				lookupAddresses(const char *host, in_port_t port,
-						AddressType atype = TCP_SOCKET) throw(SocketException);
+        Ptr impl();
 
-		private:
-			sockaddr_storage addr;
-			socklen_t addrLen;
-	};
+        void init(int af);
 
-	/**
-	 * 最底层的socket类
-	 */
-	class Socket {
-		public:
-			virtual ~Socket();
-			SocketAddress getLocalAddress() throw(SocketException);
-			void close();
-			static void cleanUp() throw(SocketException);
+    protected:
+        Socket(Ptr pImpl);
+        int sockfd() const;
 
-		private:
-			// 不可拷贝
-			Socket(const Socket &sock);
-			void operator=(const Socket &sock);
+    private:
+        Ptr _pImpl;
+};
 
-		protected:
-			int sockDesc;
-			Socket();
-			void createSocket(const SocketAddress &address, int type, int protocol)
-				throw(SocketException);
-	};
-
-	class CommunicatingSocket: public Socket {
-		public:
-			virtual size_t send(const void *buffer, int bufferLen) throw(SocketException);
-			virtual size_t recv(void *buffer, int bufferLen) throw(SocketException);
-			virtual size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
-			SocketAddress getForeignAddress() throw(SocketException);
-	};
-
-	class TCPSocket: public CommunicatingSocket {
-		public:
-			TCPSocket(const char *foreignAddress, in_port_t foreignPort) throw(SocketException);
-			TCPSocket();
-			~TCPSocket();
-
-			void bind(const SocketAddress &localAddress) throw(SocketException);
-			void connect(const SocketAddress &foreignAddress) throw(SocketException);
-			std::iostream &getStream() throw(SocketException);
-
-		private:
-			friend class TCPServerSocket;
-			TCPSocket(int sockDesc);
-
-			std::iostream *myStream;
-			std::streambuf *myStreambuf;
-	};
-
-	class TCPSslSocket: public TCPSocket {
-		public:
-			TCPSslSocket(const char *foreignAddress, in_port_t foreignPort) throw(SocketException);
-			TCPSslSocket();
-			~TCPSslSocket();
-
-			void connect(const SocketAddress &foreignAddress) throw(SocketException);
-
-			// override
-			size_t send(const void *buffer, int bufferLen) throw(SocketException);
-			size_t recv(void *buffer, int bufferLen) throw(SocketException);
-			size_t recvFully(void *buffer, int bufferLen) throw(SocketException);
-
-		private:
-			SSL *sockSsl;
-			SSL_CTX *sockSslCtx;
-
-		private:
-			TCPSslSocket(int sockDesc);
-	};
-
-	class TCPServerSocket: public Socket {
-		public:
-			TCPServerSocket();
-			TCPServerSocket(in_port_t localPort, int queueLen = 5) throw(SocketException);
-			void bind(const SocketAddress &localAddress) throw(SocketException);
-			TCPSocket *accept() throw(SocketException);
-
-		private:
-			void setListen(int queueLen) throw(SocketException);
-	};
-
-	class UDPSocket: public Socket {
-		public:
-			UDPSocket();
-			void bind(const SocketAddress &localAddress) throw(SocketException);
-			void connect(const SocketAddress &foreignAddress) throw(SocketException);
-
-			void disconnect() throw(SocketException);
-			void sendTo(const void *buffer, int bufferLen,
-					const SocketAddress &foreignAddress) throw(SocketException);
-			int recvFrom(void *buffer, int bufferLen,
-					SocketAddress &sourceAddress) throw(SocketException);
-			void setMulticastTTL(unsigned char multicastTTL) throw(SocketException);
-			void joinGroup(const std::string &multicastGroup) throw(SocketException);
-			void leaveGroup(const std::string &multicastGroup) throw(SocketException);
-
-		private:
-			void setBroadcast();
-	};
-
-	class OpenSslInit {
-		static OpenSslInit init;
-		OpenSslInit();
-	};
-
+inline void Socket::close() {
+    _pImpl->close();
 }
 
-#endif // LYXSOCKET_H
+inline Socket::Ptr Socket::impl() {
+    return _pImpl;
+}
+
+inline int Socket::sockfd() const {
+    return _pImpl->sockfd();
+}
+
+inline SocketAddress Socket::address() const {
+    return _pImpl->address();
+}
+
+inline SocketAddress Socket::peerAddress() const {
+    return _pImpl->peerAddress();
+}
+
+} // namespace lyx
+
+#endif // LIBLYX_NETWORK_LYXSOCKET_H_

@@ -95,6 +95,40 @@ int SocketImpl::receiveBytes(void* buffer, int length, int flags) {
     return rc;
 }
 
+SocketAddress SocketImpl::address() const {
+    if (_sockfd == -1) {
+        return SocketAddress();
+    }
+
+    char buffer[SocketAddress::MAX_ADDRESS_LENGTH];
+    struct sockaddr* pSA = reinterpret_cast<struct sockaddr*>(buffer);
+    socklen_t saLen = sizeof(buffer);
+    int rc = ::getsockname(_sockfd, pSA, &saLen);
+    if (rc == 0) {
+        return SocketAddress(pSA, saLen);
+    }
+    else {
+        return SocketAddress();
+    }
+}
+
+SocketAddress SocketImpl::peerAddress() const {
+    if (_sockfd == -1) {
+        return SocketAddress();
+    }
+
+    char buffer[SocketAddress::MAX_ADDRESS_LENGTH];
+    struct sockaddr* pSA = reinterpret_cast<struct sockaddr*>(buffer);
+    socklen_t saLen = sizeof(buffer);
+    int rc = ::getpeername(_sockfd, pSA, &saLen);
+    if (rc == 0) {
+        return SocketAddress(pSA, saLen);
+    }
+    else {
+        return SocketAddress();
+    }
+}
+
 void SocketImpl::init(int af) {
     initSocket(af, SOCK_STREAM);
 }

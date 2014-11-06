@@ -20,6 +20,11 @@ class SocketImpl {
         virtual int sendBytes(const void* buffer, int length, int flags = 0);
         virtual int receiveBytes(void* buffer, int length, int flags = 0);
 
+        virtual SocketAddress address() const;
+        virtual SocketAddress peerAddress() const;
+
+        int sockfd() const;
+
         // virtual int available();
 
     // protected:
@@ -36,7 +41,13 @@ class SocketImpl {
 
         int _sockfd;
         bool _blocking;
+
+        friend class Socket;
 };
+
+inline int SocketImpl::sockfd() const {
+    return _sockfd;
+}
 
 } // namespace lyx
 
