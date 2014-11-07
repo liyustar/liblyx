@@ -3,12 +3,10 @@
 
 namespace lyx {
 
-/*
 Socket::Socket():
     _pImpl(new StreamSocketImpl)
 {
 }
-*/
 
 Socket::Socket(Ptr pImpl):
     _pImpl(pImpl)

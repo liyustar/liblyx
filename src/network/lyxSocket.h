@@ -12,7 +12,7 @@ class Socket {
         typedef std::vector<Socket> SocketList;
         typedef std::shared_ptr<SocketImpl> Ptr;
 
-        // Socket();
+        Socket();
         Socket(const Socket& socket);
 
         Socket& operator = (const Socket& socket);
