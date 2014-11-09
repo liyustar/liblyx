@@ -23,7 +23,7 @@ class Socket {
         SocketAddress address() const;
         SocketAddress peerAddress() const;
 
-        Ptr impl();
+        Ptr impl() const;
 
         void init(int af);
 
@@ -39,7 +39,7 @@ inline void Socket::close() {
     _pImpl->close();
 }
 
-inline Socket::Ptr Socket::impl() {
+inline Socket::Ptr Socket::impl() const {
     return _pImpl;
 }
 

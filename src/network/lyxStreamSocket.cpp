@@ -23,7 +23,7 @@ StreamSocket::~StreamSocket() {
 }
 
 StreamSocket& StreamSocket::operator = (const Socket& socket) {
-    if (dynamic_cast<StreamSocketImpl*>(socket.impl())) {
+    if (dynamic_cast<StreamSocketImpl*>(socket.impl().get())) {
         Socket::operator = (socket);
     }
     else {
