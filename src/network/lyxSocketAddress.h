@@ -24,6 +24,7 @@ class SocketAddress {
         const struct sockaddr* addr() const;
         int af() const;
         std::string toString() const;
+        IPAddress::Family family() const;
         int length() const;
 
         enum {
@@ -64,6 +65,9 @@ inline void SocketAddress::newIPv4(const IPAddress& hostAddress, uint16_t portNu
     _pImpl.reset(new IPv4SocketAddressImpl(hostAddress.addr(), htons(portNumber)));
 }
 
+inline IPAddress::Family SocketAddress::family() const {
+    return host().family();
+}
 
 } // namespace lyx
 

@@ -38,6 +38,18 @@ SocketAddress::SocketAddress(const struct sockaddr* sockAddr, socklen_t length) 
 SocketAddress::~SocketAddress() {
 }
 
+SocketAddress& SocketAddress::operator = (const SocketAddress& socketAddress) {
+    if (&socketAddress != this) {
+        if (socketAddress.family() == IPAddress::IPv4) {
+            newIPv4(reinterpret_cast<const sockaddr_in*>(socketAddress.addr()));
+        }
+        else {
+            // TODO: newIPv6();
+        }
+    }
+    return *this;
+}
+
 IPAddress SocketAddress::host() const {
     return pImpl()->host();
 }
