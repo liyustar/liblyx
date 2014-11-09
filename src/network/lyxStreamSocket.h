@@ -3,6 +3,7 @@
 
 #include "lyxSocket.h"
 #include <memory>
+#include "lyxStreamSocketImpl.h"
 
 namespace lyx {
 
@@ -19,7 +20,7 @@ class StreamSocket : public Socket {
 
         StreamSocket& operator = (const Socket& socket);
 
-        void connect(const StreamAddress& address);
+        void connect(const SocketAddress& address);
 
         void shutdownReceive();
         void shutdownSend();
@@ -28,7 +29,7 @@ class StreamSocket : public Socket {
         int sendBytes(const void* buffer, int length, int flags = 0);
         int receiveBytes(void* buffer, int length, int flags = 0);
 
-        StreamSocket(Ptr pImpl);
+        StreamSocket(StreamSocketImpl* pImpl);
 
     private:
         enum {

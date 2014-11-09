@@ -8,9 +8,8 @@ Socket::Socket():
 {
 }
 
-Socket::Socket(Ptr pImpl):
-    _pImpl(pImpl)
-{
+Socket::Socket(SocketImpl* pImpl) {
+    _pImpl.reset(pImpl);
 }
 
 Socket::Socket(const Socket& socket):

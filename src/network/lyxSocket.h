@@ -28,7 +28,7 @@ class Socket {
         void init(int af);
 
     protected:
-        Socket(Ptr pImpl);
+        Socket(SocketImpl* pImpl);
         int sockfd() const;
 
     private:
