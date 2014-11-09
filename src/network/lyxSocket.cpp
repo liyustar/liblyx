@@ -17,6 +17,13 @@ Socket::Socket(const Socket& socket):
 {
 }
 
+Socket& Socket::operator = (const Socket& socket) {
+    if (&socket != this) {
+        _pImpl = socket._pImpl;
+    }
+    return *this;
+}
+
 Socket::~Socket() {
 }
 

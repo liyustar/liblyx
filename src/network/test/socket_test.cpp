@@ -1,5 +1,5 @@
 #include "lyxSocketImpl.h"
-#include "lyxSocket.h"
+#include "lyxStreamSocket.h"
 #include "gtest/gtest.h"
 #include <string>
 
@@ -20,8 +20,8 @@ TEST(SocketImplTest, connect) {
     EXPECT_EQ("hello world.\n", response.substr(pos));
 }
 
-TEST(SocketTest, connect) {
-    Socket sock;
+TEST(StreamSocketTest, connect) {
+    StreamSocket sock;
     std::string request = "GET / HTTP/1.0\r\n\r\n";
     char buf[1024];
 
