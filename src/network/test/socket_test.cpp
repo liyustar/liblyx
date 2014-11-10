@@ -34,3 +34,16 @@ TEST(StreamSocketTest, connect) {
 
     EXPECT_EQ("hello world.\n", response.substr(pos));
 }
+
+TEST(StreamSocketTest, Echo) {
+    StreamSocket sock;
+    sock.connect(SocketAddress("localhost", "echo"));
+    int n = sock.sendBytes("hello", 5);
+    EXPECT_EQ(5, n);
+
+    char buf[1024];
+    n = sock.receiveBytes(buf, sizeof(buf));
+    EXPECT_EQ(5, n);
+    EXPECT_EQ("hello", std::string(buf, n));
+    sock.close();
+}
