@@ -1,5 +1,6 @@
 #include "lyxSocketImpl.h"
 #include "lyxStreamSocket.h"
+#include "lyxException.h"
 #include "gtest/gtest.h"
 #include <string>
 
@@ -18,6 +19,17 @@ TEST(SocketImplTest, connect) {
     int pos = response.find("\r\n\r\n") + 4;
 
     EXPECT_EQ("hello world.\n", response.substr(pos));
+}
+
+TEST(SocketImplTest, Exception) {
+    SocketImpl sock;
+    std::string request = "GET / HTTP/1.0\r\n\r\n";
+    try {
+        sock.sendBytes(request.c_str(), request.length());
+        FAIL();
+    } catch(Exception &e) {
+        e.displayText();
+    }
 }
 
 TEST(StreamSocketTest, connect) {

@@ -1,6 +1,7 @@
 #include "lyxSocketImpl.h"
 #include <cassert>
 #include "lyxStreamSocketImpl.h"
+#include "lyxException.h"
 
 namespace lyx {
 
@@ -79,7 +80,7 @@ void SocketImpl::shutdown() {
 
 int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
     if (_sockfd == -1) {
-        return -1;
+        throw Exception("socket not init");
     }
     int rc;
     rc = TEMP_FAILURE_RETRY(::send(_sockfd, buffer, length, flags));
@@ -88,7 +89,7 @@ int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
 
 int SocketImpl::receiveBytes(void* buffer, int length, int flags) {
     if (_sockfd == -1) {
-        return -1;
+        throw Exception("socket not init");
     }
     int rc;
     rc = TEMP_FAILURE_RETRY(::recv(_sockfd, buffer, length, flags));
