@@ -65,6 +65,10 @@ const char* Exception::className() const throw() {
     return typeid(*this).name();
 }
 
+const char* Exception::what() const throw() {
+    return name();
+}
+
 std::string Exception::displayText() const {
     std::string txt = name();
     if (!_msg.empty()) {
