@@ -28,7 +28,7 @@ TEST(SocketImplTest, Exception) {
         sock.sendBytes(request.c_str(), request.length());
         FAIL();
     } catch(Exception &e) {
-        e.displayText();
+        EXPECT_EQ("Exception: socket not init", e.displayText());
     }
 }
 
