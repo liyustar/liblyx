@@ -56,6 +56,22 @@ inline int Exception::code() const {
     return _code;
 }
 
+#define LYX_DECLARE_EXCEPTION_CODE(CLS, BASE, CODE) \
+    class CLS : public BASE {                                                       \
+        public:                                                                     \
+            CLS(int code = CODE);                                                   \
+            CLS(const std::string& msg, int code = CODE);                           \
+            CLS(const std::string& msg, const std::string& arg, int code = CODE);   \
+            CLS(const std::string& msg, const Exception& exc, int code = CODE);     \
+            CLS(const CLS& exc);                                                    \
+            ~CLS() throw();                                                         \
+            CLS& operator = (const CLS& exc);                                       \
+            const char* name() const throw();                                       \
+            const char* className() const throw();                                  \
+            Exception* clone() const;                                               \
+            void rethrow() const;                                                   \
+    };
+
 } // namespace lyx
 
 #endif // LIBLYX_FOUNDATION_LYXEXCEPTION_H_
