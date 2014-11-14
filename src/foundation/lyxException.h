@@ -91,6 +91,8 @@ inline int Exception::code() const {
     Exception* CLS::clone() const { return new CLS(*this); }                                        \
     void CLS::rethrow() const { throw * this; }
 
+LYX_DECLARE_EXCEPTION(LogicException, Exception)
+
 } // namespace lyx
 
 #endif // LIBLYX_FOUNDATION_LYXEXCEPTION_H_

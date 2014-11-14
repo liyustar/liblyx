@@ -95,4 +95,6 @@ void Exception::rethrow() const {
     throw *this;
 }
 
+LYX_IMPLEMENT_EXCEPTION(LogicException, Exception, "Logic exception")
+
 } // namespace lyx
