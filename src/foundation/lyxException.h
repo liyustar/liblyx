@@ -72,6 +72,25 @@ inline int Exception::code() const {
             void rethrow() const;                                                   \
     };
 
+#define LYX_DECLARE_EXCEPTION(CLS, BASE) \
+    LYX_DECLARE_EXCEPTION_CODE(CLS, BASE, 0)
+
+#define LYX_IMPLEMENT_EXCEPTION(CLS, BASE, NAME) \
+    CLS::CLS(int code) : BASE(code) {}                                                              \
+    CLS::CLS(const std::string& msg, int code) : BASE(msg, code) {}                                 \
+    CLS::CLS(const std::string& msg, const std::string& arg, int code) : BASE(msg, arg, code) {}    \
+    CLS::CLS(const std::string& msg, const Exception& exc, int code) : BASE(msg, exc, code) {}      \
+    CLS::CLS(const CLS& exc) : BASE(exc) {}                                                         \
+    CLS::~CLS() throw() {}                                                                          \
+    CLS& CLS::operator = (const CLS& exc) {                                                         \
+        BASE::operator = (exc);                                                                     \
+        return *this;                                                                               \
+    }                                                                                               \
+    const char* CLS::name() const throw() { return NAME; }                                          \
+    const char* CLS::className() const throw() { return typeid(*this).name(); }                     \
+    Exception* CLS::clone() const { return new CLS(*this); }                                        \
+    void CLS::rethrow() const { throw * this; }
+
 } // namespace lyx
 
 #endif // LIBLYX_FOUNDATION_LYXEXCEPTION_H_
