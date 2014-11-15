@@ -91,7 +91,55 @@ inline int Exception::code() const {
     Exception* CLS::clone() const { return new CLS(*this); }                                        \
     void CLS::rethrow() const { throw * this; }
 
+// 具体Exception类声明
 LYX_DECLARE_EXCEPTION(LogicException, Exception)
+LYX_DECLARE_EXCEPTION(AssertionViolationException, LogicException)
+LYX_DECLARE_EXCEPTION(NullPointerException, LogicException)     // 空指针
+LYX_DECLARE_EXCEPTION(NullValueException, LogicException)
+LYX_DECLARE_EXCEPTION(BugcheckException, LogicException)
+LYX_DECLARE_EXCEPTION(InvalidArgumentException, LogicException) // 无效参数
+LYX_DECLARE_EXCEPTION(NotImplementedException, LogicException)  // 未实现
+LYX_DECLARE_EXCEPTION(RangeException, LogicException)           // 边界出错
+LYX_DECLARE_EXCEPTION(IllegalStateException, LogicException)    // 状态非法
+LYX_DECLARE_EXCEPTION(InvalidAccessException, LogicException)
+LYX_DECLARE_EXCEPTION(SignalException, LogicException)
+LYX_DECLARE_EXCEPTION(UnhandledException, LogicException)
+
+LYX_DECLARE_EXCEPTION(RuntimeException, Exception)
+LYX_DECLARE_EXCEPTION(NotFoundException, RuntimeException)
+LYX_DECLARE_EXCEPTION(ExistsException, RuntimeException)
+LYX_DECLARE_EXCEPTION(TimeoutException, RuntimeException)
+LYX_DECLARE_EXCEPTION(SystemException, RuntimeException)
+LYX_DECLARE_EXCEPTION(RegularExpressionException, RuntimeException)
+LYX_DECLARE_EXCEPTION(LibraryLoadException, RuntimeException)
+LYX_DECLARE_EXCEPTION(LibraryAlreadyLoadedException, RuntimeException)
+LYX_DECLARE_EXCEPTION(NoThreadAvailableException, RuntimeException)
+LYX_DECLARE_EXCEPTION(PropertyNotSupportedException, RuntimeException)
+LYX_DECLARE_EXCEPTION(PoolOverflowException, RuntimeException)
+LYX_DECLARE_EXCEPTION(NoPermissionException, RuntimeException)
+LYX_DECLARE_EXCEPTION(OutOfMemoryException, RuntimeException)
+LYX_DECLARE_EXCEPTION(DataException, RuntimeException)
+
+LYX_DECLARE_EXCEPTION(DataFormatException, DataException)
+LYX_DECLARE_EXCEPTION(SyntaxException, DataException)
+LYX_DECLARE_EXCEPTION(CircularReferenceException, DataException)
+LYX_DECLARE_EXCEPTION(PathSyntaxException, SyntaxException)
+LYX_DECLARE_EXCEPTION(IOException, RuntimeException)
+LYX_DECLARE_EXCEPTION(ProtocolException, IOException)
+LYX_DECLARE_EXCEPTION(FileException, IOException)
+LYX_DECLARE_EXCEPTION(FileExistsException, FileException)
+LYX_DECLARE_EXCEPTION(FileNotFoundException, FileException)
+LYX_DECLARE_EXCEPTION(PathNotFoundException, FileException)
+LYX_DECLARE_EXCEPTION(FileReadOnlyException, FileException)
+LYX_DECLARE_EXCEPTION(FileAccessDeniedException, FileException)
+LYX_DECLARE_EXCEPTION(CreateFileException, FileException)
+LYX_DECLARE_EXCEPTION(OpenFileException, FileException)
+LYX_DECLARE_EXCEPTION(WriteFileException, FileException)
+LYX_DECLARE_EXCEPTION(ReadFileException, FileException)
+LYX_DECLARE_EXCEPTION(UnknownURISchemeException, RuntimeException)
+
+LYX_DECLARE_EXCEPTION(ApplicationException, Exception)
+LYX_DECLARE_EXCEPTION(BadCastException, RuntimeException)
 
 } // namespace lyx
 
