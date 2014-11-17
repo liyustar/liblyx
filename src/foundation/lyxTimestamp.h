@@ -15,15 +15,24 @@ class Timestamp {
         Timestamp(TimeVal tv);
         Timestamp(const Timestamp& other);
         ~Timestamp();
+
         Timestamp& operator = (const Timestamp& other);
+        Timestamp& operator = (TimeVal tv);
+
+        void swap(Timestamp& timestamp);
 
         void update();
+
+        Timestamp   operator +  (TimeDiff d) const;
+        Timestamp   operator -  (TimeDiff d) const;
+        Timestamp   operator += (TimeDiff d);
+        Timestamp   operator -= (TimeDiff d);
+        TimeDiff    operator -  (const Timestamp& ts) const;
 
         std::time_t epochTime() const;
         UtcTimeVal utcTime() const;
         TimeVal epochMicroseconds() const;
         TimeDiff elapsed() const;
-        void swap(Timestamp& timestamp);
 
         static Timestamp fromEpochTime(std::time_t t);
         static Timestamp fromUtcTime(UtcTimeVal val);
@@ -32,6 +41,28 @@ class Timestamp {
     private:
         TimeVal _ts;
 };
+
+inline Timestamp Timestamp::operator +  (TimeDiff d) const {
+    return Timestamp(_ts + d);
+}
+
+inline Timestamp Timestamp::operator -  (TimeDiff d) const {
+    return Timestamp(_ts - d);
+}
+
+inline Timestamp::TimeDiff Timestamp::operator -  (const Timestamp& ts) const {
+    return _ts - ts._ts;
+}
+
+inline Timestamp Timestamp::operator += (TimeDiff d) {
+    _ts += d;
+    return *this;
+}
+
+inline Timestamp Timestamp::operator -= (TimeDiff d) {
+    _ts -= d;
+    return *this;
+}
 
 inline std::time_t Timestamp::epochTime() const {
     return std::time_t(_ts/resolution());
