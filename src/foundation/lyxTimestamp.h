@@ -23,6 +23,8 @@ class Timestamp {
 
         void update();
 
+        bool operator == (const Timestamp& ts) const;
+
         Timestamp   operator +  (TimeDiff d) const;
         Timestamp   operator -  (TimeDiff d) const;
         Timestamp   operator += (TimeDiff d);
@@ -33,6 +35,7 @@ class Timestamp {
         UtcTimeVal utcTime() const;
         TimeVal epochMicroseconds() const;
         TimeDiff elapsed() const;
+        bool isElapsed(const TimeDiff interval) const;
 
         static Timestamp fromEpochTime(std::time_t t);
         static Timestamp fromUtcTime(UtcTimeVal val);
@@ -41,6 +44,10 @@ class Timestamp {
     private:
         TimeVal _ts;
 };
+
+inline bool Timestamp::operator == (const Timestamp& ts) const {
+    return _ts == ts._ts;
+}
 
 inline Timestamp Timestamp::operator +  (TimeDiff d) const {
     return Timestamp(_ts + d);
@@ -68,10 +75,21 @@ inline std::time_t Timestamp::epochTime() const {
     return std::time_t(_ts/resolution());
 }
 
+inline Timestamp::UtcTimeVal Timestamp::utcTime() const {
+    return _ts*10 + (TimeDiff(0x01b21dd2) << 32) + 0x13814000;
+}
+
 inline Timestamp::TimeVal Timestamp::elapsed() const {
     Timestamp now;
     return now - *this;
 }
+
+inline bool Timestamp::isElapsed(const Timestamp::TimeDiff interval) const {
+    Timestamp now;
+    Timestamp::TimeDiff diff = now - *this;
+    return diff >= interval;
+}
+
 
 inline Timestamp::TimeVal Timestamp::resolution() {
     return 1000000;
