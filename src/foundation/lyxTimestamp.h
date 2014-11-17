@@ -1,6 +1,8 @@
 #ifndef LIBLYX_FOUNDATION_LYXTIMESTAMP_H_
 #define LIBLYX_FOUNDATION_LYXTIMESTAMP_H_
 
+#include <ctime>    // for time_t
+
 namespace lyx {
 
 class Timestamp {
@@ -13,6 +15,7 @@ class Timestamp {
         Timestamp(TimeVal tv);
         Timestamp(const Timestamp& other);
         ~Timestamp();
+        Timestamp& operator = (const Timestamp& other);
 
         void update();
 
@@ -20,9 +23,10 @@ class Timestamp {
         UtcTimeVal utcTime() const;
         TimeVal epochMicroseconds() const;
         TimeDiff elapsed() const;
+        void swap(Timestamp& timestamp);
 
         static Timestamp fromEpochTime(std::time_t t);
-        static Timestamp fromUtcTime(UtTimeVal val);
+        static Timestamp fromUtcTime(UtcTimeVal val);
         static TimeVal resolution();
 
     private:
