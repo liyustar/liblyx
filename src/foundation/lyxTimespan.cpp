@@ -1,4 +1,5 @@
 #include "lyxTimespan.h"
+#include <utility>
 
 namespace lyx {
 
@@ -24,7 +25,7 @@ Timespan::Timespan(long seconds, long microseconds):
 }
 
 Timespan::Timespan(int days, int hours, int minutes, int seconds, int microseconds):
-    _span(TimeDiff(midroseconds)
+    _span(TimeDiff(microseconds)
             + TimeDiff(seconds)*SECONDS
             + TimeDiff(minutes)*MINUTES
             + TimeDiff(hours)*HOURS
@@ -46,7 +47,7 @@ Timespan& Timespan::assign(long seconds, long microseconds) {
 }
 
 Timespan& Timespan::assign(int days, int hours, int minutes, int seconds, int microseconds) {
-    _span = TimeDiff(midroseconds)
+    _span = TimeDiff(microseconds)
             + TimeDiff(seconds)*SECONDS
             + TimeDiff(minutes)*MINUTES
             + TimeDiff(hours)*HOURS
