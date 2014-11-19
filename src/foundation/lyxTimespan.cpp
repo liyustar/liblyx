@@ -41,6 +41,11 @@ Timespan& Timespan::operator = (const Timespan& timespan) {
     return *this;
 }
 
+Timespan& Timespan::operator = (const TimeDiff& microseconds) {
+    _span = microseconds;
+    return *this;
+}
+
 Timespan& Timespan::assign(long seconds, long microseconds) {
     _span = TimeDiff(seconds)*SECONDS + TimeDiff(microseconds);
     return *this;

@@ -17,6 +17,7 @@ class Timespan {
 
         ~Timespan();
         Timespan& operator = (const Timespan& timespan);
+        Timespan& operator = (const TimeDiff& microseconds);
 
         Timespan& assign(long seconds, long microseconds);
         Timespan& assign(int days, int hours, int minutes, int seconds, int microseconds);
@@ -91,6 +92,14 @@ inline Timespan::TimeDiff Timespan::totalMilliseconds() const {
 
 inline int Timespan::microseconds() const {
     return int(_span % 1000);
+}
+
+inline int Timespan::useconds() const {
+    return int(_span % 1000000);
+}
+
+inline Timespan::TimeDiff Timespan::totalMicroseconds() const {
+    return _span;
 }
 
 inline bool Timespan::operator == (const Timespan& ts) const {
