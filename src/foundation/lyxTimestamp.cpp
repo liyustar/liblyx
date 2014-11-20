@@ -1,6 +1,7 @@
 #include "lyxTimestamp.h"
 #include <sys/time.h>
 #include <utility>  // for swap
+#include "lyxTimespan.h"
 #include "lyxException.h"
 
 namespace lyx {
@@ -25,6 +26,11 @@ Timestamp& Timestamp::operator = (const Timestamp& other) {
     return *this;
 }
 
+Timestamp& Timestamp::operator = (TimeVal tv) {
+    _ts = tv;
+    return *this;
+}
+
 void Timestamp::swap(Timestamp& timestamp) {
     std::swap(_ts, timestamp._ts);
 }
@@ -44,6 +50,22 @@ void Timestamp::update() {
     if (gettimeofday(&tv, NULL))
         throw SystemException("cannot get time of day");
     _ts = TimeVal(tv.tv_sec) * resolution() + tv.tv_usec;
+}
+
+Timestamp Timestamp::operator + (const Timespan& span) const {
+    return *this + span.totalMicroseconds();
+}
+
+Timestamp Timestamp::operator - (const Timespan& span) const {
+    return *this - span.totalMicroseconds();
+}
+
+Timestamp& Timestamp::operator += (const Timespan& span) {
+    return *this += span.totalMicroseconds();
+}
+
+Timestamp& Timestamp::operator -= (const Timespan& span) {
+    return *this -= span.totalMicroseconds();
 }
 
 } // namespace lyx

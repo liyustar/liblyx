@@ -5,6 +5,8 @@
 
 namespace lyx {
 
+class Timespan;
+
 class Timestamp {
     public:
         typedef long long TimeVal;
@@ -24,11 +26,20 @@ class Timestamp {
         void update();
 
         bool operator == (const Timestamp& ts) const;
+        bool operator != (const Timestamp& ts) const;
+        bool operator >  (const Timestamp& ts) const;
+        bool operator >= (const Timestamp& ts) const;
+        bool operator <  (const Timestamp& ts) const;
+        bool operator <= (const Timestamp& ts) const;
 
         Timestamp   operator +  (TimeDiff d) const;
         Timestamp   operator -  (TimeDiff d) const;
-        Timestamp   operator += (TimeDiff d);
-        Timestamp   operator -= (TimeDiff d);
+        Timestamp&  operator += (TimeDiff d);
+        Timestamp&  operator -= (TimeDiff d);
+        Timestamp   operator +  (const Timespan& span) const;
+        Timestamp   operator -  (const Timespan& span) const;
+        Timestamp&  operator += (const Timespan& span);
+        Timestamp&  operator -= (const Timespan& span);
         TimeDiff    operator -  (const Timestamp& ts) const;
 
         std::time_t epochTime() const;
@@ -49,26 +60,46 @@ inline bool Timestamp::operator == (const Timestamp& ts) const {
     return _ts == ts._ts;
 }
 
-inline Timestamp Timestamp::operator +  (TimeDiff d) const {
+inline bool Timestamp::operator != (const Timestamp& ts) const {
+    return _ts != ts._ts;
+}
+
+inline bool Timestamp::operator >  (const Timestamp& ts) const {
+    return _ts >  ts._ts;
+}
+
+inline bool Timestamp::operator >= (const Timestamp& ts) const {
+    return _ts >= ts._ts;
+}
+
+inline bool Timestamp::operator <  (const Timestamp& ts) const {
+    return _ts <  ts._ts;
+}
+
+inline bool Timestamp::operator <= (const Timestamp& ts) const {
+    return _ts <= ts._ts;
+}
+
+inline Timestamp Timestamp::operator +  (Timestamp::TimeDiff d) const {
     return Timestamp(_ts + d);
 }
 
-inline Timestamp Timestamp::operator -  (TimeDiff d) const {
+inline Timestamp Timestamp::operator -  (Timestamp::TimeDiff d) const {
     return Timestamp(_ts - d);
 }
 
-inline Timestamp::TimeDiff Timestamp::operator -  (const Timestamp& ts) const {
-    return _ts - ts._ts;
-}
-
-inline Timestamp Timestamp::operator += (TimeDiff d) {
+inline Timestamp& Timestamp::operator += (Timestamp::TimeDiff d) {
     _ts += d;
     return *this;
 }
 
-inline Timestamp Timestamp::operator -= (TimeDiff d) {
+inline Timestamp& Timestamp::operator -= (Timestamp::TimeDiff d) {
     _ts -= d;
     return *this;
+}
+
+inline Timestamp::TimeDiff Timestamp::operator -  (const Timestamp& ts) const {
+    return _ts - ts._ts;
 }
 
 inline std::time_t Timestamp::epochTime() const {
@@ -90,9 +121,12 @@ inline bool Timestamp::isElapsed(const Timestamp::TimeDiff interval) const {
     return diff >= interval;
 }
 
-
 inline Timestamp::TimeVal Timestamp::resolution() {
     return 1000000;
+}
+
+inline void swap(Timestamp& s1, Timestamp& s2) {
+    s1.swap(s2);
 }
 
 } // namespace lyx
