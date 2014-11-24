@@ -15,6 +15,7 @@ class Mutex: private MutexImpl {
 
         void lock();
         void lock(long milliseconds);
+        bool tryLock();
         bool tryLock(long milliseconds);
         void unlock();
 
@@ -36,7 +37,7 @@ inline bool Mutex::tryLock() {
     return tryLockImpl();
 }
 
-inline bool Mutex::tryLock(long mi8llisedconds) {
+inline bool Mutex::tryLock(long milliseconds) {
     return tryLockImpl(milliseconds);
 }
 
