@@ -27,6 +27,8 @@ class SignalHandler {
 
     private:
         static JumpBufferVec _jumpBufferVec;
+
+        friend class ThreadImpl;
 };
 
 } // namespace lyx
