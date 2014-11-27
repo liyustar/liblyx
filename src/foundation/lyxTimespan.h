@@ -25,6 +25,11 @@ class Timespan {
         void swap(Timespan& timespan);
 
         bool operator == (const Timespan& ts) const;
+        bool operator != (const Timespan& ts) const;
+        bool operator >  (const Timespan& ts) const;
+        bool operator >= (const Timespan& ts) const;
+        bool operator <  (const Timespan& ts) const;
+        bool operator <= (const Timespan& ts) const;
 
         Timespan operator + (const Timespan& d) const;
         Timespan operator - (const Timespan& d) const;
@@ -104,6 +109,26 @@ inline Timespan::TimeDiff Timespan::totalMicroseconds() const {
 
 inline bool Timespan::operator == (const Timespan& ts) const {
     return _span == ts._span;
+}
+
+inline bool Timespan::operator != (const Timespan& ts) const {
+    return _span != ts._span;
+}
+
+inline bool Timespan::operator > (const Timespan& ts) const {
+    return _span > ts._span;
+}
+
+inline bool Timespan::operator >= (const Timespan& ts) const {
+    return _span >= ts._span;
+}
+
+inline bool Timespan::operator < (const Timespan& ts) const {
+    return _span < ts._span;
+}
+
+inline bool Timespan::operator <= (const Timespan& ts) const {
+    return _span <= ts._span;
 }
 
 inline void swap(Timespan& s1, Timespan& s2) {
