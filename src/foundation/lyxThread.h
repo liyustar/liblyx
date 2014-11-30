@@ -36,7 +36,7 @@ class Thread: private ThreadImpl {
         TID tid() const;
         std::string name() const;
         std::string getName() const;
-        voidsetName(const std::string& name);
+        void setName(const std::string& name);
 
         void setPriority(Priority prio);
         Priority getPriority() const;
