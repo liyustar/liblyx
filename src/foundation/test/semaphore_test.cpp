@@ -81,3 +81,15 @@ TEST(SemaphoreTest, InitNonZero) {
     EXPECT_TRUE(r.tryWait(10));
     EXPECT_TRUE(!r.tryWait(10));
 }
+
+TEST(SemaphoreTest, ExceedMax) {
+    SemaRunnable r(2, 2);
+    try {
+        r.set();
+    }
+    catch (SystemException&) {
+    }
+    catch (...) {
+        FAIL();
+    }
+}
