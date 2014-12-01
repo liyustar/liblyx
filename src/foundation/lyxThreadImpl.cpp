@@ -231,6 +231,14 @@ bool ThreadImpl::joinImpl(long milliseconds) {
     else return true;
 }
 
+ThreadImpl* ThreadImpl::currentImpl() {
+    return _currentThreadHolder.get();
+}
+
+ThreadImpl::TIDImpl ThreadImpl::currentTidImpl() {
+    return pthread_self();
+}
+
 void ThreadImpl::sleepImpl(long milliseconds) {
     lyx::Timespan remainingTime(1000*lyx::Timespan::TimeDiff(milliseconds));
     int rc;
