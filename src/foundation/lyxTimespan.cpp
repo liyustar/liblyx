@@ -64,4 +64,40 @@ void Timespan::swap(Timespan& timespan) {
     std::swap(_span, timespan._span);
 }
 
+Timespan Timespan::operator + (const Timespan& d) const {
+    return Timespan(_span + d._span);
+}
+
+Timespan Timespan::operator - (const Timespan& d) const {
+    return Timespan(_span - d._span);
+}
+
+Timespan& Timespan::operator += (const Timespan& d) {
+    _span += d._span;
+    return *this;
+}
+
+Timespan& Timespan::operator -= (const Timespan& d) {
+    _span -= d._span;
+    return *this;
+}
+
+Timespan Timespan::operator + (TimeDiff microSeconds) const {
+    return Timespan(_span + microSeconds);
+}
+
+Timespan Timespan::operator - (TimeDiff microSeconds) const {
+    return Timespan(_span - microSeconds);
+}
+
+Timespan& Timespan::operator += (TimeDiff microSeconds) {
+    _span += microSeconds;
+    return *this;
+}
+
+Timespan& Timespan::operator -= (TimeDiff microSeconds) {
+    _span -= microSeconds;
+    return *this;
+}
+
 } // namespace lyx

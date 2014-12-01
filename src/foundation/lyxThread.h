@@ -1,5 +1,5 @@
-#ifndef LIBLYX_FOUNDATION_LYXTHREAD_H
-#define LIBLYX_FOUNDATION_LYXTHREAD_H
+#ifndef LIBLYX_FOUNDATION_LYXTHREAD_H_
+#define LIBLYX_FOUNDATION_LYXTHREAD_H_
 
 #include "lyxThreadImpl.h"
 #include "lyxEvent.h"
@@ -82,6 +82,63 @@ class Thread: private ThreadImpl {
         friend class PooledThread;
 };
 
+inline Thread::TID Thread::tid() const {
+    return tidImpl();
+}
+
+inline int Thread::id() const {
+    return _id;
+}
+
+inline std::string Thread::name() const {
+    Mutex::ScopedLock lock(_mutex);
+    return _name;
+}
+
+inline bool Thread::isRunning() const {
+    return isRunningImpl();
+}
+
+inline void Thread::sleep(long milliseconds) {
+    sleepImpl(milliseconds);
+}
+
+inline void Thread::yield() {
+    yieldImpl();
+}
+
+inline Thread* Thread::current() {
+    return static_cast<Thread*>(currentImpl());
+}
+
+inline void Thread::setOSPriority(int prio, int policy) {
+    setOSPriorityImpl(prio, policy);
+}
+
+inline int Thread::getOSPriority() const {
+    return getOSPriorityImpl();
+}
+
+inline int Thread::getMinOSPriority(int policy) {
+    return ThreadImpl::getMinOSPriorityImpl(policy);
+}
+
+inline int Thread::getMaxOSPriority(int policy) {
+    return ThreadImpl::getMaxOSPriorityImpl(policy);
+}
+
+inline void Thread::setStackSize(int size) {
+    setStackSizeImpl(size);
+}
+
+inline int Thread::getStackSize() const {
+    return getStackSizeImpl();
+}
+
+inline Thread::TID Thread::currentTid() {
+    return currentTidImpl();
+}
+
 } // namespace lyx
 
-#endif // LIBLYX_FOUNDATION_LYXTHREAD_H
+#endif // LIBLYX_FOUNDATION_LYXTHREAD_H_

@@ -241,7 +241,6 @@ void ThreadImpl::sleepImpl(long milliseconds) {
         lyx::Timestamp start;
         rc = ::nanosleep(&ts, 0);
         if (rc < 0 && errno == EINTR) {
-            lyx::Timestamp end;
             lyx::Timespan waited = start.elapsed();
             if (waited < remainingTime)
                 remainingTime -= waited;

@@ -36,6 +36,11 @@ class Timespan {
         Timespan& operator += (const Timespan& d);
         Timespan& operator -= (const Timespan& d);
 
+        Timespan operator + (TimeDiff microSeconds) const;
+        Timespan operator - (TimeDiff microSeconds) const;
+        Timespan& operator += (TimeDiff microSeconds);
+        Timespan& operator -= (TimeDiff microSeconds);
+
         int days() const;
         int hours() const;
         int totalHours() const;
