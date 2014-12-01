@@ -42,8 +42,7 @@ class SemaRunnable: public Runnable {
         Semaphore _sema;
 };
 
-
-TEST(SemaphoreTest, InitZeroTest) {
+TEST(SemaphoreTest, InitZero) {
     SemaRunnable r(0, 3);
     EXPECT_TRUE(!r.tryWait(10));
     r.set();
@@ -73,8 +72,12 @@ TEST(SemaphoreTest, InitZeroTest) {
     EXPECT_TRUE(!r.tryWait(10));
 }
 
-
-
-
-
-
+TEST(SemaphoreTest, InitNonZero) {
+    SemaRunnable r(2, 2);
+    r.wait();
+    EXPECT_TRUE(r.tryWait(10));
+    EXPECT_TRUE(!r.tryWait(10));
+    r.set();
+    EXPECT_TRUE(r.tryWait(10));
+    EXPECT_TRUE(!r.tryWait(10));
+}
