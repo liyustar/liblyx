@@ -20,7 +20,7 @@ class Mutex: private MutexImpl {
     public:
         typedef lyx::ScopedLock<Mutex> ScopedLock;
 
-        Mutex();
+        Mutex(bool fast = false);
         ~Mutex();
 
         /* Locks the mutex. Blocks if the mutex
