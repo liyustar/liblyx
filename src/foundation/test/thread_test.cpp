@@ -5,6 +5,9 @@
 #include "lyxThread.h"
 #include "lyxRunnable.h"
 #include "lyxEvent.h"
+#include "lyxTimestamp.h"
+#include "lyxTimespan.h"
+#include "lyxThreadTarget.h"
 
 using namespace lyx;
 
@@ -247,3 +250,78 @@ TEST(ThreadTest, NotRunJoin) {
     Thread thread;
     thread.join();
 }
+
+TEST(ThreadTest, ThreadTarget) {
+    ThreadTarget te(&MyRunnable::staticFunc);
+    Thread thread;
+
+    EXPECT_TRUE(!thread.isRunning());
+
+    int tmp = MyRunnable::_staticVar;
+    thread.start(te);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp + 1);
+
+    ThreadTarget te1(freeFunc);
+    EXPECT_TRUE(!thread.isRunning());
+
+    tmp = MyRunnable::_staticVar;
+    thread.start(te1);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp + 1);
+}
+
+TEST(ThreadTest, ThreadFunction) {
+    Thread thread;
+
+    EXPECT_TRUE(!thread.isRunning());
+
+    int tmp = MyRunnable::_staticVar;
+    thread.start(freeFunc, &tmp);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp * 2);
+
+    EXPECT_TRUE(!thread.isRunning());
+
+    tmp = MyRunnable::_staticVar = 0;
+    thread.start(freeFunc, &tmp);
+    thread.join();
+    EXPECT_EQ(0, MyRunnable::_staticVar);
+}
+
+TEST(ThreadTest, ThreadStackSize) {
+    int stackSize = 50000000;
+
+    Thread thread;
+
+    EXPECT_EQ(0, thread.getStackSize());
+    thread.setStackSize(stackSize);
+    EXPECT_TRUE(stackSize <= thread.getStackSize());
+    int tmp = MyRunnable::_staticVar;
+    thread.start(freeFunc, &tmp);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp * 2);
+
+    stackSize = 1;
+    thread.setStackSize(stackSize);
+
+    tmp = MyRunnable::_staticVar;
+    thread.start(freeFunc, &tmp);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp * 2);
+
+    thread.setStackSize(0);
+    EXPECT_EQ(0, thread.getStackSize());
+    tmp = MyRunnable::_staticVar;
+    thread.start(freeFunc, &tmp);
+    thread.join();
+    EXPECT_EQ(MyRunnable::_staticVar, tmp * 2);
+}
+
+TEST(ThreadTest, Sleep) {
+    lyx::Timestamp start;
+    Thread::sleep(200);
+    lyx::Timespan elapsed = start.elapsed();
+    EXPECT_TRUE(elapsed.totalMilliseconds() >= 190 && elapsed.totalMilliseconds() < 250);
+}
+
