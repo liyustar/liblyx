@@ -1,6 +1,8 @@
 #ifndef LIBLYX_FOUNDATION_LYXTHREADTARGET_H_
 #define LIBLYX_FOUNDATION_LYXTHREADTARGET_H_
 
+#include "lyxRunnable.h"
+
 namespace lyx {
 
 /**

@@ -4,6 +4,7 @@
 #include "lyxThreadLocal.h"
 #include "lyxAtomicCounter.h"
 #include <sstream>
+#include <cassert>
 
 namespace lyx {
 
@@ -56,6 +57,12 @@ void Thread::join(long milliseconds) {
 
 bool Thread::tryJoin(long milliseconds) {
     return joinImpl(milliseconds);
+}
+
+bool Thread::trySleep(long milliseconds) {
+    Thread* pT = Thread::current();
+    assert(pT != NULL);
+    return !(pT->_event.tryWait(milliseconds));
 }
 
 void Thread::wakeUp() {

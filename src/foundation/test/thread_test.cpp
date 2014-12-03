@@ -112,3 +112,138 @@ TEST(ThreadTest, Thread) {
     EXPECT_TRUE(r.ran());
     EXPECT_TRUE(!r.threadName().empty());
 }
+
+TEST(ThreadTest, NamedThread) {
+    Thread thread("MyThread");
+    MyRunnable r;
+    thread.start(r);
+    r.notify();
+    thread.join();
+    EXPECT_TRUE(r.ran());
+    EXPECT_TRUE(r.threadName() == "MyThread");
+}
+
+
+TEST(ThreadTest, Current) {
+    EXPECT_EQ(NULL, Thread::current());
+}
+
+TEST(ThreadTest, Threads) {
+    Thread thread1("Thread1");
+    Thread thread2("Thread2");
+    Thread thread3("Thread3");
+    Thread thread4("Thread4");
+
+    MyRunnable r1;
+    MyRunnable r2;
+    MyRunnable r3;
+    MyRunnable r4;
+    EXPECT_TRUE(!thread1.isRunning());
+    EXPECT_TRUE(!thread2.isRunning());
+    EXPECT_TRUE(!thread3.isRunning());
+    EXPECT_TRUE(!thread4.isRunning());
+
+    thread1.start(r1);
+    Thread::sleep(200);
+    EXPECT_TRUE(thread1.isRunning());
+    EXPECT_TRUE(!thread2.isRunning());
+    EXPECT_TRUE(!thread3.isRunning());
+    EXPECT_TRUE(!thread4.isRunning());
+
+    thread2.start(r2);
+    thread3.start(r3);
+    thread4.start(r4);
+    Thread::sleep(200);
+    EXPECT_TRUE(thread1.isRunning());
+    EXPECT_TRUE(thread2.isRunning());
+    EXPECT_TRUE(thread3.isRunning());
+    EXPECT_TRUE(thread4.isRunning());
+
+    r4.notify();
+    thread4.join();
+    EXPECT_TRUE(!thread4.isRunning());
+    EXPECT_TRUE(thread1.isRunning());
+    EXPECT_TRUE(thread2.isRunning());
+    EXPECT_TRUE(thread3.isRunning());
+
+    r3.notify();
+    thread3.join();
+    EXPECT_TRUE(!thread3.isRunning());
+
+    r2.notify();
+    thread2.join();
+    EXPECT_TRUE(!thread2.isRunning());
+
+    r1.notify();
+    thread1.join();
+    EXPECT_TRUE(!thread1.isRunning());
+
+    EXPECT_TRUE(r1.ran());
+    EXPECT_EQ("Thread1", r1.threadName());
+    EXPECT_TRUE(r2.ran());
+    EXPECT_EQ("Thread2", r2.threadName());
+    EXPECT_TRUE(r3.ran());
+    EXPECT_EQ("Thread3", r3.threadName());
+    EXPECT_TRUE(r4.ran());
+    EXPECT_EQ("Thread4", r4.threadName());
+}
+
+TEST(ThreadTest, Join) {
+    Thread thread;
+    MyRunnable r;
+    EXPECT_TRUE(!thread.isRunning());
+    thread.start(r);
+    Thread::sleep(200);
+    EXPECT_TRUE(thread.isRunning());
+    EXPECT_TRUE(!thread.tryJoin(100));
+    r.notify();
+    EXPECT_TRUE(thread.tryJoin(500));
+    EXPECT_TRUE(!thread.isRunning());
+}
+
+TEST(ThreadTest, NotJoin) {
+    Thread thread;
+    TrySleepRunnable r;
+    EXPECT_TRUE(!thread.isRunning());
+    EXPECT_EQ(0, r.counter());
+    EXPECT_TRUE(r.isSleepy());
+
+    thread.start(r);
+    EXPECT_TRUE(thread.isRunning());
+    EXPECT_EQ(0, r.counter());
+    EXPECT_TRUE(r.isSleepy());
+
+    Thread::sleep(100);
+    EXPECT_TRUE(thread.isRunning());
+    EXPECT_EQ(0, r.counter());
+    EXPECT_TRUE(r.isSleepy());
+
+    thread.wakeUp(); Thread::sleep(10);
+    EXPECT_TRUE(thread.isRunning());
+    EXPECT_EQ(1, r.counter());
+    EXPECT_TRUE(r.isSleepy());
+
+    Thread::sleep(100);
+    EXPECT_EQ(1, r.counter());
+
+    thread.wakeUp(); Thread::sleep(10);
+    EXPECT_EQ(2, r.counter());
+    EXPECT_TRUE(r.isSleepy());
+
+    Thread::sleep(200);
+    EXPECT_EQ(3, r.counter());
+    EXPECT_TRUE(!r.isSleepy());
+    EXPECT_TRUE(!thread.isRunning());
+
+    thread.wakeUp();
+    EXPECT_TRUE(!thread.isRunning());
+}
+
+TEST(ThreadTest, NotRun) {
+    Thread thread;
+}
+
+TEST(ThreadTest, NotRunJoin) {
+    Thread thread;
+    thread.join();
+}
