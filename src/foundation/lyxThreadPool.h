@@ -1,5 +1,5 @@
 #ifndef LIBLYX_FOUNDATION_LYXTHREADPOOL_H_
-#define LIBLYX_FOUNDATION_LYXTHREADPOOL_H_
+#define LIBLYX_FOUNDATION_LYXTHREADPOOL_H_:
 
 #include "lyxThread.h"
 #include "lyxMutex.h"

@@ -4,6 +4,7 @@
 #include "lyxThreadLocal.h"
 #include "lyxEvent.h"
 #include <ctime>
+#include <cassert>
 
 namespace lyx {
 
@@ -117,6 +118,132 @@ void PooledThread::run() {
             break;
         }
     }
+}
+
+ThreadPool::ThreadPool(int minCapacity,
+        int maxCapacity,
+        int idleTime,
+        int stackSize):
+    _minCapacity(minCapacity),
+    _maxCapacity(maxCapacity),
+    _idleTime(idleTime),
+    _serial(0),
+    _age(0),
+    _stackSize(stackSize)
+{
+    assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
+
+    for (int i = 0; i < _minCapacity; i++) {
+        PooledThread* pThread = createThread();
+        _threads.push_back(pThread);
+        pThread->start();
+    }
+}
+
+ThreadPool::ThreadPool(const std::string& name,
+        int minCapacity,
+        int maxCapacity,
+        int idleTime,
+        int stackSize):
+    _name(name),
+    _minCapacity(minCapacity),
+    _maxCapacity(maxCapacity),
+    _idleTime(idleTime),
+    _serial(0),
+    _age(0),
+    _stackSize(stackSize)
+{
+    assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
+
+    for (int i = 0; i < _minCapacity; i++) {
+        PooledThread* pThread = createThread();
+        _threads.push_back(pThread);
+        pThread->start();
+    }
+}
+
+ThreadPool::~ThreadPool() {
+    try {
+        stopAll();
+    }
+    catch (...) {
+        assert (0);
+    }
+}
+
+void ThreadPool::addCapacity(int n) {
+    FastMutex::ScopedLock lock(_mutex);
+
+    assert (_maxCapacity + n >= _minCapacity);
+    _maxCapacity += n;
+    housekeep();
+}
+
+int ThreadPool::capacity() const {
+    FastMutex::ScopedLock lock(_mutex);
+    return _maxCapacity;
+}
+
+int ThreadPool::available() const {
+    FastMutex::ScopedLock lock(_mutex);
+
+    int count = 0;
+    for (ThreadVec::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
+        if ((*it)->idle()) ++count;
+    }
+    return (int) (count + _maxCapacity - _threads.size());
+}
+
+int ThreadPool::used() const {
+    FastMutex::ScopedLock lock(_mutex);
+
+    int count = 0;
+    for (ThreadVec::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
+        if (!(*it)->idle()) ++count;
+    }
+    return count;
+}
+
+int ThreadPool::allocated() const {
+    FastMutex::ScopedLock lock(_mutex);
+
+    return int(_threads.size());
+}
+
+void ThreadPool::stopAll() {
+    FastMutex::ScopedLock lock(_mutex);
+
+    for (ThreadVec::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
+        (*it)->release();
+    }
+    _threads.clear();
+}
+
+void ThreadPool::joinAll() {
+    FastMutex::ScopedLock lock(_mutex);
+
+    for (ThreadVec::const_iterator it = _threads.begin(); it != _threads.end(); ++it) {
+        (*it)->join();
+    }
+    housekeep();
+}
+
+void ThreadPool::collect() {
+    FastMutex::ScopedLock lock(_mutex);
+
+    housekeep();
+};
+
+void ThreadPool::housekeep() {
+    // TODO;
+}
+
+namespace {
+static ThreadPoolSingletonHolder sh;
+}
+
+ThreadPool& ThreadPool::defaultPool() {
+    return *sh.pool();
 }
 
 } // namespace lyx
