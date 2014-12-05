@@ -76,7 +76,7 @@ class Thread: private ThreadImpl {
         std::string         _name;
         ThreadLocalStorage* _pTLS;
         Event               _event;
-        mutable Mutex       _mutex;
+        mutable FastMutex   _mutex;
 
         friend class ThreadLocalStorage;
         friend class PooledThread;
@@ -91,7 +91,7 @@ inline int Thread::id() const {
 }
 
 inline std::string Thread::name() const {
-    Mutex::ScopedLock lock(_mutex);
+    FastMutex::ScopedLock lock(_mutex);
     return _name;
 }
 

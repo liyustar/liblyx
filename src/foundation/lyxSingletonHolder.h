@@ -7,7 +7,7 @@ namespace lyx {
 
 template <class S> class SingletonHolder {
     public:
-        SingletonHolder(): _pS(0), _m(true) {
+        SingletonHolder(): _pS(0) {
         }
 
         ~SingletonHolder() {
@@ -15,14 +15,14 @@ template <class S> class SingletonHolder {
         }
 
         S* get() {
-            Mutex::ScopedLock lock(_m);
+            FastMutex::ScopedLock lock(_m);
             if (!_pS) _pS = new S;
             return _pS;
         }
 
     private:
         S* _pS;
-        Mutex _m;
+        FastMutex _m;
 };
 
 } // namespace lyx

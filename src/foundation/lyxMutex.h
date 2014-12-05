@@ -20,7 +20,7 @@ class Mutex: private MutexImpl {
     public:
         typedef lyx::ScopedLock<Mutex> ScopedLock;
 
-        Mutex(bool fast = false);
+        Mutex();
         ~Mutex();
 
         /* Locks the mutex. Blocks if the mutex
@@ -55,6 +55,24 @@ class Mutex: private MutexImpl {
         Mutex& operator = (const Mutex&);
 };
 
+class FastMutex: private FastMutexImpl {
+    public:
+        typedef lyx::ScopedLock<FastMutex> ScopedLock;
+
+        FastMutex();
+        ~FastMutex();
+
+        void lock();
+        void lock(long milliseconds);
+        bool tryLock();
+        bool tryLock(long milliseconds);
+        void unlock();
+
+    private:
+        FastMutex(const FastMutex&);
+        FastMutex& operator = (const FastMutex&);
+};
+
 inline void Mutex::lock() {
     lockImpl();
 }
@@ -73,6 +91,27 @@ inline bool Mutex::tryLock(long milliseconds) {
 }
 
 inline void Mutex::unlock() {
+    unlockImpl();
+}
+
+inline void FastMutex::lock() {
+    lockImpl();
+}
+
+inline void FastMutex::lock(long milliseconds) {
+    if (!tryLockImpl(milliseconds))
+        throw TimeoutException();
+}
+
+inline bool FastMutex::tryLock() {
+    return tryLockImpl();
+}
+
+inline bool FastMutex::tryLock(long milliseconds) {
+    return tryLockImpl(milliseconds);
+}
+
+inline void FastMutex::unlock() {
     unlockImpl();
 }
 

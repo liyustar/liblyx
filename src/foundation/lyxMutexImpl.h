@@ -20,6 +20,12 @@ class MutexImpl {
         pthread_mutex_t _mutex;
 };
 
+class FastMutexImpl: public MutexImpl {
+    protected:
+        FastMutexImpl();
+        ~FastMutexImpl();
+};
+
 inline void MutexImpl::lockImpl() {
     if (pthread_mutex_lock(&_mutex))
         throw SystemException("cannot lock mutex");

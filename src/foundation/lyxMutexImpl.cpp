@@ -37,4 +37,10 @@ bool MutexImpl::tryLockImpl(long milliseconds) {
         throw SystemException("cannot lock mutex");
 }
 
+FastMutexImpl::FastMutexImpl(): MutexImpl(true) {
+}
+
+FastMutexImpl::~FastMutexImpl() {
+}
+
 } // namespace lyx

@@ -12,8 +12,7 @@ Thread::Thread():
     _id(uniqueId()),
     _name(makeName()),
     _pTLS(0),
-    _event(true),
-    _mutex(true)
+    _event(true)
 {
 }
 
@@ -21,8 +20,7 @@ Thread::Thread(const std::string& name):
     _id(uniqueId()),
     _name(name),
     _pTLS(0),
-    _event(true),
-    _mutex(true)
+    _event(true)
 {
 }
 
@@ -94,7 +92,7 @@ int Thread::uniqueId() {
 }
 
 void Thread::setName(const std::string& name) {
-    Mutex::ScopedLock lock(_mutex);
+    FastMutex::ScopedLock lock(_mutex);
     _name = name;
 }
 

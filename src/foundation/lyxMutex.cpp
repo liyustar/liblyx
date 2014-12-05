@@ -2,7 +2,7 @@
 
 namespace lyx {
 
-Mutex::Mutex(bool fast): MutexImpl(fast) {
+Mutex::Mutex() {
 }
 
 Mutex::~Mutex() {
