@@ -80,7 +80,7 @@ class ThreadPool {
         int _idleTime;
         int _serial;
         int _age;
-        int _stackSize();
+        int _stackSize;
         ThreadVec _threads;
         mutable FastMutex _mutex;
 };
