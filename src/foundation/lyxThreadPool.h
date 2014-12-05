@@ -85,6 +85,17 @@ class ThreadPool {
         mutable FastMutex _mutex;
 };
 
+inline void ThreadPool::setStackSize(int stackSize) {
+    _stackSize = stackSize;
+}
+
+inline int ThreadPool::getStackSize() const {
+    return _stackSize;
+}
+
+inline const std::string& ThreadPool::name() const {
+    return _name;
+}
 
 } // namespace lyx
 
