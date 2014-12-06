@@ -235,7 +235,81 @@ void ThreadPool::collect() {
 };
 
 void ThreadPool::housekeep() {
-    // TODO;
+    _age = 0;
+    if (_threads.size() <= _minCapacity)
+        return;
+
+    ThreadVec idleThreads;
+    ThreadVec expiredThreads;
+    ThreadVec activeThreads;
+    idleThreads.reserve(_threads.size());
+    activeThreads.reserve(_threads.size());
+
+    for (ThreadVec::iterator it = _threads.begin(); it != _thread.end(); it++) {
+        if ((*it)->idle()) {
+            if ((*it)->idleTime() < _idleTime)
+                idleThreads.push_back(*it);
+            else
+                expiredThreads.push_back(*it);
+        }
+        else {
+            activeThreads.push_back(*it);
+        }
+    }
+
+    int n = (int) activeThreads.size();
+    int limit = (int) idleThreads.size() + n;
+    if (limit < _minCapacity)
+        limit = _minCapacity;
+    idleThreads.insert(idleThreads.end(), expiredThreads.begin(), expiredThreads.end());
+    _threads.clear();
+    for (ThreadVec::iterator it = idleThreads.begin(); it != idleThreads.end(); it++) {
+        if (n < limit) {
+            _threads.push_back(*it);
+            n++;
+        }
+        else {
+            (*it)->release();
+        }
+    }
+    _threads.insert(_threads.end(), activeThreads.begin(), activeThreads.end());
+}
+
+PooledThread* ThreadPool::getThread() {
+    FastMutex::ScopedLock lock(_mutex);
+
+    if (++_age == 32)
+        housekeep();
+
+    PooledThread* pThread = 0;
+    for (ThreadVec::iteraotr it = _threads.begin(); !pThread && it != _threads.end(); it++) {
+        if ((*it)->idle())
+            pThread = *it;
+    }
+    if (!pThread) {
+        if (_threads.size() < _maxCapacity) {
+            pThread = createThread();
+            try {
+                pThread->start();
+                _threads.push_back(pThread);
+            }
+            catch (...) {
+                delete pThread;
+                throw;
+            }
+        }
+        else {
+            throw NoThreadAvailableException();
+        }
+    }
+    pThread->activate();
+    return pThread;
+}
+
+PooledThread* ThreadPool::createThread() {
+    std::ostringstream name;
+    name << _name << "[#" << ++_serial << "]";
+    return new PooledThread(name.str(), _stackSize);
 }
 
 class ThreadPoolSingletonHolder {
