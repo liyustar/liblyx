@@ -53,6 +53,8 @@ class ThreadPool {
 
         void start(Runnable& target);
         void start(Runnable& target, const std::string& name);
+        void startWithPriority(Thread::Priority priority, Runnable& target);
+        void startWithPriority(Thread::Priority priority, Runnable& target, const std::string& name);
 
         void stopAll();
         void joinAll();

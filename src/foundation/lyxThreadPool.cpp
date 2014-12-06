@@ -3,6 +3,7 @@
 #include "lyxThread.h"
 #include "lyxThreadLocal.h"
 #include "lyxEvent.h"
+#include <sstream>
 #include <ctime>
 #include <cassert>
 
@@ -14,6 +15,8 @@ class PooledThread: public Runnable {
         ~PooledThread();
 
         void start();
+        void start(Thread::Priority priority, Runnable& target);
+        void start(Thread::Priority priority, Runnable& target, const std::string& name);
         bool idle();
         int  idleTime();
         void join();
@@ -51,6 +54,37 @@ PooledThread::~PooledThread() {
 void PooledThread::start() {
     _thread.start(*this);
     _started.wait();
+}
+
+void PooledThread::start(Thread::Priority priority, Runnable& target) {
+    FastMutex::ScopedLock lock(_mutex);
+
+    assert (_pTarget == 0);
+
+    _pTarget = &target;
+    _thread.setPriority(priority);
+    _targetReady.set();
+}
+
+void PooledThread::start(Thread::Priority priority, Runnable& target, const std::string& name) {
+    FastMutex::ScopedLock lock(_mutex);
+
+    std::string fullName(name);
+    if (name.empty()) {
+        fullName = _name;
+    }
+    else {
+        fullName.append(" (");
+        fullName.append(_name);
+        fullName.append(")");
+    }
+    _thread.setName(fullName);
+    _thread.setPriority(priority);
+
+    assert (_pTarget == 0);
+
+    _pTarget = &target;
+    _targetReady.set();
 }
 
 bool PooledThread::idle() {
@@ -210,6 +244,22 @@ int ThreadPool::allocated() const {
     return int(_threads.size());
 }
 
+void ThreadPool::start(Runnable& target) {
+    getThread()->start(Thread::PRIO_NORMAL, target);
+}
+
+void ThreadPool::start(Runnable& target, const std::string& name) {
+    getThread()->start(Thread::PRIO_NORMAL, target, name);
+}
+
+void ThreadPool::startWithPriority(Thread::Priority priority, Runnable& target) {
+    getThread()->start(priority, target);
+}
+
+void ThreadPool::startWithPriority(Thread::Priority priority, Runnable& target, const std::string& name) {
+    getThread()->start(priority, target, name);
+}
+
 void ThreadPool::stopAll() {
     FastMutex::ScopedLock lock(_mutex);
 
@@ -236,7 +286,7 @@ void ThreadPool::collect() {
 
 void ThreadPool::housekeep() {
     _age = 0;
-    if (_threads.size() <= _minCapacity)
+    if ((int)_threads.size() <= _minCapacity)
         return;
 
     ThreadVec idleThreads;
@@ -245,7 +295,7 @@ void ThreadPool::housekeep() {
     idleThreads.reserve(_threads.size());
     activeThreads.reserve(_threads.size());
 
-    for (ThreadVec::iterator it = _threads.begin(); it != _thread.end(); it++) {
+    for (ThreadVec::iterator it = _threads.begin(); it != _threads.end(); it++) {
         if ((*it)->idle()) {
             if ((*it)->idleTime() < _idleTime)
                 idleThreads.push_back(*it);
@@ -282,12 +332,12 @@ PooledThread* ThreadPool::getThread() {
         housekeep();
 
     PooledThread* pThread = 0;
-    for (ThreadVec::iteraotr it = _threads.begin(); !pThread && it != _threads.end(); it++) {
+    for (ThreadVec::iterator it = _threads.begin(); !pThread && it != _threads.end(); it++) {
         if ((*it)->idle())
             pThread = *it;
     }
     if (!pThread) {
-        if (_threads.size() < _maxCapacity) {
+        if ((int)_threads.size() < _maxCapacity) {
             pThread = createThread();
             try {
                 pThread->start();
