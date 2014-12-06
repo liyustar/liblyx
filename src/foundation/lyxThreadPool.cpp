@@ -238,6 +238,32 @@ void ThreadPool::housekeep() {
     // TODO;
 }
 
+class ThreadPoolSingletonHolder {
+    public:
+        ThreadPoolSingletonHolder() {
+            _pPool = 0;
+        }
+
+        ~ThreadPoolSingletonHolder() {
+            delete _pPool;
+        }
+
+        ThreadPool* pool() {
+            FastMutex::ScopedLock lock(_mutex);
+
+            if (!_pPool) {
+                _pPool = new ThreadPool("default");
+                // if (THREAD_STACK_SIZE > 0)
+                //      _pPool->setStackSize(THREAD_STACK_SIZE);
+            }
+            return _pPool;
+        }
+
+    private:
+        ThreadPool* _pPool;
+        FastMutex   _mutex;
+};
+
 namespace {
 static ThreadPoolSingletonHolder sh;
 }
