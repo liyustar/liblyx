@@ -8,4 +8,10 @@ Mutex::Mutex() {
 Mutex::~Mutex() {
 }
 
+FastMutex::FastMutex() {
+}
+
+FastMutex::~FastMutex() {
+}
+
 } // namespace lyx

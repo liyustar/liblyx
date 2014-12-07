@@ -3,7 +3,7 @@
 
 namespace lyx {
 
-#include "Runnable.h"
+#include "lyxRunnable.h"
 
 /**
  * This adapter simplifies using ordinary methods as
