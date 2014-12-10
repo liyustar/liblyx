@@ -75,6 +75,17 @@ TEST_F(ThreadPoolTest, threadpool) {
     EXPECT_EQ(4, pool.capacity());
     EXPECT_EQ(0, pool.available());
 
+    try {
+        pool.start(ra);
+        FAIL();
+    }
+    catch (lyx::NoThreadAvailableException&) {
+
+    }
+    catch (...) {
+        FAIL();
+    }
+
     _event.set(); // go!!!
     pool.joinAll();
 
