@@ -110,6 +110,10 @@ inline Timestamp::UtcTimeVal Timestamp::utcTime() const {
     return _ts*10 + (TimeDiff(0x01b21dd2) << 32) + 0x13814000;
 }
 
+inline Timestamp::TimeVal Timestamp::epochMicroseconds() const {
+    return _ts;
+}
+
 inline Timestamp::TimeVal Timestamp::elapsed() const {
     Timestamp now;
     return now - *this;
