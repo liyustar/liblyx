@@ -5,7 +5,8 @@
 #include "lyxEvent.h"
 #include "lyxMutex.h"
 #include "lyxRunnable.h"
-#include "Clock.h"
+#include "lyxClock.h"
+#include "lyxThreadPool.h"
 
 namespace lyx {
 
@@ -20,7 +21,7 @@ class Timer: protected Runnable {
         void start(const AbstractTimerCallback& method);
         void start(const AbstractTimerCallback& method, Thread::Priority priority);
         void start(const AbstractTimerCallback& method, ThreadPool& threadPool);
-        void start(const AbstractTimerCallback& method, Thread::Priority priority, Thread& threadPool);
+        void start(const AbstractTimerCallback& method, Thread::Priority priority, ThreadPool& threadPool);
 
         void stop();
         void restart();
