@@ -68,7 +68,7 @@ template <class C> class TimerCallback: public AbstractTimerCallback {
         TimerCallback(C& object, Callback method): _pObject(&object), _method(method) {
         }
 
-        TimerCallback(const TimerCallback& callback): _pObject(callback._pObject), _method(callback._method) {
+        TimerCallback(const TimerCallback& callback): AbstractTimerCallback(callback), _pObject(callback._pObject), _method(callback._method) {
         }
 
         ~TimerCallback() {
