@@ -1,5 +1,5 @@
-#ifndef LIBLYX_FOUNDATION_LYXTIMER_H_
-#define LIBLYX_FOUNDATION_LYXTIMER_H_
+#ifndef LIBLYX_FOUNDATION_LYXSTOPWATCH_H_
+#define LIBLYX_FOUNDATION_LYXSTOPWATCH_H_
 
 #include "lyxClock.h"
 
@@ -54,4 +54,4 @@ inline Clock::ClockVal Stopwatch::resolution() {
 
 } // namespace lyx
 
-#endif // LIBLYX_FOUNDATION_LYXTIMER_H_
+#endif // LIBLYX_FOUNDATION_LYXSTOPWATCH_H_

@@ -23,7 +23,6 @@ TEST_F(TimerTest, timer) {
     EXPECT_EQ(100, t.getStartInterval());
     EXPECT_EQ(200, t.getPeriodicInterval());
 
-    /*
     Stopwatch sw;
     TimerCallback<TimerTest> tc(*this, &TimerTest::onTimer);
 
@@ -44,7 +43,6 @@ TEST_F(TimerTest, timer) {
     sw.stop();
     EXPECT_TRUE(sw.elapsed() >= 180000 && sw.elapsed() < 250000);
     t.stop();
-    */
 }
 
 TEST_F(TimerTest, DuplicateStop) {
