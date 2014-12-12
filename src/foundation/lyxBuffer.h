@@ -11,7 +11,7 @@ template <class T> class Buffer {
     public:
         Buffer(std::size_t capacity):
             _capacity(capacity),
-            _used(0),
+            _used(capacity),
             _ptr(0),
             _ownMem(true) {
                 if (capacity > 0) {
@@ -29,7 +29,7 @@ template <class T> class Buffer {
         Buffer(const T* pMem, std::size_t length):
             _capacity(length),
             _used(length),
-            _ptr(pMem),
+            _ptr(0),
             _ownMem(true) {
                 if (_capacity > 0) {
                     _ptr = new T[_capacity];
@@ -154,8 +154,7 @@ template <class T> class Buffer {
         }
 
         void clear() {
-            // std::memset(_ptr, 0, _used * sizeof(T));
-            _used = 0;
+            std::memset(_ptr, 0, _used * sizeof(T));
         }
 
         std::size_t size() const {
