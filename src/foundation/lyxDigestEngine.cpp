@@ -10,7 +10,7 @@ DigestEngine::~DigestEngine() {
 }
 
 std::string DigestEngine::digestToHex(const Digest& bytes) {
-    static const char digist[] = "0123456789abcdef";
+    static const char digits[] = "0123456789abcdef";
     std::string result;
     result.reserve(bytes.size() * 2);
     for (Digest::const_iterator it = bytes.begin(); it != bytes.end(); it++) {

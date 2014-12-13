@@ -1,6 +1,7 @@
 #ifndef LIBLYX_FOUNDATION_LYXDIGESTENGINE_H_
 #define LIBLYX_FOUNDATION_LYXDIGESTENGINE_H_
 
+#include <string>
 #include <vector>
 
 namespace lyx {
@@ -48,11 +49,11 @@ inline void DigestEngine::update(const void* data, std::size_t length) {
     updateImpl(data, length);
 }
 
-inline void DigestEngtine::update(char data) {
+inline void DigestEngine::update(char data) {
     updateImpl(&data, 1);
 }
 
-inline void DigestEngtine::update(const std::string& data) {
+inline void DigestEngine::update(const std::string& data) {
     updateImpl(data.data(), data.size());
 }
 
