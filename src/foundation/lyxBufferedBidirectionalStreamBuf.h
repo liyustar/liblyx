@@ -1,5 +1,5 @@
-#ifndef LIBLYX_FOUNDATION_LYXBUFFEREDSTREAMBUF_H_
-#define LIBLYX_FOUNDATION_LYXBUFFEREDSTREAMBUF_H_
+#ifndef LIBLYX_FOUNDATION_LYXBUFFEREDBIDIRECTIONALSTREAMBUF_H_
+#define LIBLYX_FOUNDATION_LYXBUFFEREDBIDIRECTIONALSTREAMBUF_H_
 
 #include "lyxBufferAllocator.h"
 #include <streambuf>
@@ -8,20 +8,8 @@
 
 namespace lyx {
 
-/**
- * This is an implementation of a buffered streambuf
- * that greatly simplifies the implementation of
- * custom streambufs of various kinds.
- * Derived classes only have to override the method
- * readFromDevice() or wirteToDevice().
- *
- * This streambuf only supports unidirectional streams.
- * In other words, the BasicBufferedStreamBuf can be
- * used for the implementation fo an istream or an
- * ostream, but not for an iostream.
- */
 template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
-    class BasicBufferedStreamBuf: public std::basic_streambuf<ch, tr>
+    class BasicBufferedBindirectionalStreamBuf: public std::basic_streambuf<ch, tr>
 {
     protected:
         typedef std::basic_streambuf<ch, tr> Base;
@@ -35,16 +23,17 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
         typedef typename IOS::openmode openmode;
 
     public:
-        BasicBufferedStreamBuf(std::streamsize bufferSize, openmode mode):
+        BasicBufferedBindirectionalStreamBuf(std::streamsize bufferSize, openmode mode):
             _bufsize(bufferSize),
-            _pBuffer(Allocator::allocate(_bufsize)),
+            _pReadBuffer(Allocator::allocate(_bufsize)),
+            _pWriteBuffer(Allocator::allocate(_bufsize)),
             _mode(mode) {
-                this->setg(_pBuffer + 4, _pBuffer + 4, _pBuffer + 4);
-                this->setp(_pBuffer, _pBuffer + (_bufsize - 1));
+                resetBuffers();
             }
 
-        ~BasicBufferedStreamBuf() {
-            Allocator::deallocate(_pBuffer, _bufsize);
+        ~BasicBufferedBindirectionalStreamBuf() {
+            Allocator::deallocate(_pReadBuffer, _bufsize);
+            Allocator::deallocate(_pWriteBuffer, _bufsize);
         }
 
         virtual int_type overflow(int_type c) {
@@ -62,19 +51,20 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
         virtual int_type underflow() {
             if (!(_mode & IOS::in)) return char_traits::eof();
 
-            if (this->gptr() && (this->gptr() < this->egptr()))
+            if (this->gptr() && (this->ptr() < this->egptr()))
                 return char_traits::to_int_type(*this->gptr());
 
             int putback = int(this->gptr() - this->eback());
             if (putback > 4) putback = 4;
 
-            char_traits::move(_pBuffer + (4 - putback), this->gptr() - putback, putback);
-            int n = readFromDevice(_pBuffer + 4, _bufsize - 4);
+            char_traits::move(_pReadBuffer + (4 - putback), this->gptr() - putback, putback);
+
+            int n = readFromDevice(_pReadBuffer + 4, _bufsize - 4);
             if (n <= 0) return char_traits::eof();
 
-            this->setg(_pBuffer + (4 - putback), _pBuffer + 4, _pBuffer + 4 + n);
+            this->setg(_pReadBuffer + (4 - putback), _pReadBuffer + 4, _pReadBuffer + 4 + n);
 
-            // return next charcter
+            // return next character
             return char_traits::to_int_type(*this->gptr());
         }
 
@@ -92,6 +82,11 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
 
         openmode getMode() const {
             return _mode;
+        }
+
+        void resetBuffers() {
+            this->setg(_pReadBuffer + 4, _pReadBuffer + 4, _pReadBuffer + 4);
+            this->setp(_pWriteBuffer, _pWriteBuffer + (_bufsize - 1));
         }
 
     private:
@@ -113,15 +108,16 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
         }
 
         std::streamsize _bufsize;
-        char_type*      _pBuffer;
+        char_type*      _pReadBuffer;
+        char_type*      _pWriteBuffer;
         openmode        _mode;
 
-        BasicBufferedStreamBuf(const BasicBufferedStreamBuf&);
-        BasicBufferedStreamBuf& operator = (const BasicBufferedStreamBuf&);
+        BasicBufferedBindirectionalStreamBuf(const BasicBufferedBindirectionalStreamBuf&);
+        BasicBufferedBindirectionalStreamBuf& operator = (const BasicBufferedBindirectionalStreamBuf&);
 };
 
-typedef BasicBufferedStreamBuf<char, std::char_traits<char> > BufferedStreamBuf;
+typedef BasicBufferedBindirectionalStreamBuf<char, std::char_traits<char> > BufferedBindirectionalStreamBuf;
 
 } // namespace lyx
 
-#endif // LIBLYX_FOUNDATION_LYXBUFFEREDSTREAMBUF_H_
+#endif // LIBLYX_FOUNDATION_LYXBUFFEREDBIDIRECTIONALSTREAMBUF_H_
