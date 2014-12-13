@@ -1,7 +1,7 @@
 #ifndef LIBLYX_FOUNDATION_LYXBUFFEREDSTREAMBUF_H_
 #define LIBLYX_FOUNDATION_LYXBUFFEREDSTREAMBUF_H_
 
-#include "BufferAllocator.h"
+#include "lyxBufferAllocator.h"
 #include <streambuf>
 #include <iosfwd>
 #include <ios>
@@ -115,7 +115,7 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
             char_type*      _pBuffer;
             openmode        _mode;
 
-            BasicBufferedStreamBuf(const BasicBufferedStreamBuf);
+            BasicBufferedStreamBuf(const BasicBufferedStreamBuf&);
             BasicBufferedStreamBuf& operator = (const BasicBufferedStreamBuf&);
     };
 
