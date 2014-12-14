@@ -51,7 +51,7 @@ template <typename ch, typename tr, typename ba = BufferAllocator<ch> >
         virtual int_type underflow() {
             if (!(_mode & IOS::in)) return char_traits::eof();
 
-            if (this->gptr() && (this->ptr() < this->egptr()))
+            if (this->gptr() && (this->gptr() < this->egptr()))
                 return char_traits::to_int_type(*this->gptr());
 
             int putback = int(this->gptr() - this->eback());
