@@ -42,6 +42,13 @@ FileOutputStream::FileOutputStream():
 {
 }
 
+FileOutputStream::FileOutputStream(const std::string& path, std::ios::openmode mode):
+    FileIOS(std::ios::out),
+    std::ostream(&_buf)
+{
+    open(path, mode);
+}
+
 FileOutputStream::~FileOutputStream() {
 }
 
