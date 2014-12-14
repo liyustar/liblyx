@@ -2,7 +2,7 @@
 #define LIBLYX_FOUNDATION_LYXDIGESTSTREAM_H_
 
 #include "lyxBufferedStreamBuf.h"
-#include "DigestEngine.h"
+#include "lyxDigestEngine.h"
 #include <istream>
 #include <ostream>
 

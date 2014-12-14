@@ -53,7 +53,7 @@ DigestIOS::DigestIOS(DigestEngine& eng): _buf(eng) {
 DigestIOS::~DigestIOS() {
 }
 
-DigestBuf* DigestBuf::rdbuf() {
+DigestBuf* DigestIOS::rdbuf() {
     return &_buf;
 }
 
