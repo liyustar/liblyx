@@ -41,12 +41,26 @@ int DigestBuf::readFromDevice(char* buffer, std::streamsize length) {
     return -1;
 }
 
+int DigestBuf::writeToDevice(const char* buffer, std::streamsize length) {
+    _eng.update(buffer, (unsigned) length);
+    if (_pOstr) _pOstr->write(buffer, length);
+    return static_cast<int>(length);
+}
+
 void DigestBuf::close() {
     sync();
     if (_pOstr) _pOstr->flush();
 }
 
 DigestIOS::DigestIOS(DigestEngine& eng): _buf(eng) {
+    init(&_buf);
+}
+
+DigestIOS::DigestIOS(DigestEngine& eng, std::istream& istr): _buf(eng, istr) {
+    init(&_buf);
+}
+
+DigestIOS::DigestIOS(DigestEngine& eng, std::ostream& ostr): _buf(eng, ostr) {
     init(&_buf);
 }
 
