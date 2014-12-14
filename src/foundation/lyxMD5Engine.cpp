@@ -4,7 +4,7 @@ namespace lyx {
 
 MD5Engine::MD5Engine() {
     _digest.reserve(DIGEST_SIZE);
-    MD5_Init(&_context);
+    reset();
 }
 
 MD5Engine::~MD5Engine() {
@@ -27,6 +27,7 @@ const DigestEngine::Digest& MD5Engine::digest() {
     MD5_Final(digest, &_context);
     _digest.clear();
     _digest.insert(_digest.begin(), digest, digest + sizeof(digest));
+    reset();
     return _digest;
 }
 

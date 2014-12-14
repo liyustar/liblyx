@@ -4,7 +4,7 @@ namespace lyx {
 
 SHA1Engine::SHA1Engine() {
     _digest.reserve(DIGEST_SIZE);
-    SHA1_Init(&_context);
+    reset();
 }
 
 SHA1Engine::~SHA1Engine() {
@@ -27,6 +27,7 @@ const DigestEngine::Digest& SHA1Engine::digest() {
     SHA1_Final(digest, &_context);
     _digest.clear();
     _digest.insert(_digest.begin(), digest, digest + sizeof(digest));
+    reset();
     return _digest;
 }
 
