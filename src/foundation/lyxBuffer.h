@@ -4,6 +4,7 @@
 #include "lyxException.h"
 #include <cstring>
 #include <cstddef>
+#include <cassert>
 
 namespace lyx {
 
