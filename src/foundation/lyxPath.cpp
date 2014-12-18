@@ -1,4 +1,5 @@
 #include "lyxPath.h"
+#include "lyxPathImpl.h"
 #include "lyxFile.h"
 #include "lyxException.h"
 #include "lyxBugcheck.h"
