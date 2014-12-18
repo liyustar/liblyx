@@ -34,7 +34,7 @@ class Bugcheck {
     if (!(cond)) lyx::Bugcheck::assertion(#cond, __FILE__, __LINE__); else (void) 0
 
 #define lyx_check_ptr(ptr) \
-    if (!(cond)) lyx::Bugcheck::nullPointer(#ptr, __FILE__, __LINE__); else (void) 0
+    if (!(ptr)) lyx::Bugcheck::nullPointer(#ptr, __FILE__, __LINE__); else (void) 0
 
 #define lyx_bugcheck() \
     lyx::Bugcheck::bugcheck(__FILE__, __LINE__);
