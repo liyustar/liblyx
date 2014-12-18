@@ -6,7 +6,7 @@
 
 namespace lyx {
 
-class Path { 
+class Path {
     public:
         enum Style {
             PATH_UNIX,
@@ -28,7 +28,7 @@ class Path {
         ~Path();
 
         Path& operator = (const Path& path);
-        Path& operator = (const str::string& path);
+        Path& operator = (const std::string& path);
         Path& operator = (const char* path);
 
         void swap(Path& path);
@@ -65,6 +65,8 @@ class Path {
 
         Path& setNode(const std::string& node);
         const std::string& getNode() const;
+        Path& setDevice(const std::string& device);
+        const std::string& getDevice() const;
 
         int depth() const;
         const std::string& directory(int n) const;
@@ -133,10 +135,14 @@ inline const std::string& Path::getNode() const {
 }
 
 inline const std::string& Path::getDevice() const {
-    return device;
+    return _device;
 }
 
 inline const std::string& Path::getFileName() const {
+    return _name;
+}
+
+inline int Path::depth() const {
     return int(_dirs.size());
 }
 
@@ -151,6 +157,15 @@ inline Path Path::forDirectory(const std::string& path, Style style) {
 }
 
 inline char Path::separator() {
+    return '/';
+}
+
+inline char Path::pathSeparator() {
+    return ':';
+}
+
+inline void swap(Path& p1, Path& p2) {
+    p1.swap(p2);
 }
 
 } // namespace lyx

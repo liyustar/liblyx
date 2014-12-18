@@ -274,7 +274,7 @@ bool FileImpl::createFileImpl() {
     return false;
 }
 
-bool FileImpl::createDirecotryImpl() {
+bool FileImpl::createDirectoryImpl() {
     assert (!_path.empty());
 
     const mode_t DEFAULT_CREATEDIR_MODE = S_IRWXU | S_IRWXG | S_IRWXO;

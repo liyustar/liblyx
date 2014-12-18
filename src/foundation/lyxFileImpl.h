@@ -36,7 +36,7 @@ class FileImpl {
         void renameToImpl(const std::string& path);
         void removeImpl();
         bool createFileImpl();
-        bool createDirecotryImpl();
+        bool createDirectoryImpl();
         static void handleLastErrorImpl(const std::string& path);
 
     private:

@@ -3,6 +3,7 @@
 
 #include "lyxFileImpl.h"
 #include "lyxTimestamp.h"
+#include "lyxPath.h"
 #include <vector>
 
 namespace lyx {

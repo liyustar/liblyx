@@ -23,11 +23,11 @@ File::~File() {
 }
 
 File& File::operator = (const File& file) {
-    setPathImpl(path);
+    setPathImpl(file.getPathImpl());
     return *this;
 }
 
-File& File::operaotr = (const char* path) {
+File& File::operator = (const char* path) {
     assert (path);
     setPathImpl(path);
     return *this;
@@ -106,7 +106,7 @@ File& File::setWriteable(bool flag) {
 }
 
 File& File::setReadOnly(bool flag) {
-    setReadOnlyImpl(!flag);
+    setWriteableImpl(!flag);
     return *this;
 }
 

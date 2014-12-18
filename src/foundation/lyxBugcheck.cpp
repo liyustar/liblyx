@@ -1,5 +1,6 @@
 #include "lyxBugcheck.h"
 #include "lyxException.h"
+#include <sstream>
 
 namespace lyx {
 
