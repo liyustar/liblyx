@@ -366,6 +366,10 @@ std::string Path::expand(const std::string& path) {
     return PathImpl::expandImpl(path);
 }
 
+void listRoots(std::vector<std::string>& roots) {
+    return PathImpl::listRootsImpl(roots);
+}
+
 void Path::parseUnix(const std::string& path) {
     clear();
 
