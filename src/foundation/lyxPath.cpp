@@ -419,8 +419,10 @@ void Path::parseUnix(const std::string& path) {
             if (it != end) {
                 // 有 ‘/’ 结尾， 名字是目录名
                 if (_dirs.empty()) {
+                    // 处理 "/c:/" 设备符号
                     if (!name.empty() && *(name.rbegin()) == ':') {
-                        throw NotImplementedException();
+                        _absolute = true;
+                        _device.assign(name, 0, name.length() - 1);
                     }
                     else {
                         pushDirectory(name);
