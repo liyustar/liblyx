@@ -411,10 +411,13 @@ void Path::parseUnix(const std::string& path) {
             else it--;
         }
 
+        // 相对路径
         while (it != end) {
             std::string name;
+            // 提取名字
             while (it != end && *it != '/') name += *it++;
             if (it != end) {
+                // 有 ‘/’ 结尾， 名字是目录名
                 if (_dirs.empty()) {
                     if (!name.empty() && *(name.rbegin()) == ':') {
                         throw NotImplementedException();
@@ -423,9 +426,12 @@ void Path::parseUnix(const std::string& path) {
                         pushDirectory(name);
                     }
                 }
-                else _name = name;
-                if (it != end) it++;
+                else {
+                    pushDirectory(name);
+                }
             }
+            else _name = name;  // it == end 名字是文件名
+            if (it != end) it++;
         }
     }
 }
