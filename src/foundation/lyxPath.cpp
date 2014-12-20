@@ -220,6 +220,14 @@ Path Path::absolute() const {
     return result;
 }
 
+Path Path::absolute(const Path& base) const {
+    Path result(*this);
+    if (!result._absolute) {
+        result.makeAbsolute(base);
+    }
+    return result;
+}
+
 Path Path::parent() const {
     Path p(*this);
     return p.makeParent();
@@ -297,8 +305,20 @@ Path& Path::pushDirectory(const std::string& dir) {
 Path& Path::popDirectory() {
     lyx_assert (!_dirs.empty());
 
+    _dirs.pop_back();
+    return *this;
+}
+
+Path& Path::popFrontDirectory() {
+    lyx_assert (!_dirs.empty());
+
     StringVec::iterator it = _dirs.begin();
     _dirs.erase(it);
+    return *this;
+}
+
+Path& Path::setFileName(const std::string& name) {
+    _name = name;
     return *this;
 }
 
@@ -366,8 +386,8 @@ std::string Path::expand(const std::string& path) {
     return PathImpl::expandImpl(path);
 }
 
-void listRoots(std::vector<std::string>& roots) {
-    return PathImpl::listRootsImpl(roots);
+void Path::listRoots(std::vector<std::string>& roots) {
+    PathImpl::listRootsImpl(roots);
 }
 
 void Path::parseUnix(const std::string& path) {
