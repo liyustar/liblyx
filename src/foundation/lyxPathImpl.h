@@ -1,6 +1,7 @@
 #ifndef LIBLYX_FOUNDATION_LYXPATHIMPL_H_
 #define LIBLYX_FOUNDATION_LYXPATHIMPL_H_
 
+#include <vector>
 #include <string>
 
 namespace lyx {
@@ -12,6 +13,7 @@ class PathImpl {
         static std::string tempImpl();
         static std::string nullImpl();
         static std::string expandImpl(const std::string& path);
+        static void listRootsImpl(std::vector<std::string>& roots);
 };
 
 } // namespace lyx
