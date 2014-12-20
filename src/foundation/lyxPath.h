@@ -130,6 +130,14 @@ inline bool Path::isFile() const {
     return !_name.empty();
 }
 
+inline Path& Path::parse(const std::string& path) {
+    return assign(path);
+}
+
+inline Path& Path::parse(const std::string& path, Style style) {
+    return assign(path, style);
+}
+
 inline const std::string& Path::getNode() const {
     return _node;
 }

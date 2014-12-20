@@ -272,6 +272,15 @@ const std::string& Path::directory(int n) const {
         return _name;
 }
 
+const std::string& Path::operator [] (int n) const {
+    lyx_assert (0 <= n && (unsigned int)n <= _dirs.size());
+
+    if ((unsigned int)n < _dirs.size())
+        return _dirs[n];
+    else
+        return _name;
+}
+
 Path& Path::pushDirectory(const std::string& dir) {
     if (!dir.empty() && dir != ".") {
         if (dir == "..") {
@@ -355,6 +364,135 @@ std::string Path::null() {
 
 std::string Path::expand(const std::string& path) {
     return PathImpl::expandImpl(path);
+}
+
+void Path::parseUnix(const std::string& path) {
+    clear();
+
+    std::string::const_iterator it = path.begin();
+    std::string::const_iterator end = path.end();
+
+    if (it != end) {
+        if (*it == '/') {
+            _absolute = true;
+            it++;
+        }
+        else if (*it == '~') {
+            it++;
+            if (it == end || *it == '/') {
+                Path cwd(home());
+                _dirs = cwd._dirs;
+                _absolute = true;
+            }
+            else it--;
+        }
+
+        while (it != end) {
+            std::string name;
+            while (it != end && *it != '/') name += *it++;
+            if (it != end) {
+                if (_dirs.empty()) {
+                    if (!name.empty() && *(name.rbegin()) == ':') {
+                        throw NotImplementedException();
+                    }
+                    else {
+                        pushDirectory(name);
+                    }
+                }
+                else _name = name;
+                if (it != end) it++;
+            }
+        }
+    }
+}
+
+void Path::parseWindows(const std::string& path) {
+    clear();
+
+    std::string::const_iterator it = path.begin();
+    std::string::const_iterator end = path.end();
+
+    if (it != end) {
+        if (*it == '\\' || *it == '/') {
+            _absolute = true;
+            it++;
+        }
+
+        if (_absolute && it != end && (*it == '\\' || *it == '/')) { // UNC
+            it++;
+            while (it != end && *it != '\\' && *it != '/') _node += *it++;
+            if (it != end) it++;
+        }
+        else if (it != end) {
+            char d = *it++;
+            if (it != end && *it == ':') { // drive letter
+                if (_absolute || !((d >= 'a' && d <= 'z') || (d >= 'A' && d <= 'Z')))
+                    throw PathSyntaxException(path);
+                _absolute = true;
+                _device += d;
+                it++;
+                if (it == end || (*it != '\\' && *it != '/'))
+                    throw PathSyntaxException(path);
+                it++;
+            }
+            else it--;
+        }
+
+        while (it != end) {
+            std::string name;
+            while (it != end && *it != '\\' && *it != '/') name += *it++;
+            if (it != end)
+                pushDirectory(name);
+            else
+                _name = name;
+
+            if (it != end) it++;
+        }
+    }
+    if (!_node.empty() && _dirs.empty() && !_name.empty())
+        makeDirectory();
+}
+
+std::string Path::buildUnix() const {
+    std::string result;
+    if (!_device.empty()) {
+        result.append("/");
+        result.append(_device);
+        result.append(":/");
+    }
+    else if (_absolute) {
+        result.append("/");
+    }
+
+    for (StringVec::const_iterator it = _dirs.begin(); it != _dirs.end(); it++) {
+        result.append(*it);
+        result.append("/");
+    }
+    result.append(_name);
+    return result;
+}
+
+std::string Path::buildWindows() const {
+    std::string result;
+    if (!_node.empty()) {
+        result.append("\\\\");
+        result.append(_node);
+        result.append("\\");
+    }
+    else if (!_device.empty()) {
+        result.append(_device);
+        result.append(":\\");
+    }
+    else if (_absolute) {
+        result.append("\\");
+    }
+
+    for (StringVec::const_iterator it = _dirs.begin(); it != _dirs.end(); it++) {
+        result.append(*it);
+        result.append("\\");
+    }
+    result.append(_name);
+    return result;
 }
 
 } // namespace lyx
