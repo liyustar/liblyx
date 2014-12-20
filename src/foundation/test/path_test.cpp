@@ -11,63 +11,63 @@ TEST(PathTest, testParseUnix1)
     p.parse("", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "");
+    EXPECT_EQ ("", p.toString(Path::PATH_UNIX));
 
     p.parse("/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/");
+    EXPECT_EQ ("/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr");
+    EXPECT_EQ ("/usr", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/");
+    EXPECT_EQ ("/usr/", p.toString(Path::PATH_UNIX));
 
     p.parse("usr/", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/");
+    EXPECT_EQ ("usr/", p.toString(Path::PATH_UNIX));
 
     p.parse("usr", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (0, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr");
+    EXPECT_EQ ("usr", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local");
+    EXPECT_EQ ("/usr/local", p.toString(Path::PATH_UNIX));
 }
 
 
@@ -77,54 +77,54 @@ TEST(PathTest, testParseUnix2)
     p.parse("/usr/local/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/");
+    EXPECT_EQ ("/usr/local/", p.toString(Path::PATH_UNIX));
 
     p.parse("usr/local/", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/local/");
+    EXPECT_EQ ("usr/local/", p.toString(Path::PATH_UNIX));
 
     p.parse("usr/local", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/local");
+    EXPECT_EQ ("usr/local", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/bin", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin");
+    EXPECT_EQ ("/usr/local/bin", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 }
 
 
@@ -134,90 +134,90 @@ TEST(PathTest, testParseUnix3)
     p.parse("//usr/local/bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr//local/bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local//bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/bin//", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/./bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("./usr/local/bin/", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/local/bin/");
+    EXPECT_EQ ("usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("./usr/local/bin/./", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/local/bin/");
+    EXPECT_EQ ("usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("./usr/local/bin/.", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "usr/local/bin/.");
+    EXPECT_EQ ("usr/local/bin/.", p.toString(Path::PATH_UNIX));
 }
 
 
@@ -227,95 +227,95 @@ TEST(PathTest, testParseUnix4)
     p.parse("/usr/local/lib/../bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/lib/../bin/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/bin/");
+    EXPECT_EQ ("/usr/local/bin/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/lib/../../", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/");
+    EXPECT_EQ ("/usr/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/local/lib/..", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "lib");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("lib", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/lib/..");
+    EXPECT_EQ ("/usr/local/lib/..", p.toString(Path::PATH_UNIX));
 
     p.parse("../usr/local/lib/", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 4);
-    EXPECT_TRUE (p[0] == "..");
-    EXPECT_TRUE (p[1] == "usr");
-    EXPECT_TRUE (p[2] == "local");
-    EXPECT_TRUE (p[3] == "lib");
+    EXPECT_EQ (4, p.depth());
+    EXPECT_EQ ("..", p[0]);
+    EXPECT_EQ ("usr", p[1]);
+    EXPECT_EQ ("local", p[2]);
+    EXPECT_EQ ("lib", p[3]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "../usr/local/lib/");
+    EXPECT_EQ ("../usr/local/lib/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/../lib/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "lib");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("lib", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/lib/");
+    EXPECT_EQ ("/lib/", p.toString(Path::PATH_UNIX));
 
     p.parse("/usr/../../lib/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "lib");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("lib", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/lib/");
+    EXPECT_EQ ("/lib/", p.toString(Path::PATH_UNIX));
 
     p.parse("local/../../lib/", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "..");
-    EXPECT_TRUE (p[1] == "lib");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("..", p[0]);
+    EXPECT_EQ ("lib", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "../lib/");
+    EXPECT_EQ ("../lib/", p.toString(Path::PATH_UNIX));
 
     p.parse("a/b/c/d", Path::PATH_UNIX);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "a");
-    EXPECT_TRUE (p[1] == "b");
-    EXPECT_TRUE (p[2] == "c");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("a", p[0]);
+    EXPECT_EQ ("b", p[1]);
+    EXPECT_EQ ("c", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "a/b/c/d");
+    EXPECT_EQ ("a/b/c/d", p.toString(Path::PATH_UNIX));
 }
 
 
@@ -325,13 +325,13 @@ TEST(PathTest, testParseUnix5)
     p.parse("/c:/windows/system32/", Path::PATH_UNIX);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.getDevice() == "c");
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "windows");
-    EXPECT_TRUE (p[1] == "system32");
+    EXPECT_EQ ("c", p.getDevice());
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("windows", p[0]);
+    EXPECT_EQ ("system32", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/c:/windows/system32/");	
+    EXPECT_EQ ("/c:/windows/system32/", p.toString(Path::PATH_UNIX));	
 }
 
 
@@ -341,60 +341,60 @@ TEST(PathTest, testParseWindows1)
     p.parse("", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "");
+    EXPECT_EQ ("", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\");
+    EXPECT_EQ ("\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\");
+    EXPECT_EQ ("\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr");
+    EXPECT_EQ ("\\usr", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\usr", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
+    EXPECT_EQ (0, p.depth());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr");
+    EXPECT_EQ ("\\usr", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\");
+    EXPECT_EQ ("\\usr\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\usr\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\");
+    EXPECT_EQ ("\\usr\\", p.toString(Path::PATH_WINDOWS));
 }
 
 
@@ -404,134 +404,134 @@ TEST(PathTest, testParseWindows2)
     p.parse("usr/", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\");
+    EXPECT_EQ ("usr\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("usr", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (0, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr");
+    EXPECT_EQ ("usr", p.toString(Path::PATH_WINDOWS));
 
     p.parse("usr\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\");
+    EXPECT_EQ ("usr\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local");
+    EXPECT_EQ ("\\usr\\local", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\usr\\local", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local");
+    EXPECT_EQ ("\\usr\\local", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\");
+    EXPECT_EQ ("\\usr\\local\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("usr/local/", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\local\\");
+    EXPECT_EQ ("usr\\local\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("usr/local", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\local");
+    EXPECT_EQ ("usr\\local", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/bin", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin");
+    EXPECT_EQ ("\\usr\\local\\bin", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr//local/bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local//bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/bin//", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 }
 
 
@@ -541,139 +541,139 @@ TEST(PathTest, testParseWindows3)
     p.parse("/usr/local/./bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("./usr/local/bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\local\\bin\\");
+    EXPECT_EQ ("usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("./usr/local/bin/./", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\local\\bin\\");
+    EXPECT_EQ ("usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("./usr/local/bin/.", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "usr\\local\\bin\\.");
+    EXPECT_EQ ("usr\\local\\bin\\.", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/lib/../bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/lib/../bin/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\usr\\local\\lib\\..\\bin\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "bin");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("bin", p[2]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\bin\\");
+    EXPECT_EQ ("\\usr\\local\\bin\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/lib/../../", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "usr");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("usr", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\");
+    EXPECT_EQ ("\\usr\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/local/lib/..", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "usr");
-    EXPECT_TRUE (p[1] == "local");
-    EXPECT_TRUE (p[2] == "lib");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("usr", p[0]);
+    EXPECT_EQ ("local", p[1]);
+    EXPECT_EQ ("lib", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\usr\\local\\lib\\..");
+    EXPECT_EQ ("\\usr\\local\\lib\\..", p.toString(Path::PATH_WINDOWS));
 
     p.parse("../usr/local/lib/", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 4);
-    EXPECT_TRUE (p[0] == "..");
-    EXPECT_TRUE (p[1] == "usr");
-    EXPECT_TRUE (p[2] == "local");
-    EXPECT_TRUE (p[3] == "lib");
+    EXPECT_EQ (4, p.depth());
+    EXPECT_EQ ("..", p[0]);
+    EXPECT_EQ ("usr", p[1]);
+    EXPECT_EQ ("local", p[2]);
+    EXPECT_EQ ("lib", p[3]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "..\\usr\\local\\lib\\");
+    EXPECT_EQ ("..\\usr\\local\\lib\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/../lib/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "lib");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("lib", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\lib\\");
+    EXPECT_EQ ("\\lib\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("/usr/../../lib/", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "lib");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("lib", p[0]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\lib\\");
+    EXPECT_EQ ("\\lib\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("local/../../lib/", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "..");
-    EXPECT_TRUE (p[1] == "lib");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("..", p[0]);
+    EXPECT_EQ ("lib", p[1]);
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "..\\lib\\");
+    EXPECT_EQ ("..\\lib\\", p.toString(Path::PATH_WINDOWS));
 }
 
 
@@ -683,91 +683,91 @@ TEST(PathTest, testParseWindows4)
     p.parse("\\\\server\\files", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "files");
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("files", p[0]);
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\files\\");
+    EXPECT_EQ ("\\\\server\\files\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\\\server\\files\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "files");
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("files", p[0]);
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\files\\");
+    EXPECT_EQ ("\\\\server\\files\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\\\server\\files\\file", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "files");
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("files", p[0]);
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\files\\file");
+    EXPECT_EQ ("\\\\server\\files\\file", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\\\server\\files\\dir\\file", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "files");
-    EXPECT_TRUE (p[1] == "dir");
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("files", p[0]);
+    EXPECT_EQ ("dir", p[1]);
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\files\\dir\\file");
+    EXPECT_EQ ("\\\\server\\files\\dir\\file", p.toString(Path::PATH_WINDOWS));
 
     p.parse("\\\\server\\files\\dir\\file", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 2);
-    EXPECT_TRUE (p[0] == "files");
-    EXPECT_TRUE (p[1] == "dir");
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (2, p.depth());
+    EXPECT_EQ ("files", p[0]);
+    EXPECT_EQ ("dir", p[1]);
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\files\\dir\\file");	
+    EXPECT_EQ ("\\\\server\\files\\dir\\file", p.toString(Path::PATH_WINDOWS));	
 
     p.parse("\\\\server", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
-    EXPECT_TRUE (p.getNode() == "server");
+    EXPECT_EQ (0, p.depth());
+    EXPECT_EQ ("server", p.getNode());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "\\\\server\\");
+    EXPECT_EQ ("\\\\server\\", p.toString(Path::PATH_WINDOWS));
 
     p.parse("c:\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
-    EXPECT_TRUE (p.getDevice() == "c");
+    EXPECT_EQ (0, p.depth());
+    EXPECT_EQ ("c", p.getDevice());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\");	
+    EXPECT_EQ ("c:\\", p.toString(Path::PATH_WINDOWS));	
 
     p.parse("c:\\WinNT", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 0);
-    EXPECT_TRUE (p.getDevice() == "c");
+    EXPECT_EQ (0, p.depth());
+    EXPECT_EQ ("c", p.getDevice());
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\WinNT");	
+    EXPECT_EQ ("c:\\WinNT", p.toString(Path::PATH_WINDOWS));	
 
     p.parse("c:\\WinNT\\", Path::PATH_WINDOWS);
     EXPECT_TRUE (!p.isRelative());
     EXPECT_TRUE (p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 1);
-    EXPECT_TRUE (p[0] == "WinNT");
-    EXPECT_TRUE (p.getDevice() == "c");
+    EXPECT_EQ (1, p.depth());
+    EXPECT_EQ ("WinNT", p[0]);
+    EXPECT_EQ ("c", p.getDevice());
     EXPECT_TRUE (p.isDirectory());
     EXPECT_TRUE (!p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\WinNT\\");
+    EXPECT_EQ ("c:\\WinNT\\", p.toString(Path::PATH_WINDOWS));
 
     try
     {
@@ -792,24 +792,24 @@ TEST(PathTest, testParseWindows4)
     p.parse("a\\b\\c\\d", Path::PATH_WINDOWS);
     EXPECT_TRUE (p.isRelative());
     EXPECT_TRUE (!p.isAbsolute());
-    EXPECT_TRUE (p.depth() == 3);
-    EXPECT_TRUE (p[0] == "a");
-    EXPECT_TRUE (p[1] == "b");
-    EXPECT_TRUE (p[2] == "c");
+    EXPECT_EQ (3, p.depth());
+    EXPECT_EQ ("a", p[0]);
+    EXPECT_EQ ("b", p[1]);
+    EXPECT_EQ ("c", p[2]);
     EXPECT_TRUE (!p.isDirectory());
     EXPECT_TRUE (p.isFile());
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "a\\b\\c\\d");
+    EXPECT_EQ ("a\\b\\c\\d", p.toString(Path::PATH_WINDOWS));
 }
 TEST(PathTest, testTryParse)
 {
     Path p;
     EXPECT_TRUE (p.tryParse("/etc/passwd"));
-    EXPECT_TRUE (p.toString() == "/etc/passwd");
+    EXPECT_EQ ("/etc/passwd", p.toString());
 
     EXPECT_TRUE (p.tryParse("c:\\windows\\system", Path::PATH_WINDOWS));
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\windows\\system");
+    EXPECT_EQ ("c:\\windows\\system", p.toString(Path::PATH_WINDOWS));
     EXPECT_TRUE (!p.tryParse("c:foo.bar", Path::PATH_WINDOWS));
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\windows\\system");
+    EXPECT_EQ ("c:\\windows\\system", p.toString(Path::PATH_WINDOWS));
 }
 
 
@@ -839,29 +839,29 @@ TEST(PathTest, testStatics)
 TEST(PathTest, testBaseNameExt)
 {
     Path p("foo.bar");
-    EXPECT_TRUE (p.getFileName() == "foo.bar");
-    EXPECT_TRUE (p.getBaseName() == "foo");
-    EXPECT_TRUE (p.getExtension() == "bar");
+    EXPECT_EQ ("foo.bar", p.getFileName());
+    EXPECT_EQ ("foo", p.getBaseName());
+    EXPECT_EQ ("bar", p.getExtension());
 
     p.setBaseName("readme");
-    EXPECT_TRUE (p.getFileName() == "readme.bar");
-    EXPECT_TRUE (p.getBaseName() == "readme");
-    EXPECT_TRUE (p.getExtension() == "bar");
+    EXPECT_EQ ("readme.bar", p.getFileName());
+    EXPECT_EQ ("readme", p.getBaseName());
+    EXPECT_EQ ("bar", p.getExtension());
 
     p.setExtension("txt");
-    EXPECT_TRUE (p.getFileName() == "readme.txt");
-    EXPECT_TRUE (p.getBaseName() == "readme");
-    EXPECT_TRUE (p.getExtension() == "txt");
+    EXPECT_EQ ("readme.txt", p.getFileName());
+    EXPECT_EQ ("readme", p.getBaseName());
+    EXPECT_EQ ("txt", p.getExtension());
 
     p.setExtension("html");
-    EXPECT_TRUE (p.getFileName() == "readme.html");
-    EXPECT_TRUE (p.getBaseName() == "readme");
-    EXPECT_TRUE (p.getExtension() == "html");
+    EXPECT_EQ ("readme.html", p.getFileName());
+    EXPECT_EQ ("readme", p.getBaseName());
+    EXPECT_EQ ("html", p.getExtension());
 
     p.setBaseName("index");
-    EXPECT_TRUE (p.getFileName() == "index.html");
-    EXPECT_TRUE (p.getBaseName() == "index");
-    EXPECT_TRUE (p.getExtension() == "html");
+    EXPECT_EQ ("index.html", p.getFileName());
+    EXPECT_EQ ("index", p.getBaseName());
+    EXPECT_EQ ("html", p.getExtension());
 }
 
 
@@ -870,17 +870,17 @@ TEST(PathTest, testAbsolute)
     Path base("C:\\Program Files\\", Path::PATH_WINDOWS);
     Path rel("lyx");
     Path abs = rel.absolute(base);
-    EXPECT_TRUE (abs.toString(Path::PATH_WINDOWS) == "C:\\Program Files\\lyx");
+    EXPECT_EQ ("C:\\Program Files\\lyx", abs.toString(Path::PATH_WINDOWS));
 
     base.parse("/usr/local", Path::PATH_UNIX);
     rel.parse("lyx/include", Path::PATH_UNIX);
     abs = rel.absolute(base);
-    EXPECT_TRUE (abs.toString(Path::PATH_UNIX) == "/usr/local/lyx/include");
+    EXPECT_EQ ("/usr/local/lyx/include", abs.toString(Path::PATH_UNIX));
 
     base.parse("/usr/local/bin", Path::PATH_UNIX);
     rel.parse("../lyx/include", Path::PATH_UNIX);
     abs = rel.absolute(base);
-    EXPECT_TRUE (abs.toString(Path::PATH_UNIX) == "/usr/local/lyx/include");
+    EXPECT_EQ ("/usr/local/lyx/include", abs.toString(Path::PATH_UNIX));
 }
 
 /*
@@ -914,39 +914,39 @@ TEST(PathTest, testParent)
 {
     Path p("/usr/local/include", Path::PATH_UNIX);
     p.makeParent();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/");
+    EXPECT_EQ ("/usr/local/", p.toString(Path::PATH_UNIX));
     p.makeParent();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/");
+    EXPECT_EQ ("/usr/", p.toString(Path::PATH_UNIX));
     p.makeParent();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/");
+    EXPECT_EQ ("/", p.toString(Path::PATH_UNIX));
     p.makeParent();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/");
+    EXPECT_EQ ("/", p.toString(Path::PATH_UNIX));
 }
 
 
 TEST(PathTest, testForDirectory)
 {
     Path p = Path::forDirectory("/usr/local/include", Path::PATH_UNIX);
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/include/");
+    EXPECT_EQ ("/usr/local/include/", p.toString(Path::PATH_UNIX));
 
     p = Path::forDirectory("/usr/local/include/", Path::PATH_UNIX);
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "/usr/local/include/");
+    EXPECT_EQ ("/usr/local/include/", p.toString(Path::PATH_UNIX));
 }
 
 
 TEST(PathTest, testExpand)
 {
     std::string s = Path::expand("~/.bashrc");
-    EXPECT_TRUE (s == Path::expand("$HOME/.bashrc"));
+    EXPECT_EQ (Path::expand("$HOME/.bashrc"), s);
     /*
     EXPECT_TRUE (s == Environment::get("HOME") + "/.bashrc" || 
             s == Environment::get("HOME") + "//.bashrc");
             */
     Path p(s);
     s = Path::expand("$HOME/.bashrc");
-    EXPECT_TRUE (s == Path::expand("~/.bashrc"));
+    EXPECT_EQ (Path::expand("~/.bashrc"), s);
     s = Path::expand("${HOME}/.bashrc");
-    EXPECT_TRUE (s == Path::expand("~/.bashrc"));
+    EXPECT_EQ (Path::expand("~/.bashrc"), s);
 }
 
 
@@ -981,8 +981,8 @@ TEST(PathTest, testSwap)
     Path p1("c:\\temp\\foo.bar");
     Path p2("\\\\server\\files\\foo.bar");
     p1.swap(p2);
-    EXPECT_TRUE (p1.toString() == "\\\\server\\files\\foo.bar");
-    EXPECT_TRUE (p2.toString() == "c:\\temp\\foo.bar");
+    EXPECT_EQ ("\\\\server\\files\\foo.bar", p1.toString());
+    EXPECT_EQ ("c:\\temp\\foo.bar", p2.toString());
 }
 
 
@@ -990,19 +990,19 @@ TEST(PathTest, testResolve)
 {
     Path p("c:\\foo\\", Path::PATH_WINDOWS);
     p.resolve("test.dat");
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\foo\\test.dat");
+    EXPECT_EQ ("c:\\foo\\test.dat", p.toString(Path::PATH_WINDOWS));
 
     p.assign("c:\\foo\\", Path::PATH_WINDOWS);
     p.resolve(Path("d:\\bar.txt", Path::PATH_WINDOWS));
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "d:\\bar.txt");
+    EXPECT_EQ ("d:\\bar.txt", p.toString(Path::PATH_WINDOWS));
 
     p.assign("c:\\foo\\bar.txt", Path::PATH_WINDOWS);
     p.resolve("foo.txt");
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\foo\\foo.txt");
+    EXPECT_EQ ("c:\\foo\\foo.txt", p.toString(Path::PATH_WINDOWS));
 
     p.assign("c:\\foo\\bar\\", Path::PATH_WINDOWS);
     p.resolve(Path("..\\baz\\test.dat", Path::PATH_WINDOWS));
-    EXPECT_TRUE (p.toString(Path::PATH_WINDOWS) == "c:\\foo\\baz\\test.dat");
+    EXPECT_EQ ("c:\\foo\\baz\\test.dat", p.toString(Path::PATH_WINDOWS));
 }
 
 
@@ -1012,11 +1012,11 @@ TEST(PathTest, testPushPop)
     p.pushDirectory("a");
     p.pushDirectory("b");
     p.pushDirectory("c");
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "a/b/c/");
+    EXPECT_EQ ("a/b/c/", p.toString(Path::PATH_UNIX));
 
     p.popDirectory();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "a/b/");
+    EXPECT_EQ ("a/b/", p.toString(Path::PATH_UNIX));
 
     p.popFrontDirectory();
-    EXPECT_TRUE (p.toString(Path::PATH_UNIX) == "b/");
+    EXPECT_EQ ("b/", p.toString(Path::PATH_UNIX));
 }
