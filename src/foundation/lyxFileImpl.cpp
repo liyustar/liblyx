@@ -1,4 +1,5 @@
 #include "lyxFileImpl.h"
+#include "lyxPath.h"
 #include "lyxBuffer.h"
 #include "lyxException.h"
 #include <errno.h>
@@ -138,13 +139,10 @@ bool FileImpl::isDeviceImpl() const {
 bool FileImpl::isHiddenImpl() const {
     assert (!_path.empty());
 
-    throw NotImplementedException();
-    /*
     Path p(_path);
     p.makeFile();
 
     return p.getFileName()[0] == '.';
-    */
 }
 
 Timestamp FileImpl::createdImpl() const {

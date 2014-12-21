@@ -25,6 +25,12 @@ DirectoryIterator::DirectoryIterator(const File& file): _path(file.path()), _pIm
     _file = _path;
 }
 
+DirectoryIterator::DirectoryIterator(const Path& path): _path(path), _pImpl(new DirectoryIteratorImpl(path.toString())) {
+    _path.makeDirectory();
+    _path.setFileName(_pImpl->get());
+    _file = _path;
+}
+
 DirectoryIterator::~DirectoryIterator() {
     if (_pImpl) _pImpl->release();
 }

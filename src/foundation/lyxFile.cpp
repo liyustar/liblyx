@@ -1,4 +1,5 @@
 #include "lyxFile.h"
+#include "lyxDirectoryIterator.h"
 #include "lyxException.h"
 #include <cassert>
 
@@ -116,11 +117,30 @@ File& File::setExecutable(bool flag) {
 }
 
 void File::copyTo(const std::string& path) const {
-    throw NotImplementedException();
+    Path src(getPathImpl());
+    Path dest(path);
+    File destFile(path);
+    if ((destFile.exists() && destFile.isDirectory()) || dest.isDirectory()) {
+        dest.makeDirectory();
+        dest.setFileName(src.getFileName());
+    }
+    if (isDirectory())
+        copyDirecotry(dest.toString());
+    else
+        copyToImpl(dest.toString());
 }
 
 void File::copyDirecotry(const std::string& path) const {
-    throw NotImplementedException();
+    File target(path);
+    target.createDirectories();
+
+    Path src(getPathImpl());
+    src.makeFile();
+    DirectoryIterator it(src);
+    DirectoryIterator end;
+    for (; it != end; ++it) {
+        it->copyTo(path);
+    }
 }
 
 void File::moveTo(const std::string& path) {
@@ -154,15 +174,36 @@ bool File::createDirectory() {
 }
 
 void File::createDirectories() {
-    throw NotImplementedException();
+    if (!exists()) {
+        Path p(getPathImpl());
+        p.makeDirectory();
+        if (p.depth() > 1) {
+            p.makeParent();
+            File f(p);
+            f.createDirectories();
+        }
+        createDirectoryImpl();
+    }
 }
 
 void File::list(std::vector<std::string>& files) const {
-    throw NotImplementedException();
+    files.clear();
+    DirectoryIterator it(*this);
+    DirectoryIterator end;
+    while (it != end) {
+        files.push_back(it.name());
+        ++it;
+    }
 }
 
 void File::list(std::vector<File>& files) const {
-    throw NotImplementedException();
+    files.clear();
+    DirectoryIterator it(*this);
+    DirectoryIterator end;
+    while (it != end) {
+        files.push_back(*it);
+        ++it;
+    }
 }
 
 void File::handleLastError(const std::string& path) {

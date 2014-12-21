@@ -23,7 +23,7 @@ class DirectoryIteratorImpl {
         int         _rc;
 };
 
-const std::string& DirectoryIteratorImpl::get() const {
+inline const std::string& DirectoryIteratorImpl::get() const {
     return _current;
 }
 
