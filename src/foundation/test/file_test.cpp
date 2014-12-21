@@ -3,6 +3,7 @@
 #include "lyxFile.h"
 #include "lyxTemporaryFile.h"
 #include "lyxException.h"
+#include <fstream>
 
 using namespace lyx;
 
@@ -179,7 +180,7 @@ TEST(FileTest, testFileAttributes2) {
 TEST(FileTest, testFileAttributes3) {
     File f("/dev/console");
 
-    EXPECT_TRUE (f.isDivice());
+    EXPECT_TRUE (f.isDevice());
     EXPECT_TRUE (!f.isFile());
     EXPECT_TRUE (!f.isDirectory());
 }
@@ -200,8 +201,8 @@ TEST(FileTest, testCompare) {
     EXPECT_TRUE (!(f2 <= f1));
     EXPECT_TRUE (f2 > f1);
     EXPECT_TRUE (f2 >= f1);
-    EXPECT_TRUE (!(f1 < f2));
-    EXPECT_TRUE (!(f1 <= f2));
+    EXPECT_TRUE (!(f1 > f2));
+    EXPECT_TRUE (!(f1 >= f2));
 
     EXPECT_TRUE (f1 <= f3);
     EXPECT_TRUE (f1 >= f3);
@@ -226,7 +227,7 @@ TEST(FileTest, testSize) {
     ostr.close();
     File f("testfile.dat");
     EXPECT_TRUE (f.getSize() > 0);
-    EXPECT_EQ (13, f.getSize());
+    EXPECT_EQ (14, f.getSize());
     f.setSize(0);
     EXPECT_EQ (0, f.getSize());
 }
@@ -322,15 +323,15 @@ TEST(FileTest, testCopyDirectory) {
     fd2.createDirectories();
     Path pf1(pd1, "testfile1.dat");
     std::ofstream ostr1(pf1.toString().c_str());
-    ostr1 << "Hello, world!" << std::end;
+    ostr1 << "Hello, world!" << std::endl;
     ostr1.close();
     Path pf2(pd1, "testfile2.dat");
     std::ofstream ostr2(pf2.toString().c_str());
-    ostr2 << "Hello, world!" << std::end;
+    ostr2 << "Hello, world!" << std::endl;
     ostr2.close();
     Path pf3(pd2, "testfile3.dat");
     std::ofstream ostr3(pf3.toString().c_str());
-    ostr3 << "Hello, world!" << std::end;
+    ostr3 << "Hello, world!" << std::endl;
     ostr3.close();
 
     File fd3("testdir2");
