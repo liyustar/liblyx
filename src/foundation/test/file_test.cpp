@@ -262,11 +262,9 @@ TEST(FileTest, testDirectory) {
 
     std::set<std::string> fs;
     fs.insert(files.begin(), files.end());
-    /*
-    EXPECT_EQ (fs.find("file1") != fs.end());
-    EXPECT_EQ (fs.find("file2") != fs.end());
-    EXPECT_EQ (fs.find("file3") != fs.end());
-    */
+    EXPECT_TRUE (fs.find("file1") != fs.end());
+    EXPECT_TRUE (fs.find("file2") != fs.end());
+    EXPECT_TRUE (fs.find("file3") != fs.end());
 
     File dd(Path("testdir/testdir2/testdir3", Path::PATH_UNIX));
     dd.createDirectories();
@@ -349,7 +347,7 @@ TEST(FileTest, testCopyDirectory) {
     EXPECT_TRUE (fd1t.exists());
     EXPECT_TRUE (fd1t.isDirectory());
 
-    Path pd2t("subdir");
+    Path pd2t(pd1t, "subdir");
     File fd2t(pd2t);
     EXPECT_TRUE (fd2t.exists());
     EXPECT_TRUE (fd2t.isDirectory());

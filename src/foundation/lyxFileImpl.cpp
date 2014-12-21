@@ -2,6 +2,7 @@
 #include "lyxPath.h"
 #include "lyxBuffer.h"
 #include "lyxException.h"
+#include "lyxBugcheck.h"
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -10,7 +11,6 @@
 #include <utime.h>
 #include <utility>
 #include <cstring>
-#include <cassert>
 
 namespace lyx {
 
@@ -38,14 +38,14 @@ void FileImpl::setPathImpl(const std::string& path) {
 }
 
 bool FileImpl::existsImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     return stat(_path.c_str(), &st) == 0;
 }
 
 bool FileImpl::canReadImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0) {
@@ -61,7 +61,7 @@ bool FileImpl::canReadImpl() const {
 }
 
 bool FileImpl::canWriteImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0) {
@@ -77,7 +77,7 @@ bool FileImpl::canWriteImpl() const {
 }
 
 bool FileImpl::canExecuteImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0) {
@@ -93,7 +93,7 @@ bool FileImpl::canExecuteImpl() const {
 }
 
 bool FileImpl::isFileImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -104,7 +104,7 @@ bool FileImpl::isFileImpl() const {
 }
 
 bool FileImpl::isDirectoryImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -115,7 +115,7 @@ bool FileImpl::isDirectoryImpl() const {
 }
 
 bool FileImpl::isLinkImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -126,7 +126,7 @@ bool FileImpl::isLinkImpl() const {
 }
 
 bool FileImpl::isDeviceImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -137,7 +137,7 @@ bool FileImpl::isDeviceImpl() const {
 }
 
 bool FileImpl::isHiddenImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     Path p(_path);
     p.makeFile();
@@ -146,7 +146,7 @@ bool FileImpl::isHiddenImpl() const {
 }
 
 Timestamp FileImpl::createdImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -157,7 +157,7 @@ Timestamp FileImpl::createdImpl() const {
 }
 
 Timestamp FileImpl::getLastModifiedImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -168,7 +168,7 @@ Timestamp FileImpl::getLastModifiedImpl() const {
 }
 
 void FileImpl::setLastModifiedImpl(const Timestamp& ts) {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct utimbuf tb;
     tb.actime  = ts.epochTime();
@@ -178,7 +178,7 @@ void FileImpl::setLastModifiedImpl(const Timestamp& ts) {
 }
 
 FileImpl::FileSizeImpl FileImpl::getSizeImpl() const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) == 0)
@@ -188,14 +188,14 @@ FileImpl::FileSizeImpl FileImpl::getSizeImpl() const {
     return 0;
 }
 void FileImpl::setSizeImpl(FileSizeImpl size) {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     if (truncate(_path.c_str(), size) != 0)
         handleLastErrorImpl(_path);
 }
 
 void FileImpl::setWriteableImpl(bool flag) {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) != 0)
@@ -213,7 +213,7 @@ void FileImpl::setWriteableImpl(bool flag) {
 }
 
 void FileImpl::setExecutableImpl(bool flag) {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     struct stat st;
     if (stat(_path.c_str(), &st) != 0)
@@ -231,20 +231,56 @@ void FileImpl::setExecutableImpl(bool flag) {
 }
 
 void FileImpl::copyToImpl(const std::string& path) const {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
-    throw NotImplementedException();
+    int sd = open(_path.c_str(), O_RDONLY);
+    if (sd == -1) handleLastErrorImpl(_path);
+
+    struct stat st;
+    if (fstat(sd, &st) != 0) {
+        close(sd);
+        handleLastErrorImpl(_path);
+    }
+    const long blockSize = st.st_blksize;
+
+    int dd = open(path.c_str(), O_CREAT | O_TRUNC | O_WRONLY, st.st_mode);
+    if (dd == -1) {
+        close(sd);
+        handleLastErrorImpl(path);
+    }
+    Buffer<char> buffer(blockSize);
+    try {
+        int n;
+        while ((n = read(sd, buffer.begin(), blockSize)) > 0) {
+            if (write(dd, buffer.begin(), n) != n)
+                handleLastErrorImpl(path);
+        }
+        if (n < 0)
+            handleLastErrorImpl(_path);
+    }
+    catch (...) {
+        close(sd);
+        close(dd);
+        throw;
+    }
+    close(sd);
+    if (fsync(dd) != 0) {
+        close(dd);
+        handleLastErrorImpl(path);
+    }
+    if (close(dd) != 0)
+        handleLastErrorImpl(path);
 }
 
 void FileImpl::renameToImpl(const std::string& path) {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     if (rename(_path.c_str(), path.c_str()) != 0)
         handleLastErrorImpl(_path);
 }
 
 void FileImpl::removeImpl() {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     int rc;
     if (!isLinkImpl() && isDirectoryImpl())
@@ -256,7 +292,7 @@ void FileImpl::removeImpl() {
 
 
 bool FileImpl::createFileImpl() {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     const int    DEFAULT_CREATEFILE_FLAG = O_WRONLY | O_CREAT | O_EXCL;
     const mode_t DEFAULT_CREATEFILE_MODE = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
@@ -273,7 +309,7 @@ bool FileImpl::createFileImpl() {
 }
 
 bool FileImpl::createDirectoryImpl() {
-    assert (!_path.empty());
+    lyx_assert (!_path.empty());
 
     const mode_t DEFAULT_CREATEDIR_MODE = S_IRWXU | S_IRWXG | S_IRWXO;
     if (existsImpl() && isDirectoryImpl())
