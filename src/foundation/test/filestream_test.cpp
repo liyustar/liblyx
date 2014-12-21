@@ -1,11 +1,14 @@
 #include <gtest/gtest.h>
 
 #include "lyxFileStream.h"
+#include "lyxTemporaryFile.h"
 
 using namespace lyx;
 
 TEST(FileStreamTest, Read) {
     std::string file("testfile.txt");
+
+    TemporaryFile::registerForDeletion(file);
 
     FileOutputStream fos(file, std::ios::binary);
     fos << "sometestdata";
@@ -21,6 +24,8 @@ TEST(FileStreamTest, Read) {
 
 TEST(FileStreamTest, Write) {
     std::string file("dummy_file.txt");
+
+    TemporaryFile::registerForDeletion(file);
 
     FileOutputStream fos(file);
     EXPECT_TRUE(fos.good());
@@ -38,6 +43,8 @@ TEST(FileStreamTest, ReadWrite) {
     char tmp[] = {'\xc3', '\x9f', '\xc3', '\x84', '\xc3', '\x96', '\xc3', '\x9c', '\xc3', '\xa4', '\xc3', '\xb6', '\xc3', '\xbc', '\0'};
     std::string file(tmp);
     file = "dummy_" + file + ".txt";
+
+    TemporaryFile::registerForDeletion(file);
 
     FileStream fos(file);
     EXPECT_TRUE(fos.good());
