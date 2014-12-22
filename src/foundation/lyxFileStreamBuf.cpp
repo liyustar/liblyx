@@ -1,7 +1,7 @@
 #include "lyxFileStreamBuf.h"
 #include "lyxFile.h"
 #include "lyxException.h"
-#include <cassert>
+#include "lyxBugcheck.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -20,7 +20,7 @@ FileStreamBuf::~FileStreamBuf() {
 }
 
 void FileStreamBuf::open(const std::string& path, std::ios::openmode mode) {
-    assert (_fd == -1);
+    lyx_assert (_fd == -1);
 
     _pos = 0;
     _path = path;

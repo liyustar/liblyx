@@ -3,9 +3,9 @@
 #include "lyxThread.h"
 #include "lyxThreadLocal.h"
 #include "lyxEvent.h"
+#include "lyxBugcheck.h"
 #include <sstream>
 #include <ctime>
-#include <cassert>
 
 namespace lyx {
 
@@ -59,7 +59,7 @@ void PooledThread::start() {
 void PooledThread::start(Thread::Priority priority, Runnable& target) {
     FastMutex::ScopedLock lock(_mutex);
 
-    assert (_pTarget == 0);
+    lyx_assert (_pTarget == 0);
 
     _pTarget = &target;
     _thread.setPriority(priority);
@@ -81,7 +81,7 @@ void PooledThread::start(Thread::Priority priority, Runnable& target, const std:
     _thread.setName(fullName);
     _thread.setPriority(priority);
 
-    assert (_pTarget == 0);
+    lyx_assert (_pTarget == 0);
 
     _pTarget = &target;
     _targetReady.set();
@@ -165,7 +165,7 @@ ThreadPool::ThreadPool(int minCapacity,
     _age(0),
     _stackSize(stackSize)
 {
-    assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
+    lyx_assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
 
     for (int i = 0; i < _minCapacity; i++) {
         PooledThread* pThread = createThread();
@@ -187,7 +187,7 @@ ThreadPool::ThreadPool(const std::string& name,
     _age(0),
     _stackSize(stackSize)
 {
-    assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
+    lyx_assert (minCapacity >= 1 && maxCapacity >= minCapacity && idleTime > 0);
 
     for (int i = 0; i < _minCapacity; i++) {
         PooledThread* pThread = createThread();
@@ -201,14 +201,14 @@ ThreadPool::~ThreadPool() {
         stopAll();
     }
     catch (...) {
-        assert (0);
+        lyx_unexpected();
     }
 }
 
 void ThreadPool::addCapacity(int n) {
     FastMutex::ScopedLock lock(_mutex);
 
-    assert (_maxCapacity + n >= _minCapacity);
+    lyx_assert (_maxCapacity + n >= _minCapacity);
     _maxCapacity += n;
     housekeep();
 }

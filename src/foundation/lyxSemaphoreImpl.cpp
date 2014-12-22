@@ -1,11 +1,11 @@
 #include "lyxSemaphoreImpl.h"
+#include "lyxBugcheck.h"
 #include <sys/time.h>
-#include <cassert>
 
 namespace lyx {
 
 SemaphoreImpl::SemaphoreImpl(int n, int max): _n(n), _max(max) {
-    assert (n >= 0 && max > 0 && n <= max);
+    lyx_assert (n >= 0 && max > 0 && n <= max);
 
     if (pthread_mutex_init(&_mutex, NULL))
         throw SystemException("cannot create semaphore (mutex)");

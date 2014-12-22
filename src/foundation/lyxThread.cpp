@@ -3,8 +3,8 @@
 #include "lyxException.h"
 #include "lyxThreadLocal.h"
 #include "lyxAtomicCounter.h"
+#include "lyxBugcheck.h"
 #include <sstream>
-#include <cassert>
 
 namespace lyx {
 
@@ -59,7 +59,7 @@ bool Thread::tryJoin(long milliseconds) {
 
 bool Thread::trySleep(long milliseconds) {
     Thread* pT = Thread::current();
-    assert(pT != NULL);
+    lyx_assert(pT != NULL);
     return !(pT->_event.tryWait(milliseconds));
 }
 

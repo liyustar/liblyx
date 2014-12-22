@@ -1,6 +1,6 @@
 #include "lyxTimer.h"
 #include "lyxException.h"
-#include <cassert>
+#include "lyxBugcheck.h"
 
 namespace lyx {
 
@@ -10,7 +10,7 @@ Timer::Timer(long startInterval, long periodicInterval):
     _skipped(0),
     _pCallback(0)
 {
-    assert (startInterval >= 0 && periodicInterval >= 0);
+    lyx_assert (startInterval >= 0 && periodicInterval >= 0);
 }
 
 Timer::~Timer() {
@@ -18,7 +18,7 @@ Timer::~Timer() {
         stop();
     }
     catch (...) {
-        assert(0);
+        lyx_unexpected();
     }
 }
 
@@ -78,7 +78,7 @@ void Timer::restart() {
 }
 
 void Timer::restart(long milliseconds) {
-    assert (milliseconds >= 0);
+    lyx_assert (milliseconds >= 0);
     FastMutex::ScopedLock lock(_mutex);
     if (_pCallback) {
         _periodicInterval = milliseconds;
@@ -92,7 +92,7 @@ long Timer::getStartInterval() const {
 }
 
 void Timer::setStartInterval(long milliseconds) {
-    assert (milliseconds >= 0);
+    lyx_assert (milliseconds >= 0);
     FastMutex::ScopedLock lock(_mutex);
     _startInterval = milliseconds;
 }
@@ -103,7 +103,7 @@ long Timer::getPeriodicInterval() const {
 }
 
 void Timer::setPeriodicInterval(long milliseconds) {
-    assert (milliseconds >= 0);
+    lyx_assert (milliseconds >= 0);
     FastMutex::ScopedLock lock(_mutex);
     _periodicInterval = milliseconds;
 }
@@ -136,13 +136,13 @@ void Timer::run() {
                 _pCallback->invoke(*this);
             }
             catch (Exception& exc) {
-                assert(0);
+                lyx_unexpected();
             }
             catch (std::exception& exc) {
-                assert(0);
+                lyx_unexpected();
             }
             catch (...) {
-                assert(0);
+                lyx_unexpected();
             }
             interval = _periodicInterval;
         }

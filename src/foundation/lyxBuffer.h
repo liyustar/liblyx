@@ -2,9 +2,9 @@
 #define LIBLYX_FOUNDATION_LYXBUFFER_H_
 
 #include "lyxException.h"
+#include "lyxBugcheck.h"
 #include <cstring>
 #include <cstddef>
-#include <cassert>
 
 namespace lyx {
 
@@ -187,12 +187,12 @@ template <class T> class Buffer {
         }
 
         T& operator [] (std::size_t index) {
-            assert (index < _used);
+            lyx_assert (index < _used);
             return _ptr[index];
         }
 
         const T& operator [] (std::size_t index) const {
-            assert (index < _used);
+            lyx_assert (index < _used);
             return _ptr[index];
         }
 

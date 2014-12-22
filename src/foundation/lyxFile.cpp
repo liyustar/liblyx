@@ -1,7 +1,7 @@
 #include "lyxFile.h"
 #include "lyxDirectoryIterator.h"
 #include "lyxException.h"
-#include <cassert>
+#include "lyxBugcheck.h"
 
 namespace lyx {
 
@@ -29,7 +29,7 @@ File& File::operator = (const File& file) {
 }
 
 File& File::operator = (const char* path) {
-    assert (path);
+    lyx_assert (path);
     setPathImpl(path);
     return *this;
 }
