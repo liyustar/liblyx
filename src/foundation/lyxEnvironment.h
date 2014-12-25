@@ -10,6 +10,7 @@ class Environment {
         typedef uint8_t NodeId[6]; // Ethernet address.
 
         static std::string get(const std::string& name);
+        static std::string get(const std::string& name, const std::string& defaultValue);
         static bool has(const std::string& name);
         static void set(const std::string& name, const std::string& value);
         static std::string osName();

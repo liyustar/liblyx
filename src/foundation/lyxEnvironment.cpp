@@ -1,6 +1,7 @@
 #include "lyxEnvironment.h"
 
 #include "lyxEnvironmentImpl.h"
+#include <cstdio>
 
 namespace lyx {
 
@@ -16,8 +17,53 @@ std::string Environment::get(const std::string& name, const std::string& default
 }
 
 bool Environment::has(const std::string& name) {
-    EnvironmentImpl::hasImpl(name);
+    return EnvironmentImpl::hasImpl(name);
 }
 
+void Environment::set(const std::string& name, const std::string& value) {
+    EnvironmentImpl::setImpl(name, value);
+}
+
+std::string Environment::osName() {
+    return EnvironmentImpl::osNameImpl();
+}
+
+std::string Environment::osDisplayName() {
+    return EnvironmentImpl::osDisplayNameImpl();
+}
+
+std::string Environment::osVersion() {
+    return EnvironmentImpl::osVersionImpl();
+}
+
+std::string Environment::osArchitecture() {
+    return EnvironmentImpl::osArchitectureImpl();
+}
+
+std::string Environment::nodeName() {
+    return EnvironmentImpl::nodeNameImpl();
+}
+
+void Environment::nodeId(NodeId& id) {
+    return EnvironmentImpl::nodeIdImpl(id);
+}
+
+std::string Environment::nodeId() {
+    NodeId id;
+    nodeId(id);
+    char result[18];
+    std::sprintf(result, "%02x:%02x:%02x:%02x:%02x:%02x",
+            id[0],
+            id[1],
+            id[2],
+            id[3],
+            id[4],
+            id[5]);
+    return std::string(result);
+}
+
+unsigned Environment::processorCount() {
+    return EnvironmentImpl::processorCountImpl();
+}
 
 } // namespace lyx
