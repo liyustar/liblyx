@@ -25,8 +25,8 @@ template <typename ch, typename tr>
         BasicMemoryStreamBuf(char_type* pBuffer, std::streamsize bufferSize):
             _pBuffer(pBuffer),
             _bufferSize(bufferSize) {
-                this->setg(_Buffer, _pBuffer, _pBuffer + _bufferSize);
-                this->setp(_Buffer, _pBuffer + _bufferSize);
+                this->setg(_pBuffer, _pBuffer, _pBuffer + _bufferSize);
+                this->setp(_pBuffer, _pBuffer + _bufferSize);
             }
 
         ~BasicMemoryStreamBuf() {
@@ -49,8 +49,8 @@ template <typename ch, typename tr>
         }
 
         void reset() {
-            this->setg(_Buffer, _pBuffer, _pBuffer + _bufferSize);
-            this->setp(_Buffer, _pBuffer + _bufferSize);
+            this->setg(_pBuffer, _pBuffer, _pBuffer + _bufferSize);
+            this->setp(_pBuffer, _pBuffer + _bufferSize);
         }
 
     private:
@@ -85,6 +85,8 @@ class MemoryOutputStream: public MemoryIOS, public std::ostream {
     public:
         MemoryOutputStream(const char* pBuffer, std::streamsize bufferSize);
         ~MemoryOutputStream();
+
+        std::streamsize charsWritten() const;
 };
 
 inline MemoryStreamBuf* MemoryIOS::rdbuf() {

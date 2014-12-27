@@ -1,4 +1,5 @@
 #include "lyxBinaryReader.h"
+#include "lyxByteOrder.h"
 
 namespace lyx {
 
@@ -57,13 +58,13 @@ BinaryReader& BinaryReader::operator >> (unsigned int& value) {
 
 BinaryReader& BinaryReader::operator >> (long& value) {
     _istr.read((char*) &value, sizeof(value));
-    if (_flipBytes) value = ByteOrder::flipBytes(value);
+    if (_flipBytes) value = ByteOrder::flipBytes((int) value);
     return *this;
 }
 
 BinaryReader& BinaryReader::operator >> (unsigned long& value) {
     _istr.read((char*) &value, sizeof(value));
-    if (_flipBytes) value = ByteOrder::flipBytes(value);
+    if (_flipBytes) value = ByteOrder::flipBytes((unsigned int) value);
     return *this;
 }
 
