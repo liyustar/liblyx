@@ -1,6 +1,11 @@
 #ifndef LIBLYX_FOUNDATION_LYXBINARYREADER_H_
 #define LIBLYX_FOUNDATION_LYXBINARYREADER_H_
 
+#include "lyxBuffer.h"
+#include "lyxMemoryStream.h"
+#include <string>
+#include <vector>
+
 namespace lyx {
 
 class BinaryReader {
@@ -14,7 +19,7 @@ class BinaryReader {
         };
 
         BinaryReader(std::istream& istr, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
-        BinaryReader(std::istream& istr, TextEncoding& encoding, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
+        BinaryReader(std::istream& istr, /* TextEncoding& encoding,*/ StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
         ~BinaryReader();
 
         BinaryReader& operator >> (bool& value);
@@ -64,19 +69,19 @@ class BinaryReader {
     private:
         std::istream&   _istr;
         bool            _flipBytes;
-        TextConverter*  _pTextConverter;
+        // TextConverter*  _pTextConverter;
 };
 
 template <typename T> class BasicMemoryBinaryReader: public BinaryReader {
     public:
         BasicMemoryBinaryReader(const Buffer<T>& data, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
             BinaryReader(_istr, byteOrder),
-            _date(data),
+            _data(data),
             _istr(data.begin(), data.capacity()) {
             }
 
-        BasicMemoryBinaryReader(const Buffer<T>& data, TextEncoding& encoding, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
-            BinaryReader(_istr, encoding, byteOrder),
+        BasicMemoryBinaryReader(const Buffer<T>& data, /* TextEncoding& encoding,*/ StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
+            BinaryReader(_istr, /*encoding,*/ byteOrder),
             _data(data),
             _istr(data.begin(), data.capacity()) {
             }
