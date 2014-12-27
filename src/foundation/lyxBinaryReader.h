@@ -19,7 +19,7 @@ class BinaryReader {
         };
 
         BinaryReader(std::istream& istr, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
-        BinaryReader(std::istream& istr, /* TextEncoding& encoding,*/ StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
+        // BinaryReader(std::istream& istr, TextEncoding& encoding, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER);
         ~BinaryReader();
 
         BinaryReader& operator >> (bool& value);
@@ -76,12 +76,6 @@ template <typename T> class BasicMemoryBinaryReader: public BinaryReader {
     public:
         BasicMemoryBinaryReader(const Buffer<T>& data, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
             BinaryReader(_istr, byteOrder),
-            _data(data),
-            _istr(data.begin(), data.capacity()) {
-            }
-
-        BasicMemoryBinaryReader(const Buffer<T>& data, /* TextEncoding& encoding,*/ StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
-            BinaryReader(_istr, /*encoding,*/ byteOrder),
             _data(data),
             _istr(data.begin(), data.capacity()) {
             }

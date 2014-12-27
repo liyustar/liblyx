@@ -9,13 +9,6 @@ BinaryReader::BinaryReader(std::istream& istr, StreamByteOrder byteOrder):
     _flipBytes = (byteOrder == LITTLE_ENDIANBYTE_ORDER);
 }
 
-BinaryReader::BinaryReader(std::istream& istr, /* TextEncoding& encoding,*/ StreamByteOrder byteOrder):
-    _istr(istr)
-    // _pTextConverter(new TextConverter(encoding, TextEncoding::global()))
-{
-    _flipBytes = (byteOrder == LITTLE_ENDIANBYTE_ORDER);
-}
-
 BinaryReader::~BinaryReader() {
     // delete _pTextConverter;
 }
