@@ -19,8 +19,8 @@ MemoryInputStream::MemoryInputStream(const char* pBuffer, std::streamsize buffer
 MemoryInputStream::~MemoryInputStream() {
 }
 
-MemoryOutputStream::MemoryOutputStream(const char* pBuffer, std::streamsize bufferSize):
-    MemoryIOS(const_cast<char*>(pBuffer), bufferSize),
+MemoryOutputStream::MemoryOutputStream(char* pBuffer, std::streamsize bufferSize):
+    MemoryIOS(pBuffer, bufferSize),
     std::ostream(&_buf)
 {
 }

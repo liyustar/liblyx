@@ -71,7 +71,7 @@ class BinaryWriter {
 
 template <typename T> class BasicMemoryBinaryWriter: public BinaryWriter {
     public:
-        BasicMemoryBinaryWriter(const Buffer<T>& data, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
+        BasicMemoryBinaryWriter(Buffer<T>& data, StreamByteOrder byteOrder = NATIVE_BYTE_ORDER):
             BinaryWriter(_ostr, byteOrder),
             _data(data),
             _ostr(data.begin(), data.capacity()) {
@@ -94,17 +94,17 @@ template <typename T> class BasicMemoryBinaryWriter: public BinaryWriter {
             return _data;
         }
 
-        const MemoryInputStream& stream() const {
+        const MemoryOutputStream& stream() const {
             return _ostr;
         }
 
-        MemoryInputStream& stream() {
+        MemoryOutputStream& stream() {
             return _ostr;
         }
 
     private:
         Buffer<T>& _data;
-        MemoryInputStream _ostr;
+        MemoryOutputStream _ostr;
 };
 
 typedef BasicMemoryBinaryWriter<char> MemoryBinaryWriter;

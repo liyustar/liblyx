@@ -83,7 +83,7 @@ class MemoryInputStream: public MemoryIOS, public std::istream {
 
 class MemoryOutputStream: public MemoryIOS, public std::ostream {
     public:
-        MemoryOutputStream(const char* pBuffer, std::streamsize bufferSize);
+        MemoryOutputStream(char* pBuffer, std::streamsize bufferSize);
         ~MemoryOutputStream();
 
         std::streamsize charsWritten() const;
