@@ -36,11 +36,13 @@ BinaryReader& BinaryReader::operator >> (signed char& value) {
 
 BinaryReader& BinaryReader::operator >> (short& value) {
     _istr.read((char*) &value, sizeof(value));
+    if (_flipBytes) value = ByteOrder::flipBytes(value);
     return *this;
 }
 
 BinaryReader& BinaryReader::operator >> (unsigned short& value) {
     _istr.read((char*) &value, sizeof(value));
+    if (_flipBytes) value = ByteOrder::flipBytes(value);
     return *this;
 }
 
