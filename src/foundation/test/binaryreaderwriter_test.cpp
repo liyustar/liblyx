@@ -4,7 +4,6 @@
 #include "lyxBinaryWriter.h"
 #include "lyxBuffer.h"
 #include <sstream>
-// #include <unistd.h>
 
 using namespace lyx;
 
@@ -155,5 +154,37 @@ TEST_F(BinaryReaderWriterTest, testNative) {
     BinaryReader reader(sstream);
     testWrite(writer);
     testRead(reader);
+}
+
+TEST_F(BinaryReaderWriterTest, testWrappers) {
+    bool b = false;
+    char c = '0';
+    int i = 0;
+    Buffer<char> buf(2 * sizeof(bool) + sizeof(char) + 2 * sizeof(int));
+
+    MemoryBinaryWriter writer(buf);
+    writer << true;
+    writer << false;
+    writer << 'a';
+    writer << 1;
+    writer << -1;
+
+    MemoryBinaryReader reader(writer.data());
+    reader >> b; EXPECT_EQ(true, b);
+    reader >> b; EXPECT_EQ(false, b);
+    reader >> c; EXPECT_EQ('a', c);
+    EXPECT_EQ(2 * sizeof(i), reader.available());
+    reader >> i; EXPECT_EQ(1, i);
+    EXPECT_EQ(sizeof(i), reader.available());
+    reader >> i; EXPECT_EQ(-1, i);
+    EXPECT_EQ(0, reader.available());
+
+    reader.setExceptions(std::istream::eofbit);
+    try {
+        reader >> i;
+        FAIL();
+    }
+    catch (std::exception&) {
+    }
 }
 
