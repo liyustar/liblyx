@@ -1,0 +1,37 @@
+#ifndef LIBLYX_NETWORK_LYXNETEXCEPTION_H_
+#define LIBLYX_NETWORK_LYXNETEXCEPTION_H_
+
+#include "lyxException.h"
+#include <typeinfo>
+
+namespace lyx {
+
+LYX_DECLARE_EXCEPTION(NetException, IOException)
+LYX_DECLARE_EXCEPTION(InvalidAddressException, NetException)
+LYX_DECLARE_EXCEPTION(InvalidSocketException, NetException)
+LYX_DECLARE_EXCEPTION(ServiceNotFoundException, NetException)
+LYX_DECLARE_EXCEPTION(ConnectionAbortedException, NetException)
+LYX_DECLARE_EXCEPTION(ConnectionResetException, NetException)
+LYX_DECLARE_EXCEPTION(ConnectionRefusedException, NetException)
+LYX_DECLARE_EXCEPTION(DNSException, NetException)
+LYX_DECLARE_EXCEPTION(HostNotFoundException, DNSException)
+LYX_DECLARE_EXCEPTION(NoAddressFoundException, DNSException)
+LYX_DECLARE_EXCEPTION(InterfaceNotFoundException, NetException)
+LYX_DECLARE_EXCEPTION(NoMessageException, NetException)
+LYX_DECLARE_EXCEPTION(MessageException, NetException)
+LYX_DECLARE_EXCEPTION(MultipartException, MessageException)
+LYX_DECLARE_EXCEPTION(HTTPException, NetException)
+LYX_DECLARE_EXCEPTION(NotAuthenticatedException, HTTPException)
+LYX_DECLARE_EXCEPTION(UnsupportedRedirectException, HTTPException)
+LYX_DECLARE_EXCEPTION(FTPException, NetException)
+LYX_DECLARE_EXCEPTION(SMTPException, NetException)
+LYX_DECLARE_EXCEPTION(POP3Exception, NetException)
+LYX_DECLARE_EXCEPTION(ICMPException, NetException)
+LYX_DECLARE_EXCEPTION(NTPExeption, NetException)
+LYX_DECLARE_EXCEPTION(HTMLFormException, NetException)
+LYX_DECLARE_EXCEPTION(WebSocketException, NetException)
+LYX_DECLARE_EXCEPTION(UnsupportedFamilyException, NetException)
+
+} // namespace lyx
+
+#endif // LIBLYX_NETWORK_LYXNETEXCEPTION_H_
