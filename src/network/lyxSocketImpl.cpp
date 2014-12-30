@@ -1,7 +1,11 @@
 #include "lyxSocketImpl.h"
-#include <cassert>
 #include "lyxStreamSocketImpl.h"
-#include "lyxException.h"
+#include "lyxNetException.h"
+#include "lyxBugcheck.h"
+#include <cstring>
+#include <sys/epoll.h>
+#include <unistd.h>
+#include <stropts.h>
 
 namespace lyx {
 
@@ -43,6 +47,37 @@ void SocketImpl::connect(const SocketAddress& address) {
     }
     int rc;
     rc = TEMP_FAILURE_RETRY(::connect(_sockfd, address.addr(), address.length()));
+    if (rc != 0) {
+        int err = lastError();
+        error(err, address.toString());
+    }
+}
+
+void SocketImpl::connect(const SocketAddress& address, const Timespan& timeout) {
+    if (_sockfd == -1) {
+        init(address.af());
+    }
+
+    setBlocking(false);
+
+    try {
+        int rc = ::connect(_sockfd, (sockaddr*) address.addr(), address.length());
+        if (rc != 0) {
+            int err = lastError();
+            if (err != EINPROGRESS && err != EWOULDBLOCK)
+                error(err, address.toString());
+            if (!poll(timeout, SELECT_READ | SELECT_WRITE | SELECT_ERROR))
+                throw TimeoutException("connect timed out", address.toString());
+            err = socketError();
+            if (err != 0) error(err);
+        }
+    }
+    catch (Exception&) {
+        setBlocking(true);
+        throw;
+    }
+
+    setBlocking(true);
 }
 
 void SocketImpl::bind(const SocketAddress& address, bool reuseAddress) {
@@ -50,6 +85,7 @@ void SocketImpl::bind(const SocketAddress& address, bool reuseAddress) {
         init(address.af());
     }
     int rc = ::bind(_sockfd, address.addr(), address.length());
+    if (rc != 0) error(address.toString());
 }
 
 void SocketImpl::listen(int backlog) {
@@ -57,6 +93,7 @@ void SocketImpl::listen(int backlog) {
         return;
     }
     int rc = ::listen(_sockfd, backlog);
+    if (rc != 0) error();
 }
 
 void SocketImpl::close() {
@@ -67,15 +104,24 @@ void SocketImpl::close() {
 }
 
 void SocketImpl::shutdownReceive() {
+    if (_sockfd == -1) throw InvalidSocketException();
+
     int rc = ::shutdown(_sockfd, 0);
+    if (rc != 0) error();
 }
 
 void SocketImpl::shutdownSend() {
+    if (_sockfd == -1) throw InvalidSocketException();
+
     int rc = ::shutdown(_sockfd, 1);
+    if (rc != 0) error();
 }
 
 void SocketImpl::shutdown() {
+    if (_sockfd == -1) throw InvalidSocketException();
+
     int rc = ::shutdown(_sockfd, 2);
+    if (rc != 0) error();
 }
 
 int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
@@ -94,6 +140,57 @@ int SocketImpl::receiveBytes(void* buffer, int length, int flags) {
     int rc;
     rc = TEMP_FAILURE_RETRY(::recv(_sockfd, buffer, length, flags));
     return rc;
+}
+
+bool SocketImpl::poll(const Timespan& timeout, int mode) {
+    int sockfd = _sockfd;
+    if (sockfd == -1) throw InvalidSocketException();
+
+    int epollfd = epoll_create(1);
+    if (epollfd < 0) {
+        char buf[1024];
+        strerror_r(errno, buf, sizeof(buf));
+        error(std::string("Can't create epoll queue: ") + buf);
+    }
+
+    struct epoll_event evin;
+    std::memset(&evin, 0, sizeof(evin));
+
+    if (mode & SELECT_READ)
+        evin.events |= EPOLLIN;
+    if (mode & SELECT_WRITE)
+        evin.events |= EPOLLOUT;
+    if (mode & SELECT_ERROR)
+        evin.events |= EPOLLERR;
+
+    if (epoll_ctl(epollfd, EPOLL_CTL_ADD, sockfd, &evin) < 0) {
+        char buf[1024];
+        strerror_r(errno, buf, sizeof(buf));
+        ::close(epollfd);
+        error(std::string("Can't insert socket to epoll queue: ") + buf);
+    }
+
+    Timespan remainingTime(timeout);
+    int rc;
+    do {
+        struct epoll_event evout;
+        std::memset(&evout, 0, sizeof(evout));
+
+        Timestamp start;
+        rc = epoll_wait(epollfd, &evout, 1, remainingTime.totalMilliseconds());
+        if (rc < 0 && lastError() == EINTR) {
+            Timestamp end;
+            Timespan waited = end - start;
+            if (waited < remainingTime)
+                remainingTime -= waited;
+            else
+                remainingTime = 0;
+        }
+    } while (rc < 0 && lastError() == EINTR);
+
+    ::close(epollfd);
+    if (rc < 0) error();
+    return rc > 0;
 }
 
 SocketAddress SocketImpl::address() const {
@@ -130,14 +227,42 @@ SocketAddress SocketImpl::peerAddress() const {
     }
 }
 
+int SocketImpl::socketError() {
+    int result(0);
+    getOption(SOL_SOCKET, SO_ERROR, result);
+    return result;
+}
+
 void SocketImpl::init(int af) {
     initSocket(af, SOCK_STREAM);
 }
 
 void SocketImpl::initSocket(int af, int type, int proto) {
-    assert(_sockfd == -1);
+    lyx_assert(_sockfd == -1);
 
     _sockfd = ::socket(af, type, proto);
+}
+
+void SocketImpl::error() {
+    int err = lastError();
+    std::string empty;
+    error(err, empty);
+}
+
+void SocketImpl::error(int code) {
+    std::string empty;
+    error(code, empty);
+}
+
+void SocketImpl::error(const std::string& arg) {
+    error(lastError(), arg);
+}
+
+void SocketImpl::error(int code, const std::string& arg) {
+    switch (code) {
+        default:
+            IOException(arg, code);
+    }
 }
 
 } // namespace lyx
