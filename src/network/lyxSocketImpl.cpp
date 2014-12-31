@@ -6,6 +6,7 @@
 #include <sys/epoll.h>
 #include <unistd.h>
 #include <stropts.h>
+#include <fcntl.h>
 
 namespace lyx {
 
@@ -227,6 +228,15 @@ SocketAddress SocketImpl::peerAddress() const {
     }
 }
 
+void SocketImpl::setBlocking(bool flag) {
+    int arg = fcntl(F_GETFL);
+    long flags = arg & ~O_NONBLOCK;
+    if (!flag) flags |= O_NONBLOCK;
+    (void) fcntl(F_SETFL, flags);
+
+    _blocking = flag;
+}
+
 int SocketImpl::socketError() {
     int result(0);
     getOption(SOL_SOCKET, SO_ERROR, result);
@@ -241,6 +251,30 @@ void SocketImpl::initSocket(int af, int type, int proto) {
     lyx_assert(_sockfd == -1);
 
     _sockfd = ::socket(af, type, proto);
+}
+
+void SocketImpl::getOption(int level, int option, int& value) {
+    socklen_t len = sizeof(value);
+    getRawOption(level, option, &value, len);
+}
+
+void SocketImpl::getRawOption(int level, int option, void* value, socklen_t& length) {
+    if (_sockfd == -1) throw InvalidSocketException();
+
+    int rc = ::getsockopt(_sockfd, level, option, reinterpret_cast<char*>(value), &length);
+    if (rc == -1) error();
+}
+
+int SocketImpl::fcntl(int request) {
+    int rc = ::fcntl(_sockfd, request);
+    if (rc == -1) error();
+    return rc;
+}
+
+int SocketImpl::fcntl(int request, long arg) {
+    int rc = ::fcntl(_sockfd, request, arg);
+    if (rc == -1) error();
+    return rc;
 }
 
 void SocketImpl::error() {

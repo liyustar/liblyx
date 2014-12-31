@@ -50,6 +50,10 @@ class SocketImpl {
         virtual void initSocket(int af, int type, int proto = 0);
 
         void getOption(int level, int option, int& value);
+        void getRawOption(int level, int option, void* value, socklen_t& length);
+
+        int fcntl(int request);
+        int fcntl(int request, long arg);
 
         static int lastError();
         static void error();
