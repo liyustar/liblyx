@@ -39,6 +39,10 @@ class SocketImpl {
         virtual void setReceiveTimeout(const Timespan& timeout);
         virtual Timespan getReceiveTimeout();
 
+        void setReuseAddress(bool flag);
+        bool getReuseAddress();
+        void setReusePort(bool flag);
+        bool getReusePort();
         virtual void setBlocking(bool flag);
 
         int socketError();

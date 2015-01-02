@@ -85,6 +85,10 @@ void SocketImpl::bind(const SocketAddress& address, bool reuseAddress) {
     if (_sockfd == -1) {
         init(address.af());
     }
+    if (reuseAddress) {
+        setReuseAddress(true);
+        setReusePort(true);
+    }
     int rc = ::bind(_sockfd, address.addr(), address.length());
     if (rc != 0) error(address.toString());
 }
@@ -251,6 +255,29 @@ SocketAddress SocketImpl::peerAddress() const {
     else {
         return SocketAddress();
     }
+}
+
+void SocketImpl::setReuseAddress(bool flag) {
+    int value = flag ? 1 : 0;
+    setOption(SOL_SOCKET, SO_REUSEADDR, value);
+}
+
+bool SocketImpl::getReuseAddress() {
+    int value(0);
+    getOption(SOL_SOCKET, SO_REUSEADDR, value);
+    return value != 0;
+}
+
+void SocketImpl::setReusePort(bool flag) {
+    int value = flag ? 1 : 0;
+    setOption(SOL_SOCKET, SO_REUSEPORT, value);
+}
+
+bool SocketImpl::getReusePort() {
+    int value(0);
+    getOption(SOL_SOCKET, SO_REUSEPORT, value);
+    return value != 0;
+
 }
 
 void SocketImpl::setBlocking(bool flag) {
