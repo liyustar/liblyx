@@ -91,7 +91,7 @@ void SocketImpl::bind(const SocketAddress& address, bool reuseAddress) {
 
 void SocketImpl::listen(int backlog) {
     if (_sockfd == -1) {
-        return;
+        throw InvalidSocketException();
     }
     int rc = ::listen(_sockfd, backlog);
     if (rc != 0) error();
@@ -126,20 +126,25 @@ void SocketImpl::shutdown() {
 }
 
 int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
-    if (_sockfd == -1) {
-        throw Exception("socket not init");
-    }
+    if (_sockfd == -1) throw InvalidSocketException();
     int rc;
     rc = TEMP_FAILURE_RETRY(::send(_sockfd, buffer, length, flags));
     return rc;
 }
 
 int SocketImpl::receiveBytes(void* buffer, int length, int flags) {
-    if (_sockfd == -1) {
-        throw Exception("socket not init");
-    }
+    if (_sockfd == -1) throw InvalidSocketException();
     int rc;
     rc = TEMP_FAILURE_RETRY(::recv(_sockfd, buffer, length, flags));
+    if (rc < 0) {
+        int err = lastError();
+        if (err == EAGAIN && !_blocking)
+            ;
+        else if (err == EAGAIN || err == ETIMEDOUT)
+            throw TimeoutException(err);
+        else
+            error(err);
+    }
     return rc;
 }
 
@@ -192,6 +197,26 @@ bool SocketImpl::poll(const Timespan& timeout, int mode) {
     ::close(epollfd);
     if (rc < 0) error();
     return rc > 0;
+}
+
+void SocketImpl::setSendTimeout(const Timespan& timeout) {
+    setOption(SOL_SOCKET, SO_SNDTIMEO, timeout);
+}
+
+Timespan SocketImpl::getSendTimeout() {
+    Timespan result;
+    getOption(SOL_SOCKET, SO_SNDTIMEO, result);
+    return result;
+}
+
+void SocketImpl::setReceiveTimeout(const Timespan& timeout) {
+    setOption(SOL_SOCKET, SO_RCVTIMEO, timeout);
+}
+
+Timespan SocketImpl::getReceiveTimeout() {
+    Timespan result;
+    getOption(SOL_SOCKET, SO_RCVTIMEO, result);
+    return result;
 }
 
 SocketAddress SocketImpl::address() const {
@@ -253,9 +278,31 @@ void SocketImpl::initSocket(int af, int type, int proto) {
     _sockfd = ::socket(af, type, proto);
 }
 
+void SocketImpl::setOption(int level, int option, const Timespan& value) {
+    struct timeval tv;
+    tv.tv_sec   = (long) value.totalSeconds();
+    tv.tv_usec  = (long) value.useconds();
+
+    setRawOption(level, option, &tv, sizeof(tv));
+}
+
+void SocketImpl::setRawOption(int level, int option, const void* value, socklen_t length) {
+    if (_sockfd == -1) throw InvalidSocketException();
+
+    int rc = ::setsockopt(_sockfd, level, option, reinterpret_cast<const char*>(value), length);
+    if (rc == -1) error();
+}
+
 void SocketImpl::getOption(int level, int option, int& value) {
     socklen_t len = sizeof(value);
     getRawOption(level, option, &value, len);
+}
+
+void SocketImpl::getOption(int level, int option, Timespan& value) {
+    struct timeval tv;
+    socklen_t len = sizeof(tv);
+    getRawOption(level, option, &tv, len);
+    value.assign(tv.tv_sec, tv.tv_usec);
 }
 
 void SocketImpl::getRawOption(int level, int option, void* value, socklen_t& length) {

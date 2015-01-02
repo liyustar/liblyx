@@ -20,6 +20,11 @@ class Socket {
 
         void close();
 
+        void setSendTimeout(const Timespan& timeout);
+        Timespan getSendTimeout();
+        void setReceiveTimeout(const Timespan& timeout);
+        Timespan getReceiveTimeout();
+
         SocketAddress address() const;
         SocketAddress peerAddress() const;
 
@@ -53,6 +58,22 @@ inline SocketAddress Socket::address() const {
 
 inline SocketAddress Socket::peerAddress() const {
     return _pImpl->peerAddress();
+}
+
+inline void Socket::setSendTimeout(const Timespan& timeout) {
+    _pImpl->setSendTimeout(timeout);
+}
+
+inline Timespan Socket::getSendTimeout() {
+    return _pImpl->getSendTimeout();
+}
+
+inline void Socket::setReceiveTimeout(const Timespan& timeout) {
+    _pImpl->setReceiveTimeout(timeout);
+}
+
+inline Timespan Socket::getReceiveTimeout() {
+    return _pImpl->getReceiveTimeout();
 }
 
 } // namespace lyx

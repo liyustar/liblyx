@@ -33,6 +33,11 @@ Timespan::Timespan(int days, int hours, int minutes, int seconds, int microsecon
 {
 }
 
+Timespan::Timespan(const Timespan& timespan):
+    _span(timespan._span)
+{
+}
+
 Timespan::~Timespan() {
 }
 

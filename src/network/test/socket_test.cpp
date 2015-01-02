@@ -1,6 +1,8 @@
 #include "lyxSocketImpl.h"
 #include "lyxStreamSocket.h"
 #include "lyxException.h"
+#include "lyxTimespan.h"
+#include "lyxStopwatch.h"
 #include "gtest/gtest.h"
 #include <string>
 
@@ -28,7 +30,7 @@ TEST(SocketImplTest, Exception) {
         sock.sendBytes(request.c_str(), request.length());
         FAIL();
     } catch(Exception &e) {
-        EXPECT_EQ("Exception: socket not init", e.displayText());
+        EXPECT_EQ("Invalid socket", e.displayText());
     }
 }
 
@@ -58,4 +60,37 @@ TEST(StreamSocketTest, Echo) {
     EXPECT_EQ(5, n);
     EXPECT_EQ("hello", std::string(buf, n));
     sock.close();
+}
+
+TEST(SocketTest, testTimeout) {
+    StreamSocket ss;
+    ss.connect(SocketAddress("localhost", "echo"));
+
+    Timespan timeout0 = ss.getReceiveTimeout();
+    Timespan timeout(250000);
+    ss.setReceiveTimeout(timeout);
+    Timespan timeout1 = ss.getReceiveTimeout();
+
+    std::cout << "original receive timeout:  " << timeout0.totalMicroseconds() << std::endl;
+    std::cout << "requested receive timeout: " << timeout.totalMicroseconds() << std::endl;
+    std::cout << "actual receive timeout:    " << timeout1.totalMicroseconds() << std::endl;
+
+    Stopwatch sw;
+    try {
+        char buffer[256];
+        sw.start();
+        ss.receiveBytes(buffer, sizeof(buffer));
+        FAIL();
+    }
+    catch (TimeoutException&) {
+    }
+    EXPECT_TRUE(sw.elapsed() < 1000000);
+
+    timeout0 = ss.getSendTimeout();
+    ss.setSendTimeout(timeout);
+    timeout1 = ss.getSendTimeout();
+
+    std::cout << "original send timeout:  " << timeout0.totalMicroseconds() << std::endl;
+    std::cout << "requested send timeout: " << timeout.totalMicroseconds() << std::endl;
+    std::cout << "actual send timeout:    " << timeout1.totalMicroseconds() << std::endl;
 }

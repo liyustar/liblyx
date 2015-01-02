@@ -34,6 +34,11 @@ class SocketImpl {
 
         virtual bool poll(const Timespan& timeout, int mode);
 
+        virtual void setSendTimeout(const Timespan& timeout);
+        virtual Timespan getSendTimeout();
+        virtual void setReceiveTimeout(const Timespan& timeout);
+        virtual Timespan getReceiveTimeout();
+
         virtual void setBlocking(bool flag);
 
         int socketError();
@@ -49,7 +54,10 @@ class SocketImpl {
         virtual void init(int af);
         virtual void initSocket(int af, int type, int proto = 0);
 
+        void setOption(int level, int option, const Timespan& value);
+        void setRawOption(int level, int option, const void* value, socklen_t length);
         void getOption(int level, int option, int& value);
+        void getOption(int level, int option, Timespan& value);
         void getRawOption(int level, int option, void* value, socklen_t& length);
 
         int fcntl(int request);
