@@ -2,6 +2,7 @@
 #define LIBLYX_NETWORK_LYXSOCKET_H_
 
 #include "lyxSocketImpl.h"
+#include "lyxTimespan.h"
 #include <vector>
 #include <memory>
 
@@ -19,6 +20,8 @@ class Socket {
         virtual ~Socket();
 
         void close();
+
+        static int select(SocketList& readList, SocketList& writeList, SocketList& exceptList, const Timespan& timeout);
 
         void setSendTimeout(const Timespan& timeout);
         Timespan getSendTimeout();
