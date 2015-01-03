@@ -1,5 +1,7 @@
 #include "lyxSocket.h"
 #include "lyxStreamSocketImpl.h"
+#include <cstring>
+#include <sys/epoll.h>
 
 namespace lyx {
 
@@ -34,7 +36,7 @@ int Socket::select(SocketList& readList, SocketList& writeList, SocketList& exce
     int epollfd = -1;
     {
         struct epoll_event eventsIn[epollSize];
-        memset(eventsIn, 0 sizeof(eventsIn));
+        std::memset(eventsIn, 0, sizeof(eventsIn));
         struct epoll_event* eventLast = eventsIn;
 
         for (SocketList::iterator it = readList.begin(); it != readList.end(); ++it) {
@@ -90,7 +92,7 @@ int Socket::select(SocketList& readList, SocketList& writeList, SocketList& exce
         if (epollfd < 0) {
             char buf[1024];
             strerror_r(errno, buf, sizeof(buf));
-            SocketImpl::error(str::string("Can't create epoll queue: ") + buf);
+            SocketImpl::error(std::string("Can't create epoll queue: ") + buf);
         }
 
         for (struct epoll_event* e = eventsIn; e != eventLast; ++e) {
@@ -107,7 +109,7 @@ int Socket::select(SocketList& readList, SocketList& writeList, SocketList& exce
     }
 
     struct epoll_event eventsOut[epollSize];
-    memset(eventsOut, 0, sizeof(eventsOut));
+    std::memset(eventsOut, 0, sizeof(eventsOut));
 
     Timespan remainingTime(timeout);
     int rc;

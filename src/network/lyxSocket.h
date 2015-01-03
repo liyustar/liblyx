@@ -10,6 +10,12 @@ namespace lyx {
 
 class Socket {
     public:
+        enum SelectMode {
+            SELECT_READ  = 1,
+            SELECT_WRITE = 2,
+            SELECT_ERROR = 4
+        };
+
         typedef std::vector<Socket> SocketList;
         typedef std::shared_ptr<SocketImpl> Ptr;
 
@@ -22,6 +28,8 @@ class Socket {
         void close();
 
         static int select(SocketList& readList, SocketList& writeList, SocketList& exceptList, const Timespan& timeout);
+
+        bool poll(const Timespan& timeout, int mode) const;
 
         void setSendTimeout(const Timespan& timeout);
         Timespan getSendTimeout();
@@ -61,6 +69,10 @@ inline SocketAddress Socket::address() const {
 
 inline SocketAddress Socket::peerAddress() const {
     return _pImpl->peerAddress();
+}
+
+inline bool Socket::poll(const Timespan& timeout, int mode) const {
+    return _pImpl->poll(timeout, mode);
 }
 
 inline void Socket::setSendTimeout(const Timespan& timeout) {
