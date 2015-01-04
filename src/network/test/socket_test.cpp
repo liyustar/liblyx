@@ -95,6 +95,30 @@ TEST(SocketTest, testTimeout) {
     std::cout << "actual send timeout:    " << timeout1.totalMicroseconds() << std::endl;
 }
 
+TEST(SocketTest, testPoll) {
+    StreamSocket ss;
+    ss.connect(SocketAddress("localhost", "echo"));
+    Stopwatch sw;
+    sw.start();
+    Timespan timeout(1000000);
+    EXPECT_TRUE(!ss.poll(timeout, Socket::SELECT_READ));
+    EXPECT_TRUE(sw.elapsed() >= 999000);
+    sw.restart();
+    EXPECT_TRUE(ss.poll(timeout, Socket::SELECT_WRITE));
+    EXPECT_TRUE(sw.elapsed() < 1000);
+    ss.sendBytes("hello", 5);
+    char buffer[256];
+    sw.restart();
+    EXPECT_TRUE(ss.poll(timeout, Socket::SELECT_READ));
+    EXPECT_TRUE(sw.elapsed() < 10000);
+    EXPECT_TRUE(ss.poll(timeout, Socket::SELECT_READ));
+    EXPECT_TRUE(sw.elapsed() < 10000);
+    int n = ss.receiveBytes(buffer, sizeof(buffer));
+    EXPECT_EQ(5, n);
+    EXPECT_EQ("hello", std::string(buffer, n));
+    ss.close();
+}
+
 TEST(SocketTest, testSelect) {
     Timespan timeout(250000);
 
