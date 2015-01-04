@@ -29,7 +29,7 @@ class StreamSocket : public Socket {
         int sendBytes(const void* buffer, int length, int flags = 0);
         int receiveBytes(void* buffer, int length, int flags = 0);
 
-        StreamSocket(StreamSocketImpl* pImpl);
+        StreamSocket(SocketImpl* pImpl);
 
     private:
         enum {

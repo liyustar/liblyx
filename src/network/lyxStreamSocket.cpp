@@ -14,7 +14,7 @@ StreamSocket::StreamSocket(const SocketAddress& address) :
 }
 */
 
-StreamSocket::StreamSocket(StreamSocketImpl* pImpl) :
+StreamSocket::StreamSocket(SocketImpl* pImpl) :
     Socket(pImpl)
 {
 }
