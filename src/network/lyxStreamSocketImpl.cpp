@@ -1,4 +1,5 @@
 #include "lyxStreamSocketImpl.h"
+#include "lyxBugcheck.h"
 
 namespace lyx {
 
@@ -26,6 +27,7 @@ int StreamSocketImpl::sendBytes(const void* buffer, int length, int flags) {
     int sent = 0;
     while (remaining > 0) {
         int n = SocketImpl::sendBytes(p, remaining, flags);
+        lyx_assert_dbg (n >= 0);
         p += n;
         sent += n;
         remaining -= n;

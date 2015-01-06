@@ -2,6 +2,7 @@
 #include "lyxNumberFormatter.h"
 #include "lyxHostEntry.h"
 #include "lyxDNS.h"
+#include "lyxException.h"
 
 namespace lyx {
 
@@ -32,7 +33,8 @@ SocketAddress::SocketAddress(const SocketAddress& socketAddress) {
 SocketAddress::SocketAddress(const struct sockaddr* sockAddr, socklen_t length) {
     if (length == sizeof(struct sockaddr_in))
         newIPv4(reinterpret_cast<const struct sockaddr_in*>(sockAddr));
-    newIPv4();
+    else
+        throw InvalidArgumentException("Invalid address length passed to SocketAddress()");
 }
 
 SocketAddress::~SocketAddress() {

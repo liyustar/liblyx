@@ -131,9 +131,12 @@ void SocketImpl::shutdown() {
 }
 
 int SocketImpl::sendBytes(const void* buffer, int length, int flags) {
-    if (_sockfd == -1) throw InvalidSocketException();
     int rc;
-    rc = TEMP_FAILURE_RETRY(::send(_sockfd, buffer, length, flags));
+    do {
+        if (_sockfd == -1) throw InvalidSocketException();
+        rc = TEMP_FAILURE_RETRY(::send(_sockfd, buffer, length, flags));
+    } while (_blocking && rc < 0 && lastError() == EINTR);
+    if (rc < 0) error();
     return rc;
 }
 
@@ -225,37 +228,31 @@ Timespan SocketImpl::getReceiveTimeout() {
 }
 
 SocketAddress SocketImpl::address() const {
-    if (_sockfd == -1) {
-        return SocketAddress();
-    }
+    if (_sockfd == -1) throw InvalidSocketException();
 
     char buffer[SocketAddress::MAX_ADDRESS_LENGTH];
     struct sockaddr* pSA = reinterpret_cast<struct sockaddr*>(buffer);
     socklen_t saLen = sizeof(buffer);
     int rc = ::getsockname(_sockfd, pSA, &saLen);
-    if (rc == 0) {
+    if (rc == 0)
         return SocketAddress(pSA, saLen);
-    }
-    else {
-        return SocketAddress();
-    }
+    else
+        error();
+    return SocketAddress();
 }
 
 SocketAddress SocketImpl::peerAddress() const {
-    if (_sockfd == -1) {
-        return SocketAddress();
-    }
+    if (_sockfd == -1) throw InvalidSocketException();
 
     char buffer[SocketAddress::MAX_ADDRESS_LENGTH];
     struct sockaddr* pSA = reinterpret_cast<struct sockaddr*>(buffer);
     socklen_t saLen = sizeof(buffer);
     int rc = ::getpeername(_sockfd, pSA, &saLen);
-    if (rc == 0) {
+    if (rc == 0)
         return SocketAddress(pSA, saLen);
-    }
-    else {
-        return SocketAddress();
-    }
+    else
+        error();
+    return SocketAddress();
 }
 
 void SocketImpl::setReuseAddress(bool flag) {

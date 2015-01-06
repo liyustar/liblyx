@@ -5,6 +5,9 @@
 #include "lyxStopwatch.h"
 #include "gtest/gtest.h"
 #include <string>
+#include <iostream>
+
+#include "EchoServer.h"
 
 using namespace lyx;
 
@@ -50,8 +53,10 @@ TEST(StreamSocketTest, connect) {
 }
 
 TEST(StreamSocketTest, Echo) {
+    EchoServer echoServer;
     StreamSocket sock;
-    sock.connect(SocketAddress("localhost", "echo"));
+    std::cout << "echo port: " << echoServer.port() << std::endl;
+    sock.connect(SocketAddress("localhost", echoServer.port()));
     int n = sock.sendBytes("hello", 5);
     EXPECT_EQ(5, n);
 
