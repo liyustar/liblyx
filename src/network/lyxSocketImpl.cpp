@@ -2,6 +2,7 @@
 #include "lyxStreamSocketImpl.h"
 #include "lyxNetException.h"
 #include "lyxBugcheck.h"
+#include "lyxNumberFormatter.h"
 #include <cstring>
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -366,10 +367,88 @@ void SocketImpl::error(const std::string& arg) {
     error(lastError(), arg);
 }
 
-void SocketImpl::error(int code, const std::string& arg) {
-    switch (code) {
+void SocketImpl::error(int code, const std::string& arg)
+{
+    switch (code)
+    {
+        case 0:
+            return;
+        case -4:
+            throw NetException("Net subsystem not ready", code);
+        case -5:
+            throw NetException("Net subsystem not initialized", code);
+        case EINTR:
+            throw IOException("Interrupted", code);
+        case EACCES:
+            throw IOException("Permission denied", code);
+        case EFAULT:
+            throw IOException("Bad address", code);
+        case EINVAL:
+            throw InvalidArgumentException(code);
+        case EMFILE:
+            throw IOException("Too many open files", code);
+        case EWOULDBLOCK:
+            throw IOException("Operation would block", code);
+        case EINPROGRESS:
+            throw IOException("Operation now in progress", code);
+        case EALREADY:
+            throw IOException("Operation already in progress", code);
+        case ENOTSOCK:
+            throw IOException("Socket operation attempted on non-socket", code);
+        case EDESTADDRREQ:
+            throw NetException("Destination address required", code);
+        case EMSGSIZE:
+            throw NetException("Message too long", code);
+        case EPROTOTYPE:
+            throw NetException("Wrong protocol type", code);
+        case ENOPROTOOPT:
+            throw NetException("Protocol not available", code);
+        case EPROTONOSUPPORT:
+            throw NetException("Protocol not supported", code);
+        case ESOCKTNOSUPPORT:
+            throw NetException("Socket type not supported", code);
+        case ENOTSUP:
+            throw NetException("Operation not supported", code);
+        case EPFNOSUPPORT:
+            throw NetException("Protocol family not supported", code);
+        case EAFNOSUPPORT:
+            throw NetException("Address family not supported", code);
+        case EADDRINUSE:
+            throw NetException("Address already in use", arg, code);
+        case EADDRNOTAVAIL:
+            throw NetException("Cannot assign requested address", arg, code);
+        case ENETDOWN:
+            throw NetException("Network is down", code);
+        case ENETUNREACH:
+            throw NetException("Network is unreachable", code);
+        case ENETRESET:
+            throw NetException("Network dropped connection on reset", code);
+        case ECONNABORTED:
+            throw ConnectionAbortedException(code);
+        case ECONNRESET:
+            throw ConnectionResetException(code);
+        case ENOBUFS:
+            throw IOException("No buffer space available", code);
+        case EISCONN:
+            throw NetException("Socket is already connected", code);
+        case ENOTCONN:
+            throw NetException("Socket is not connected", code);
+        case ESHUTDOWN:
+            throw NetException("Cannot send after socket shutdown", code);
+        case ETIMEDOUT:
+            throw TimeoutException(code);
+        case ECONNREFUSED:
+            throw ConnectionRefusedException(arg, code);
+        case EHOSTDOWN:
+            throw NetException("Host is down", arg, code);
+        case EHOSTUNREACH:
+            throw NetException("No route to host", arg, code);
+        case EPIPE:
+            throw IOException("Broken pipe", code);
+        case EBADF:
+            throw IOException("Bad socket descriptor", code);
         default:
-            IOException(arg, code);
+            throw IOException(NumberFormatter::format(code), arg, code);
     }
 }
 
