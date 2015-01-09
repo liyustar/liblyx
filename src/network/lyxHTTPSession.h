@@ -1,5 +1,10 @@
-#ifndef LIBLYX_NETWORK_LYXDNS_H_
-#define LIBLYX_NETWORK_LYXDNS_H_
+#ifndef LIBLYX_NETWORK_LYXHTTPSESSION_H_
+#define LIBLYX_NETWORK_LYXHTTPSESSION_H_
+
+#include "lyxStreamSocket.h"
+#include "lyxTimespan.h"
+#include "lyxException.h"
+#include <ios>
 
 namespace lyx {
 
@@ -41,6 +46,10 @@ class HTTPSession {
         void clearException();
 
     private:
+        enum {
+            HTTP_DEFAULT_TIMEOUT = 60000000
+        };
+
         HTTPSession(const HTTPSession&);
         HTTPSession& operator = (const HTTPSession&);
 
@@ -54,4 +63,4 @@ class HTTPSession {
 
 } // namespace lyx
 
-#endif // LIBLYX_NETWORK_LYXDNS_H_
+#endif // LIBLYX_NETWORK_LYXHTTPSESSION_H_
