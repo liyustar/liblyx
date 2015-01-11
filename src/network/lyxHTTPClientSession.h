@@ -23,7 +23,7 @@ class HTTPClientSession: public HTTPSession {
         const std::string& getHost() const;
         uint16_t getPort() const;
 
-        void setProxy(const std::string& host, uint16_t port = HTTPClientSession::HTTP_PORT);
+        void setProxy(const std::string& host, uint16_t port = HTTPSession::HTTP_PORT);
         void setProxyHost(const std::string& host);
         void setProxyPort(uint16_t port);
         const std::string& getProxyHost() const;
