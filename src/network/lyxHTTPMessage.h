@@ -23,6 +23,7 @@ class HTTPMessage: public MessageHeader {
         bool getChunkedTransferEncoding() const;
 
         void setContentType(const std::string& mediaType);
+        void setContentType(const MediaType& mediaType);
         const std::string& getContentType() const;
 
         void setKeepAlive(bool keepAlive);

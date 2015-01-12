@@ -1,4 +1,5 @@
 #include "lyxHTTPMessage.h"
+#include "lyxMediaType.h"
 #include "lyxNumberFormatter.h"
 
 namespace lyx {
