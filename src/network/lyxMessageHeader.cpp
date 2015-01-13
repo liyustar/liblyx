@@ -1,6 +1,7 @@
 #include "lyxMessageHeader.h"
 #include "lyxAscii.h"
-#include "lyxException.h"
+#include "lyxString.h"
+#include "lyxNetException.h"
 #include "lyxBugcheck.h"
 
 namespace lyx {
@@ -38,8 +39,61 @@ void MessageHeader::read(std::istream& istr) {
 
     std::string name;
     std::string value;
+    name.reserve(32);
+    value.reserve(64);
+    int ch = buf.sbumpc();
+    int fields = 0;
 
-    throw NotImplementedException("MessageHeader::read() not implement");
+    // 单条消息开头，不为结束符号
+    while (ch != eof && ch != '\r' && ch != '\n') {
+        if (_fieldLimit > 0 && fields == _fieldLimit)
+            throw MessageException("Too many header fields");
+
+        name.clear();
+        value.clear();
+
+        // 得到name值
+        while (ch != eof && ch != ':' && ch != '\n' && name.length() < MAX_NAME_LENGTH) {
+            name += ch;
+            ch = buf.sbumpc();
+        }
+        if (ch == '\n') {
+            ch = buf.sbumpc();  // 吃掉'\n'
+            continue;           // ignore invalid header lines
+        }
+        if (ch != ':') throw MessageException("Field name too long/no colon found");
+        if (ch != eof) ch = buf.sbumpc();
+
+        // 吃掉空格
+        while (ch != eof && Ascii::isSpace(ch) && ch != '\r' && ch != '\n') ch = buf.sbumpc();
+        // 得到value
+        while (ch != eof && ch != '\r' && ch != '\n' && value.length() < MAX_VALUE_LENGTH) {
+            value += ch;
+            ch = buf.sbumpc();
+        }
+        if (ch == '\r') ch = buf.sbumpc();
+        if (ch == '\n')
+            ch = buf.sbumpc();
+        else if (ch != eof)
+            throw MessageException("Field value too long/no CRLF found");
+
+        // 处理value换行
+        while (ch == ' ' || ch == '\t') {
+            while (ch != eof && ch != '\r' && ch != '\n' && value.length() < MAX_VALUE_LENGTH) {
+                value += ch;
+                ch = buf.sbumpc();
+            }
+            if (ch == '\r') ch = buf.sbumpc();
+            if (ch == '\n')
+                ch = buf.sbumpc();
+            else if (ch != eof)
+                throw MessageException("Folded field value too long/no CRLF found");
+        }
+        trimInPlace(value);
+        add(name, value);
+        ++fields;
+    }
+    istr.putback(ch);
 }
 
 int MessageHeader::getFieldLimit() const {
