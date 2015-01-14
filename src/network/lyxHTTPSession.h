@@ -10,6 +10,9 @@ namespace lyx {
 
 class HTTPSession {
     public:
+        void setKeepAlive(bool keepAlive);
+        bool getKeepAlive() const;
+
         void setTimeout(const Timespan& timeout);
         Timespan getTimeout() const;
 
@@ -57,9 +60,22 @@ class HTTPSession {
         char*           _pBuffer;
         char*           _pCurrent;
         char*           _pEnd;
+        bool            _keepAlive;
         Timespan        _timeout;
         Exception*      _pException;
 };
+
+inline bool HTTPSession::getKeepAlive() const {
+    return _keepAlive;
+}
+
+inline Timespan HTTPSession::getTimeout() const {
+    return _timeout;
+}
+
+inline const Exception* HTTPSession::networkException() const {
+    return _pException;
+}
 
 } // namespace lyx
 
