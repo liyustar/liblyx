@@ -47,6 +47,7 @@ class SocketImpl {
 
         int socketError();
         int sockfd() const;
+        bool initialized() const;
 
         // virtual int available();
 
@@ -85,6 +86,10 @@ class SocketImpl {
 
 inline int SocketImpl::sockfd() const {
     return _sockfd;
+}
+
+inline bool SocketImpl::initialized() const {
+    return _sockfd != -1;
 }
 
 inline int SocketImpl::lastError() {

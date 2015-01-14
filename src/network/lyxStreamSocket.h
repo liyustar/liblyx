@@ -4,6 +4,7 @@
 #include "lyxSocket.h"
 #include <memory>
 #include "lyxStreamSocketImpl.h"
+#include "lyxTimespan.h"
 
 namespace lyx {
 
@@ -21,6 +22,7 @@ class StreamSocket : public Socket {
         StreamSocket& operator = (const Socket& socket);
 
         void connect(const SocketAddress& address);
+        void connect(const SocketAddress& address, const Timespan& timeout);
 
         void shutdownReceive();
         void shutdownSend();

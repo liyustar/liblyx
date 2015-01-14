@@ -36,6 +36,10 @@ void StreamSocket::connect(const SocketAddress& address) {
     impl()->connect(address);
 }
 
+void StreamSocket::connect(const SocketAddress& address, const Timespan& timeout) {
+    impl()->connect(address, timeout);
+}
+
 void StreamSocket::shutdownReceive() {
     impl()->shutdownReceive();
 }
