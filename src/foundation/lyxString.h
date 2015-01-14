@@ -1,24 +1,20 @@
 #ifndef LIBLYX_FOUNDATION_LYXSTRING_H_
 #define LIBLYX_FOUNDATION_LYXSTRING_H_
 
-#include "lyxAscii.h"
 #include <string>
 
 namespace lyx {
 
-inline std::string& trimInPlace(std::string& str) {
-    int first = 0;
-    int last = int(str.size()) - 1;
+std::string  toUpper(const std::string& str);
+std::string& toUpperInPlace(std::string& str);
 
-    while (first <= last && Ascii::isSpace(str[first])) ++first;
-    while (last >= first && Ascii::isSpace(str[last])) --last;
+std::string  toLower(const std::string& str);
+std::string& toLowerInPlace(std::string& str);
 
-    str.resize(last + 1);
-    str.erase(0, first);
+std::string& trimInPlace(std::string& str);
 
-    return str;
-}
+int icompare(const std::string& str1, const std::string& str2);
 
-}
+} // namespace lyx
 
 #endif // LIBLYX_FOUNDATION_LYXSTRING_H_
