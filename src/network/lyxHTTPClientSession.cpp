@@ -1,5 +1,7 @@
 #include "lyxHTTPClientSession.h"
 #include "lyxHTTPSession.h"
+#include "lyxHTTPRequest.h"
+#include "lyxHTTPResponse.h"
 #include "lyxNetException.h"
 #include "lyxNumberFormatter.h"
 
@@ -105,8 +107,69 @@ void HTTPClientSession::setKeepAliveTimeout(const Timespan& timeout) {
     _keepAliveTimeout = timeout;
 }
 
-// std::ostream& sendRequest(HTTPRequest& request);
-// std::istream& receiveResponse(HTTPResponse& response);
+std::ostream& HTTPClientSession::sendRequest(HTTPRequest& request) {
+    clearException();
+    _pResponseStream = 0;
+
+    bool keepAlive = getKeepAlive();
+    // 检查是否需要重新建立链接
+    if ((connected() && !keepAlive) || mustReconnect()) {
+        close();
+        _mustReconnect = false;
+    }
+
+    try {
+        if (!connected())
+            reconnect();
+        if (!keepAlive)
+            request.setKeepAlive(false);
+        if (!request.has(HTTPRequest::HOST))
+            request.setHost(_host, _port);
+
+        _reconnect = keepAlive;
+        _expectResponseBody = request.getMethod() != HTTPRequest::HTTP_HEAD;
+
+        if (request.getChunkedTransferEncoding()) {
+            throw NotImplementedException("HTTPClientSession::sendRequest can't process Chunked");
+        }
+        else if (request.hasContentLength()) {
+            throw NotImplementedException("HTTPClientSession::sendRequest can't process ContentLength");
+        }
+        else if ((request.getMethod() != HTTPRequest::HTTP_PUT
+                    && request.getMethod() != HTTPRequest::HTTP_POST)
+                || request.has(HTTPRequest::UPGRADE)) {
+            throw NotImplementedException("HTTPClientSession::sendRequest can't process hasUpGrade");
+        }
+        else {
+            throw NotImplementedException("HTTPClientSession::sendRequest can't process Normal");
+        }
+        _lastRequest.update();
+        return *_pRequestStream;
+    }
+    catch (Exception&) {
+        close();
+        throw;
+    }
+}
+
+std::istream& HTTPClientSession::receiveResponse(HTTPResponse& response) {
+    _pRequestStream = 0;
+    if (networkException()) networkException()->rethrow();
+
+    do {
+        response.clear();
+    } while (false /* response.getStatus() == HTTPResponse::HTTP_CONTINUE */);
+
+    _mustReconnect = getKeepAlive() && !response.getKeepAlive();
+
+    if (!_expectResponseBody || response.getStatus() < 200
+            || response.getStatus() == HTTPResponse::HTTP_NO_CONTENT
+            || response.getStatus() == HTTPResponse::HTTP_NOT_MODIFIED)
+        _pResponseStream = 0;
+
+    throw NotImplementedException("HTTPClientSession::receiveResponse");
+
+}
 
 void HTTPClientSession::reset() {
     close();

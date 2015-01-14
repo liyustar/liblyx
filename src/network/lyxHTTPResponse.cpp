@@ -5,12 +5,15 @@
 
 namespace lyx {
 
-const std::string HTTPResponse::HTTP_REASON_OK        = "OK";
-const std::string HTTPResponse::HTTP_REASON_SEE_OTHER = "See Other";
-const std::string HTTPResponse::HTTP_REASON_NOT_FOUND = "Not Found";
-const std::string HTTPResponse::HTTP_REASON_UNKNOWN   = "???";
-const std::string HTTPResponse::DATE                  = "Date";
-const std::string HTTPResponse::SET_COOKIE            = "Set-Cookie";
+const std::string HTTPResponse::HTTP_REASON_OK                              = "OK";
+const std::string HTTPResponse::HTTP_REASON_NO_CONTENT                      = "No Content";
+const std::string HTTPResponse::HTTP_REASON_SEE_OTHER                       = "See Other";
+const std::string HTTPResponse::HTTP_REASON_NOT_MODIFIED                    = "Not Modified";
+const std::string HTTPResponse::HTTP_REASON_NOT_FOUND                       = "Not Found";
+const std::string HTTPResponse::HTTP_REASON_REQUESTED_RANGE_NOT_SATISFIABLE = "Requested Range Not Satisfiable";
+const std::string HTTPResponse::HTTP_REASON_UNKNOWN                         = "???";
+const std::string HTTPResponse::DATE                                        = "Date";
+const std::string HTTPResponse::SET_COOKIE                                  = "Set-Cookie";
 
 HTTPResponse::HTTPResponse():
     _status(HTTP_OK),

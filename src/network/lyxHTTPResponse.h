@@ -12,9 +12,12 @@ class HTTPCookie;
 class HTTPResponse: public HTTPMessage {
     public:
         enum HTTPStatus {
-            HTTP_OK = 200,
-            HTTP_SEE_OTHER = 303,
-            HTTP_NOT_FOUND = 404,
+            HTTP_OK                              = 200,
+            HTTP_NO_CONTENT                      = 204,
+            HTTP_SEE_OTHER                       = 303,
+            HTTP_NOT_MODIFIED                    = 304,
+            HTTP_NOT_FOUND                       = 404,
+            HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416,
         };
 
         HTTPResponse();
@@ -46,8 +49,11 @@ class HTTPResponse: public HTTPMessage {
         static const std::string& getReasonForStatus(HTTPStatus status);
 
         static const std::string HTTP_REASON_OK;
+        static const std::string HTTP_REASON_NO_CONTENT;
         static const std::string HTTP_REASON_SEE_OTHER;
+        static const std::string HTTP_REASON_NOT_MODIFIED;
         static const std::string HTTP_REASON_NOT_FOUND;
+        static const std::string HTTP_REASON_REQUESTED_RANGE_NOT_SATISFIABLE;
         static const std::string HTTP_REASON_UNKNOWN;
 
         static const std::string DATE;
