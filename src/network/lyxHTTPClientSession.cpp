@@ -2,6 +2,8 @@
 #include "lyxHTTPSession.h"
 #include "lyxHTTPRequest.h"
 #include "lyxHTTPResponse.h"
+#include "lyxHTTPFixedLengthStream.h"
+#include "lyxCountingStream.h"
 #include "lyxNetException.h"
 #include "lyxNumberFormatter.h"
 
@@ -133,7 +135,10 @@ std::ostream& HTTPClientSession::sendRequest(HTTPRequest& request) {
             throw NotImplementedException("HTTPClientSession::sendRequest can't process Chunked");
         }
         else if (request.hasContentLength()) {
-            throw NotImplementedException("HTTPClientSession::sendRequest can't process ContentLength");
+            CountingOutputStream cs;
+            request.write(cs);
+            _pRequestStream.reset(new HTTPFixedLengthOutputStream(*this, request.getContentLength() + cs.chars()));
+            request.write(*_pRequestStream);
         }
         else if ((request.getMethod() != HTTPRequest::HTTP_PUT
                     && request.getMethod() != HTTPRequest::HTTP_POST)
@@ -165,10 +170,15 @@ std::istream& HTTPClientSession::receiveResponse(HTTPResponse& response) {
     if (!_expectResponseBody || response.getStatus() < 200
             || response.getStatus() == HTTPResponse::HTTP_NO_CONTENT
             || response.getStatus() == HTTPResponse::HTTP_NOT_MODIFIED)
-        _pResponseStream = 0;
+        _pResponseStream.reset(new HTTPFixedLengthInputStream(*this, 0));
+    else if (response.getChunkedTransferEncoding())
+        throw NotImplementedException("HTTPClientSession::receiveResponse ChunkedInputStream");
+    else if (response.hasContentLength())
+        _pResponseStream.reset(new HTTPFixedLengthInputStream(*this, response.getContentLength()));
+    else
+        throw NotImplementedException("HTTPClientSession::receiveResponse HTTPIOStream");
 
-    throw NotImplementedException("HTTPClientSession::receiveResponse");
-
+    return *_pResponseStream;
 }
 
 void HTTPClientSession::reset() {
