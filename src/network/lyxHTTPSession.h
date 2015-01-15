@@ -63,6 +63,8 @@ class HTTPSession {
         bool            _keepAlive;
         Timespan        _timeout;
         Exception*      _pException;
+
+        friend class HTTPFixedLengthStreamBuf;
 };
 
 inline bool HTTPSession::getKeepAlive() const {
