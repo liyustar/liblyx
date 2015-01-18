@@ -64,6 +64,7 @@ class HTTPSession {
         Timespan        _timeout;
         Exception*      _pException;
 
+        friend class HTTPHeaderStreamBuf;
         friend class HTTPFixedLengthStreamBuf;
 };
 

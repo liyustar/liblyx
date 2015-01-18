@@ -55,7 +55,7 @@ void HTTPResponse::setStatus(HTTPStatus status) {
 }
 
 void HTTPResponse::setStatus(const std::string& status) {
-    throw NotImplementedException("HTTPResponse::setStatus");
+    setStatus((HTTPStatus) std::atoi(status.c_str()));
 }
 
 void HTTPResponse::setReason(const std::string& reason) {

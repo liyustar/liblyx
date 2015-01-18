@@ -5,19 +5,19 @@
 
 namespace lyx {
 
-const std::string HTTP_GET            = "GET";
-const std::string HTTP_HEAD           = "HEAD";
-const std::string HTTP_PUT            = "PUT";
-const std::string HTTP_POST           = "POST";
-const std::string HTTP_OPTIONS        = "OPTIONS";
-const std::string HTTP_DELETE         = "DELETE";
-const std::string HTTP_TRACE          = "TRACE";
-const std::string HTTP_CONNECT        = "CONNECT";
-const std::string HOST                = "Host";
-const std::string COOKIE              = "Cookie";
-const std::string AUTHORIZATION       = "Authorization";
-const std::string PROXY_AUTHORIZATION = "Proxy-Authorization";
-const std::string UPGRADE             = "Upgrade";
+const std::string HTTPRequest::HTTP_GET            = "GET";
+const std::string HTTPRequest::HTTP_HEAD           = "HEAD";
+const std::string HTTPRequest::HTTP_PUT            = "PUT";
+const std::string HTTPRequest::HTTP_POST           = "POST";
+const std::string HTTPRequest::HTTP_OPTIONS        = "OPTIONS";
+const std::string HTTPRequest::HTTP_DELETE         = "DELETE";
+const std::string HTTPRequest::HTTP_TRACE          = "TRACE";
+const std::string HTTPRequest::HTTP_CONNECT        = "CONNECT";
+const std::string HTTPRequest::HOST                = "Host";
+const std::string HTTPRequest::COOKIE              = "Cookie";
+const std::string HTTPRequest::AUTHORIZATION       = "Authorization";
+const std::string HTTPRequest::PROXY_AUTHORIZATION = "Proxy-Authorization";
+const std::string HTTPRequest::UPGRADE             = "Upgrade";
 
 HTTPRequest::HTTPRequest():
     _method(HTTP_GET),

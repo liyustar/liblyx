@@ -71,6 +71,10 @@ class HTTPRequest: public HTTPMessage {
         HTTPRequest& operator = (const HTTPRequest&);
 };
 
+inline const std::string& HTTPRequest::getMethod() const {
+    return _method;
+}
+
 } // namespace lyx
 
 #endif // LIBLYX_NETWORK_LYXHTTPREQUEST_H_

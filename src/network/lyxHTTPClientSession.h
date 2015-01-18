@@ -53,8 +53,8 @@ class HTTPClientSession: public HTTPSession {
         int write(const char* buffer, std::streamsize length);
         virtual std::string proxyRequestPrefix() const;
         virtual bool mustReconnect() const;
-        virtual void proxyAuthenticate(HTTPRequest& request);
-        void proxyAuthenticateImpl(HTTPRequest& request);
+        // virtual void proxyAuthenticate(HTTPRequest& request);
+        // void proxyAuthenticateImpl(HTTPRequest& request);
 
         StreamSocket proxyConnect();
         void proxyTunnel();

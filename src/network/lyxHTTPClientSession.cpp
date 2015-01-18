@@ -2,6 +2,7 @@
 #include "lyxHTTPSession.h"
 #include "lyxHTTPRequest.h"
 #include "lyxHTTPResponse.h"
+#include "lyxHTTPHeaderStream.h"
 #include "lyxHTTPFixedLengthStream.h"
 #include "lyxCountingStream.h"
 #include "lyxNetException.h"
@@ -163,6 +164,21 @@ std::istream& HTTPClientSession::receiveResponse(HTTPResponse& response) {
 
     do {
         response.clear();
+        HTTPHeaderInputStream his(*this);
+        try {
+            response.read(his);
+        }
+        catch (MessageException&) {
+            close();
+            if (networkException())
+                networkException()->rethrow();
+            else
+                throw;
+        }
+        catch (Exception&) {
+            close();
+            throw;
+        }
     } while (false /* response.getStatus() == HTTPResponse::HTTP_CONTINUE */);
 
     _mustReconnect = getKeepAlive() && !response.getKeepAlive();
