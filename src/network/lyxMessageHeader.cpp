@@ -28,7 +28,7 @@ MessageHeader& MessageHeader::operator = (const MessageHeader& messageHeader) {
 void MessageHeader::write(std::ostream& ostr) const {
     NameValueCollection::ConstIterator it = begin();
     while (it != end()) {
-        ostr << it->first << ": " << it->second << "\n\r";
+        ostr << it->first << ": " << it->second << "\r\n";
         ++it;
     }
 }
