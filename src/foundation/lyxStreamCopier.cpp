@@ -4,6 +4,25 @@
 
 namespace lyx {
 
+std::streamsize StreamCopier::copyStream(std::istream& istr, std::ostream& ostr, std::size_t bufferSize) {
+    lyx_assert (bufferSize > 0);
+
+    Buffer<char> buffer(bufferSize);
+    std::streamsize len = 0;
+    istr.read(buffer.begin(), bufferSize);
+    std::streamsize n = istr.gcount();
+    while (n > 0) {
+        len += n;
+        ostr.write(buffer.begin(), n);
+        if (istr && ostr) {
+            istr.read(buffer.begin(), bufferSize);
+            n = istr.gcount();
+        }
+        else
+            n = 0;
+    }
+    return len;
+}
 
 std::streamsize StreamCopier::copyStreamUnbuffered(std::istream& istr, std::ostream& ostr) {
     char c;
