@@ -10,7 +10,7 @@ namespace lyx {
 class Message {
     public:
         enum Priority {
-            PROI_FATAL = 1,
+            PRIO_FATAL = 1,
             PRIO_CRITICAL,
             PRIO_ERROR,
             PRIO_WARNING,
