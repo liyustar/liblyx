@@ -232,6 +232,30 @@ ValueType AnyCast(const Any& operand) {
     return AnyCast<NonRef&>(const_cast<Any&>(operand));
 }
 
+template <typename ValueType>
+const ValueType& RefAnyCast(const Any & operand) {
+    ValueType* result = AnyCast<ValueType>(const_cast<Any*>(&operand));
+    if (!result) throw BadCastException("RefAnyCast: Failed to convert between const Any types");
+    return *result;
+}
+
+template <typename ValueType>
+ValueType& RefAnyCast(Any& operand) {
+    ValueType* result = AnyCast<ValueType>(const_cast<Any*>(&operand));
+    if (!result) throw BadCastException("RefAnyCast: Failed to convert between Any types");
+    return *result;
+}
+
+template <typename ValueType>
+ValueType* UnsafeAnyCast(Any* operand) {
+    return &static_cast<Any::Holder<ValueType>*>(operand->content())->_held;
+}
+
+template <typename ValueType>
+const ValueType* UnsafeAnyCast(const Any* operand) {
+    return AnyCast<ValueType>(const_cast<Any*>(operand));
+}
+
 } // namespace lyx
 
 #endif // LIBLYX_FOUNDATION_LYXANY_H_
