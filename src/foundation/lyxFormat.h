@@ -1,5 +1,5 @@
-#ifndef LIBLYX_FOUNDATION_LYXASCII_H_
-#define LIBLYX_FOUNDATION_LYXASCII_H_
+#ifndef LIBLYX_FOUNDATION_LYXFORMAT_H_
+#define LIBLYX_FOUNDATION_LYXFORMAT_H_
 
 #include <string>
 
@@ -14,4 +14,4 @@ std::string format(const char* fmt, ...)
 
 } // namespace lyx
 
-#endif // LIBLYX_FOUNDATION_LYXASCII_H_
+#endif // LIBLYX_FOUNDATION_LYXFORMAT_H_
