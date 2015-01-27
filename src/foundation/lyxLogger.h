@@ -14,8 +14,8 @@ class Logger: public Channel {
     public:
         const std::string& name() const;
 
-        void setChannel(Channel* pChannel);
-        Channel* getChannel() const;
+        void setChannel(ChannelPtr pChannel);
+        ChannelPtr getChannel() const;
 
         void setLevel(int level); // Message::Priority
         int getLevel() const;
@@ -50,7 +50,7 @@ class Logger: public Channel {
         void trace(const std::string& msg);
         void trace(const std::string& msg, const char* file, int line);
 
-        void dump(const std::string& msg, const void* buffer, std::size_t length, Message::Priority prio = Message::PRIO_DEBUG);
+        // void dump(const std::string& msg, const void* buffer, std::size_t length, Message::Priority prio = Message::PRIO_DEBUG);
 
         bool is(int level) const;
         bool fatal() const;
@@ -74,13 +74,13 @@ class Logger: public Channel {
         static void destroy(const std::string& name);
         static void shutdown();
         static void names(std::vector<std::string>& name);
-        static const std::string ROOT;
         */
+        static const std::string ROOT;
 
     protected:
         typedef std::map<std::string, Logger*> LoggerMap;
 
-        Logger(const std::string& name, Channel* pChannel, int level);
+        Logger(const std::string& name, ChannelPtr pChannel, int level);
         ~Logger();
 
         void log(const std::string& text, Message::Priority prio);
@@ -98,7 +98,7 @@ class Logger: public Channel {
         Logger& operator = (const Logger&);
 
         std::string _name;
-        Channel*    _pChannel;
+        ChannelPtr  _pChannel;
         int         _level;
 
         static LoggerMap* _pLoggerMap;
@@ -114,7 +114,7 @@ inline int Logger::getLevel() const {
 }
 
 inline void Logger::log(const std::string& text, Message::Priority prio) {
-    if (_level >= prio && _pChannel) {
+    if (_level >= prio && _pChannel.get()) {
         _pChannel->log(Message(_name, text, prio));
     }
 }

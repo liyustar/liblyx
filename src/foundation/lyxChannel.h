@@ -2,10 +2,15 @@
 #define LIBLYX_FOUNDATION_LYXCHANNEL_H_
 
 #include "lyxConfigurable.h"
+#include <memory>
 
 namespace lyx {
 
+
 class Message;
+class Channel;
+
+typedef std::shared_ptr<Channel> ChannelPtr;
 
 class Channel: public Configurable {
     public:
