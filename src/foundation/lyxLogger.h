@@ -13,6 +13,7 @@ class Exception;
 class Logger: public Channel {
     public:
         const std::string& name() const;
+
         void setChannel(Channel* pChannel);
         Channel* getChannel() const;
 
@@ -27,6 +28,7 @@ class Logger: public Channel {
 
         void fatal(const std::string& msg);
         void fatal(const std::string& msg, const char* file, int line);
+
         void critical(const std::string& msg);
         void critical(const std::string& msg, const char* file, int line);
 
@@ -58,8 +60,9 @@ class Logger: public Channel {
         bool notice() const;
         bool info() const;
         bool debug() const;
-        bool trace() cosnt;
+        bool trace() const;
 
+        /*
         static void setLevel(const std::string& name, int level);
         static void setChannel(const std::string& name, Channel* pChannel);
         static void setProperty(const std::string& loggerName, const std::string& propertyName, const std::string& value);
@@ -72,6 +75,7 @@ class Logger: public Channel {
         static void shutdown();
         static void names(std::vector<std::string>& name);
         static const std::string ROOT;
+        */
 
     protected:
         typedef std::map<std::string, Logger*> LoggerMap;
@@ -82,9 +86,11 @@ class Logger: public Channel {
         void log(const std::string& text, Message::Priority prio);
         void log(const std::string& text, Message::Priority prio, const char* file, int line);
 
+        /*
         static Logger& parent(const std::string& name);
         static void add(Logger* pLogger);
         static Logger* find(const std::string& name);
+        */
 
     private:
         Logger();
@@ -98,6 +104,126 @@ class Logger: public Channel {
         static LoggerMap* _pLoggerMap;
         static Mutex      _mapMtx;
 };
+
+inline const std::string& Logger::name() const {
+    return _name;
+}
+
+inline int Logger::getLevel() const {
+    return _level;
+}
+
+inline void Logger::log(const std::string& text, Message::Priority prio) {
+    if (_level >= prio && _pChannel) {
+        _pChannel->log(Message(_name, text, prio));
+    }
+}
+
+inline void Logger::log(const std::string& text, Message::Priority prio, const char* file, int line) {
+    if (_level >= prio && _pChannel) {
+        _pChannel->log(Message(_name, text, prio, file, line));
+    }
+}
+
+inline void Logger::fatal(const std::string& msg) {
+    log(msg, Message::PRIO_FATAL);
+}
+
+inline void Logger::fatal(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_FATAL, file, line);
+}
+
+inline void Logger::critical(const std::string& msg) {
+    log(msg, Message::PRIO_CRITICAL);
+}
+
+inline void Logger::critical(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_CRITICAL, file, line);
+}
+
+inline void Logger::error(const std::string& msg) {
+    log(msg, Message::PRIO_ERROR);
+}
+
+inline void Logger::error(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_ERROR, file, line);
+}
+
+inline void Logger::warning(const std::string& msg) {
+    log(msg, Message::PRIO_WARNING);
+}
+
+inline void Logger::warning(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_WARNING, file, line);
+}
+
+inline void Logger::notice(const std::string& msg) {
+    log(msg, Message::PRIO_NOTICE);
+}
+
+inline void Logger::notice(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_NOTICE, file, line);
+}
+
+inline void Logger::info(const std::string& msg) {
+    log(msg, Message::PRIO_INFORMATION);
+}
+
+inline void Logger::info(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_INFORMATION, file, line);
+}
+
+inline void Logger::debug(const std::string& msg) {
+    log(msg, Message::PRIO_DEBUG);
+}
+
+inline void Logger::debug(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_DEBUG, file, line);
+}
+
+inline void Logger::trace(const std::string& msg) {
+    log(msg, Message::PRIO_TRACE);
+}
+
+inline void Logger::trace(const std::string& msg, const char* file, int line) {
+    log(msg, Message::PRIO_TRACE, file, line);
+}
+
+inline bool Logger::is(int level) const {
+    return _level >= level;
+}
+
+inline bool Logger::fatal() const {
+    return _level >= Message::PRIO_FATAL;
+}
+
+inline bool Logger::critical() const {
+    return _level >= Message::PRIO_CRITICAL;
+}
+
+inline bool Logger::error() const {
+    return _level >= Message::PRIO_ERROR;
+}
+
+inline bool Logger::warning() const {
+    return _level >= Message::PRIO_WARNING;
+}
+
+inline bool Logger::notice() const {
+    return _level >= Message::PRIO_NOTICE;
+}
+
+inline bool Logger::info() const {
+    return _level >= Message::PRIO_INFORMATION;
+}
+
+inline bool Logger::debug() const {
+    return _level >= Message::PRIO_DEBUG;
+}
+
+inline bool Logger::trace() const {
+    return _level >= Message::PRIO_TRACE;
+}
 
 } // namespace lyx
 
