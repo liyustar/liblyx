@@ -53,4 +53,27 @@ void Logger::log(const Exception& exc, const char* file, int line) {
     error(exc.displayText(), file, line);
 }
 
+Logger& Logger::get(const std::string& name) {
+    Mutex::ScopedLock lock(_mapMtx);
+
+    return unsafeGet(name);
+}
+
+Logger& Logger::unsafeGet(const std::string& name) {
+    // Logger* pLogger = find(name);
+    // if (!pLogger) {
+    Logger* pLogger = 0;
+        if (name == ROOT) {
+            pLogger = new Logger(name, 0, Message::PRIO_INFORMATION);
+        }
+    // }
+    return *pLogger;
+}
+
+Logger& Logger::root() {
+    Mutex::ScopedLock lock(_mapMtx);
+
+    return unsafeGet(ROOT);
+}
+
 } // namespace lyx

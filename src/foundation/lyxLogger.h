@@ -66,15 +66,15 @@ class Logger: public Channel {
         static void setLevel(const std::string& name, int level);
         static void setChannel(const std::string& name, Channel* pChannel);
         static void setProperty(const std::string& loggerName, const std::string& propertyName, const std::string& value);
-        static Logger& get(const std::string& name);
-        static Logger& unsafeGet(const std::string& name);
         static Logger& create(const std::string& name, Channel* pChannel, int level = Message::PRIO_INFORMATION);
-        static Logger& root();
         static Logger* has(const std::string& name);
         static void destroy(const std::string& name);
         static void shutdown();
         static void names(std::vector<std::string>& name);
         */
+        static Logger& get(const std::string& name);
+        static Logger& unsafeGet(const std::string& name);
+        static Logger& root();
         static const std::string ROOT;
 
     protected:
