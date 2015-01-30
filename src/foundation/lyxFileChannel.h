@@ -3,6 +3,7 @@
 
 #include "lyxChannel.h"
 #include "lyxMutex.h"
+#include "lyxLogFile.h"
 
 namespace lyx {
 
@@ -23,6 +24,8 @@ class FileChannel: public Channel {
         std::string _path;
         std::string _times;
         std::string _rotation;
+        bool        _flush;
+        LogFile*    _pFile;
         FastMutex   _mutex;
 };
 
